@@ -40,26 +40,26 @@ int main()
 void T0H()
 {
     set_high(PIN16);
-    busy_wait_us(0.4);
+    wait_0_4us();
 }
 
 void T1H()
 {
     set_high(PIN16);
-    busy_wait_us(0.8);
+    wait_0_8us();
 }
 
 void T0L()
 {
     set_low(PIN16);
-    busy_wait_us(0.85);
+    wait_0_85us();
 
 }
 
 void T1L()
 {
     set_low(PIN16);
-    busy_wait_us(0.45);
+    wait_0_45us();
 }
 
 void code0()
@@ -76,15 +76,15 @@ void code1()
 
 void reset_code()
 {
-    // above 50us to reset
+    // above 50us to reset, does not need to be precise
     busy_wait_us(100);
 }
 
-inline void set_high(volatile int pin)
+inline void set_high(int pin)
 {
     sio_hw->gpio_set = (1 << pin);
 }
-inline void set_low(volatile int pin)
+inline void set_low(int pin)
 {
     sio_hw->gpio_clr = (1 << pin);
 }
