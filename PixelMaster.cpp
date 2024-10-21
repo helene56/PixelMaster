@@ -15,15 +15,9 @@ inline void wait_0_85us();
 
 inline void set_high(int pin);
 inline void set_low(int pin);
-// transfer 0 high
-void T0H();
-// transfer 1 high
-void T1H();
-// transfer 0 low
-void T0L();
-// transfer 1 low
-void T1L();
-
+// send bit 0
+void send_bit_0();
+void send_bit_1();
 
 int main()
 {
@@ -37,41 +31,24 @@ int main()
     }
 }
 
-void T0H()
+void send_bit_0()
 {
+    // T0H();
     set_high(PIN16);
     wait_0_4us();
-}
-
-void T1H()
-{
-    set_high(PIN16);
-    wait_0_8us();
-}
-
-void T0L()
-{
+    // T0L();
     set_low(PIN16);
     wait_0_85us();
-
 }
 
-void T1L()
+void send_bit_1()
 {
+    // T1H();
+    set_high(PIN16);
+    wait_0_8us();
+    // T1L();
     set_low(PIN16);
     wait_0_45us();
-}
-
-void code0()
-{
-    T0H();
-    T0L();
-}
-
-void code1()
-{
-    T1H();
-    T1L();
 }
 
 void reset_code()
@@ -115,7 +92,7 @@ inline void wait_0_45us()
     busy_wait_cycles(59);
 }
 
-// Busy-wait for approximately 0.8 µs (850 ns)
+// Busy-wait for approximately 0.8 µs (800 ns)
 inline void wait_0_8us() 
 {
     // 0.8 µs requires about 106 clock cycles at 133 MHz
