@@ -27,6 +27,7 @@ int main()
     gpio_init(PIN16);
     gpio_set_dir(PIN16, GPIO_OUT);
     
+
     while (true) {
         printf("Hello, world!\n");
         sleep_ms(1000);
@@ -106,6 +107,26 @@ inline void wait_0_85us()
 {
     // 0.85 µs requires about 113 clock cycles at 133 MHz
     busy_wait_cycles(113);
+}
+
+// colors
+// TODO: need to rework this
+void green()
+{
+    send_bit_1();
+    send_bit_0();
+    send_bit_0();
+    send_bit_1();
+    send_bit_0();
+    send_bit_1();
+    send_bit_1();
+    send_bit_0();
+
+    for (volatile int i = 0; i <16; ++i)
+    {
+        send_bit_0();
+    }
+
 }
 
 
