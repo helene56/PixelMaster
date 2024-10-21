@@ -12,11 +12,13 @@ inline void wait_0_4us();
 inline void wait_0_45us();
 inline void wait_0_8us();
 inline void wait_0_85us();
-
+// custom function to set pin high on hardware level to reduce overhead time
 inline void set_high(int pin);
+// custom function to set pin low on hardware level to reduce overhead time
 inline void set_low(int pin);
 // send bit 0
 void send_bit_0();
+// send bit 1
 void send_bit_1();
 
 int main()
