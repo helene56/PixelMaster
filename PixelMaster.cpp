@@ -34,7 +34,9 @@ int main()
     stdio_init_all();
     gpio_init(PIN16);
     gpio_set_dir(PIN16, GPIO_OUT);
-    
+
+    reset_code();
+    // TODO: correct timing, timing is wrong, wrong colors output
     send_grb(0b11111111, 0b00000000, 0b00000000);  // Should display green
     send_grb(0b00000000, 0b11111111, 0b00000000);  // Should display red
     send_grb(0b00000000, 0b00000000, 0b11111111);  // Should display blue
