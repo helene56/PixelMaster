@@ -12,6 +12,12 @@ inline void wait_0_4us();
 inline void wait_0_45us();
 inline void wait_0_8us();
 inline void wait_0_85us();
+// color functions
+
+// helper function to send 8 color bits
+void send_color_bits(std::uint8_t color);
+// send a 24 bits grb code to a led
+void send_grb( std::uint8_t green, std::uint8_t red, std::uint8_t blue);
 // Reset after sending all the color data
 void reset_code();
 // custom function to set pin high on hardware level to reduce overhead time
@@ -148,7 +154,7 @@ void send_color_bits(std::uint8_t color)
     }
 }
 
-void send_rgb( std::uint8_t green, std::uint8_t red, std::uint8_t blue)
+void send_grb( std::uint8_t green, std::uint8_t red, std::uint8_t blue)
 {
     send_color_bits(green);
     send_color_bits(red);
