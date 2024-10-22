@@ -35,6 +35,10 @@ int main()
     gpio_init(PIN16);
     gpio_set_dir(PIN16, GPIO_OUT);
     
+    send_grb(0b11111111, 0b00000000, 0b00000000);  // Should display green
+    send_grb(0b00000000, 0b11111111, 0b00000000);  // Should display red
+    send_grb(0b00000000, 0b00000000, 0b11111111);  // Should display blue
+    reset_code();
 
     while (true) {
         printf("Hello, world!\n");
@@ -82,7 +86,7 @@ inline void set_low(int pin)
 inline void busy_wait_cycles(uint32_t cycles) 
 {
     // A simple loop to waste clock cycles
-    for (volatile uint32_t i = 0; i < cycles; i++) {
+    for (volatile uint32_t i = 0; i < cycles; ++i) {
         // No operation, just waste cycles
         __asm volatile ("nop");
     }
@@ -118,25 +122,7 @@ inline void wait_0_85us()
 }
 
 // colors
-// TODO: need to rework this
-void green()
-{
-    // send 10010110'00000000'00000000 for green
-    send_bit_1();
-    send_bit_0();
-    send_bit_0();
-    send_bit_1();
-    send_bit_0();
-    send_bit_1();
-    send_bit_1();
-    send_bit_0();
 
-    for (volatile int i = 0; i <16; ++i)
-    {
-        send_bit_0();
-    }
-
-}
 // send 00000000'10010110'00000000 for green in medium brigthness
 void send_color_bits(std::uint8_t color)
 {
@@ -154,7 +140,7 @@ void send_color_bits(std::uint8_t color)
     }
 }
 
-void send_grb( std::uint8_t green, std::uint8_t red, std::uint8_t blue)
+void send_grb(std::uint8_t green, std::uint8_t red, std::uint8_t blue)
 {
     send_color_bits(green);
     send_color_bits(red);
