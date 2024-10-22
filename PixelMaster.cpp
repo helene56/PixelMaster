@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
-
+#include <cstdint>
 
 constexpr int PIN16 {16};
 
@@ -12,6 +12,8 @@ inline void wait_0_4us();
 inline void wait_0_45us();
 inline void wait_0_8us();
 inline void wait_0_85us();
+// Reset after sending all the color data
+void reset_code();
 // custom function to set pin high on hardware level to reduce overhead time
 inline void set_high(int pin);
 // custom function to set pin low on hardware level to reduce overhead time
@@ -53,7 +55,7 @@ void send_bit_1()
     set_low(PIN16);
     wait_0_45us();
 }
-
+// Reset after sending all the color data
 void reset_code()
 {
     // above 50us to reset, does not need to be precise
@@ -113,6 +115,7 @@ inline void wait_0_85us()
 // TODO: need to rework this
 void green()
 {
+    // send 10010110'00000000'00000000 for green
     send_bit_1();
     send_bit_0();
     send_bit_0();
@@ -127,6 +130,29 @@ void green()
         send_bit_0();
     }
 
+}
+// send 00000000'10010110'00000000 for green in medium brigthness
+void send_color_bits(std::uint8_t color)
+{
+    for (int i = 7; i >= 0; --i)
+    {
+        if (color & (1 << i))
+        {
+            send_bit_1();
+        }
+        else
+        {
+            send_bit_0();
+        }
+        
+    }
+}
+
+void send_rgb( std::uint8_t green, std::uint8_t red, std::uint8_t blue)
+{
+    send_color_bits(green);
+    send_color_bits(red);
+    send_color_bits(blue);
 }
 
 
