@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
+#include "hardware/clocks.h"
 #include <cstdint>
 
 constexpr int PIN16 {16};
@@ -29,42 +30,57 @@ void send_bit_0();
 // send bit 1
 void send_bit_1();
 
+void test_wait()
+{
+    gpio_put(PIN16, 1);
+    busy_wait_cycles(50);
+    // busy_wait_us(0.8);
+    gpio_put(PIN16, 0);
+    // busy_wait_us(0.8);
+    busy_wait_cycles(50);
+}
+
 int main()
 {
     stdio_init_all();
     gpio_init(PIN16);
     gpio_set_dir(PIN16, GPIO_OUT);
-
+    // set_sys_clock_khz(133000, true);  // Set the clock to 133 MHz
+    send_grb(0b00000000, 0b11111111, 0b00000000);
+    send_grb(0b10010110, 0b00000000, 0b00000000);
+    send_grb(0b00000000, 0b00000000, 0b11111111);
+    send_grb(0b00000000, 0b11111111, 0b00000000);
+    send_grb(0b01101100, 0b11000110, 0b00111000);
     reset_code();
-    // TODO: correct timing, timing is wrong, wrong colors output
-    send_grb(0b11111111, 0b00000000, 0b00000000);  // Should display green
-    send_grb(0b00000000, 0b11111111, 0b00000000);  // Should display red
-    send_grb(0b00000000, 0b00000000, 0b11111111);  // Should display blue
-    reset_code();
-
     while (true) {
-        printf("Hello, world!\n");
-        sleep_ms(1000);
+        // printf("Hello, world!\n");
+        // test_wait();
+        // printf("Current system clock speed: %u Hz\n", clock_get_hz(clk_sys));
+        // sleep_ms(1000);
     }
 }
 
 void send_bit_0()
 {
     // T0H();
-    set_high(PIN16);
+    // set_high(PIN16);
+    gpio_put(PIN16, 1);
     wait_0_4us();
     // T0L();
-    set_low(PIN16);
+    // set_low(PIN16);
+    gpio_put(PIN16, 0);
     wait_0_85us();
 }
 
 void send_bit_1()
 {
     // T1H();
-    set_high(PIN16);
+    // set_high(PIN16);
+    gpio_put(PIN16, 1);
     wait_0_8us();
     // T1L();
-    set_low(PIN16);
+    // set_low(PIN16);
+    gpio_put(PIN16, 0);
     wait_0_45us();
 }
 // Reset after sending all the color data
@@ -88,7 +104,9 @@ inline void set_low(int pin)
 inline void busy_wait_cycles(uint32_t cycles) 
 {
     // A simple loop to waste clock cycles
-    for (volatile uint32_t i = 0; i < cycles; ++i) {
+    // Adjusted loop to compensate for overhead
+    uint32_t adjusted_cycles = cycles / 11;  // Each iteration takes ~11 cycles
+    for (volatile uint32_t i = 0; i < adjusted_cycles; ++i) {
         // No operation, just waste cycles
         __asm volatile ("nop");
     }
@@ -98,29 +116,30 @@ inline void busy_wait_cycles(uint32_t cycles)
 inline void wait_0_4us() 
 {
     // 0.4 µs requires about 53 clock cycles at 133 MHz
-    busy_wait_cycles(53);
+    busy_wait_cycles(50);
 }
-
+// running at 125 MHz, 8 ns/clock
 // Busy-wait for approximately 0.45 µs (450 ns)
 // 450 ns / 7.52 ns/clock
 inline void wait_0_45us() 
 {
     // 0.45 µs requires about 59 clock cycles at 133 MHz
-    busy_wait_cycles(59);
+    busy_wait_cycles(56);
 }
 
 // Busy-wait for approximately 0.8 µs (800 ns)
 inline void wait_0_8us() 
 {
     // 0.8 µs requires about 106 clock cycles at 133 MHz
-    busy_wait_cycles(106);
+    busy_wait_cycles(100);
 }
 
 // Busy-wait for approximately 0.85 µs (850 ns)
 inline void wait_0_85us() 
 {
     // 0.85 µs requires about 113 clock cycles at 133 MHz
-    busy_wait_cycles(113);
+    // turning it a bit down, it is more slow
+    busy_wait_cycles(106);
 }
 
 // colors
