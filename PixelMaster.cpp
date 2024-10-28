@@ -96,15 +96,6 @@ void reset_code()
     busy_wait_us(100);
 }
 
-inline void set_high(int pin)
-{
-    sio_hw->gpio_set = (1 << pin);
-}
-inline void set_low(int pin)
-{
-    sio_hw->gpio_clr = (1 << pin);
-}
-
 // clock running up to 133 MHz -- 1/ 133MHz = 7.52 nanoseconds
 
 inline void busy_wait_cycles(uint32_t cycles) 
