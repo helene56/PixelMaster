@@ -46,12 +46,18 @@ int main()
     gpio_init(PIN16);
     gpio_set_dir(PIN16, GPIO_OUT);
     // set_sys_clock_khz(133000, true);  // Set the clock to 133 MHz
+    // for some reason first led will not properly work, if another signal hasn't been sent.
+    send_grb(0b00000000, 0b00000000, 0b00000000);
+    reset_code();
+
     send_grb(0b00000000, 0b11111111, 0b00000000);
     send_grb(0b10010110, 0b00000000, 0b00000000);
     send_grb(0b00000000, 0b00000000, 0b11111111);
     send_grb(0b00000000, 0b11111111, 0b00000000);
     send_grb(0b01101100, 0b11000110, 0b00111000);
     reset_code();
+    send_grb(0b10010110, 0b00000000, 0b00000000);
+    // send_grb(0b00000000, 0b11111111, 0b00000000);
     while (true) {
         // printf("Hello, world!\n");
         // test_wait();
