@@ -22,13 +22,13 @@ int main()
     send_grb(0b00000000, 0b00000000, 0b00000000, Pins::DIN);
     reset_code();
 
-    send_grb(0b00000000, 0b11111111, 0b00000000, Pins::DIN);
-    send_grb(0b10010110, 0b00000000, 0b00000000, Pins::DIN);
-    send_grb(0b00000000, 0b00000000, 0b11111111, Pins::DIN);
-    send_grb(0b00000000, 0b11111111, 0b00000000, Pins::DIN);
-    send_grb(0b01101100, 0b11000110, 0b00111000, Pins::DIN);
+    setLedColor(5, 2, 0b1010, 0b00000000, 0b00000000, Pins::DIN);
     reset_code();
-    send_grb(0b10010110, 0b00000000, 0b00000000, Pins::DIN);
+    setLedColor(2, 5, 0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    reset_code();
+    setLedColor(2, 6, 0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    reset_code();
+    setLedColor(2, 7, 0b1010, 0b00000000, 0b00000000, Pins::DIN);
     // send_grb(0b00000000, 0b11111111, 0b00000000);
     while (true) {
         // printf("Hello, world!\n");

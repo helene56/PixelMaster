@@ -92,15 +92,26 @@ void send_grb(std::uint8_t green, std::uint8_t red, std::uint8_t blue, int pin)
     send_color_bits(red,   pin);
     send_color_bits(blue,  pin);
 }
-
+// set color by row and col
 void setLedColor(int row, int col, std::uint8_t green, std::uint8_t red, std::uint8_t blue, int pin)
 {
-    for (int j = 0; j < row; ++j)
+    int move {0};
+    if (row % 2 == 0)
     {
-        for (int i =+ j; i < col; ++i)
-        {
-            send_grb(0b00000000, 0b00000000, 0b00000000, pin);
-        }
+        move = (row * 8) - col;
+    }
+    else if (row == 1)
+    {
+        move = col - 1;
+    }
+    else
+    {
+        move = (row * 8) - (8 - col) - 1;
+    }
+    
+    for (int i = 1; i <= move; ++i)
+    {
+        send_grb(0b00000000, 0b00000000, 0b00000000, pin);
     }
     send_grb(green, red, blue, pin);
     
