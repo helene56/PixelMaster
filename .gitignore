@@ -2,3 +2,7 @@ build
 CMakeFiles
 CMakeCache.txt
 TODO.md
+notes.md
+_deps
+build.ninja
+compile_commands.json
