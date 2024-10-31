@@ -1,6 +1,6 @@
 #include "led_control.h"
 #include "pico/stdlib.h"
-
+#include "led_memory.h"
 
 void send_bit_0(int pin)
 {
@@ -115,4 +115,26 @@ void setLedColor(int row, int col, std::uint8_t green, std::uint8_t red, std::ui
     }
     send_grb(green, red, blue, pin);
     
+}
+
+void sendLed(int row, int col, std::uint8_t green, std::uint8_t red, std::uint8_t blue, int pin)
+{
+    // packing values into 32 bits
+    std::uint32_t grb {(green << 16) | (red << 8) | blue};
+    // assign the color to the position
+    led_memory[row][col] = grb;
+    // look through led_memory and send all
+    for (int i = 0; i < 8; ++i)
+    {
+        for (int j = 0; j < 8; ++j)
+        {
+            if (led_memory[i][j] != 0)
+            {
+                green = (led_memory[i][j] >> 16) & 0xFF;  // Extract the red component (8 bits)
+                red = (led_memory[i][j] >> 8) & 0xFF; // Extract the green component (8 bits)
+                blue = led_memory[i][j] & 0xFF;         // Extract the blue component (8 bits)
+                setLedColor(i, j, green, red, blue, pin)
+            }
+        }
+    }
 }
