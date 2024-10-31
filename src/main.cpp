@@ -17,6 +17,7 @@ int main()
     stdio_init_all();
     gpio_init(Pins::DIN);
     gpio_set_dir(Pins::DIN, GPIO_OUT);
+
     // set_sys_clock_khz(133000, true);  // Set the clock to 133 MHz
     // for some reason first led will not properly work, if another signal hasn't been sent.
     send_grb(0b00000000, 0b00000000, 0b00000000, Pins::DIN);
