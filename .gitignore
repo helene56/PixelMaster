@@ -3,6 +3,6 @@ CMakeFiles
 CMakeCache.txt
 TODO.md
 notes.md
-_deps
+_deps/
 build.ninja
 compile_commands.json
