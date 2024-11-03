@@ -117,24 +117,52 @@ void setLedColor(int row, int col, std::uint8_t green, std::uint8_t red, std::ui
     
 }
 
-void sendLed(int row, int col, std::uint8_t green, std::uint8_t red, std::uint8_t blue, int pin)
+void storeLed(int row, int col, std::uint8_t green, std::uint8_t red, std::uint8_t blue, int pin)
 {
     // packing values into 32 bits
-    std::uint32_t grb {(green << 16) | (red << 8) | blue};
+    std::uint32_t grb = static_cast<std::uint32_t>((green << 16) | (red << 8) | blue);
+
     // assign the color to the position
-    led_memory[row][col] = grb;
+    led_memory[row - 1][col - 1] = grb;
+    
+}
+
+// loops through the led_memory in correct order, and send the ledcolors
+void sendLed(int pin)
+{
     // look through led_memory and send all
-    for (int i = 0; i < 8; ++i)
+    // loop needs go from the top of the array to the bottom.. dosent work properly
+    for (int i = 7; i >= 0; --i)
     {
-        for (int j = 0; j < 8; ++j)
+
+        if (i % 2 != 0)
         {
-            if (led_memory[i][j] != 0)
+            for (int j = 0; j <= 7; ++j)
             {
-                green = (led_memory[i][j] >> 16) & 0xFF;  // Extract the red component (8 bits)
-                red = (led_memory[i][j] >> 8) & 0xFF; // Extract the green component (8 bits)
-                blue = led_memory[i][j] & 0xFF;         // Extract the blue component (8 bits)
-                setLedColor(i, j, green, red, blue, pin)
+                if (led_memory[i][j] != 0)
+                {
+                    std::uint8_t green = (led_memory[i][j] >> 16) & 0xFF;  // Extract the red component (8 bits)
+                    std::uint8_t red = (led_memory[i][j] >> 8) & 0xFF; // Extract the green component (8 bits)
+                    std::uint8_t blue = led_memory[i][j] & 0xFF;         // Extract the blue component (8 bits)
+                    setLedColor(i + 1, j + 1, green, red, blue, pin);
+                    reset_code();
+                }
             }
         }
+        else
+        {
+            for (int j = 7; j >= 0; --j)
+            {
+                if (led_memory[i][j] != 0)
+                {
+                    std::uint8_t green = (led_memory[i][j] >> 16) & 0xFF;  // Extract the red component (8 bits)
+                    std::uint8_t red = (led_memory[i][j] >> 8) & 0xFF; // Extract the green component (8 bits)
+                    std::uint8_t blue = led_memory[i][j] & 0xFF;         // Extract the blue component (8 bits)
+                    setLedColor(i + 1, j + 1, green, red, blue, pin);
+                    reset_code();
+                }
+            }
+        }
+        
     }
 }

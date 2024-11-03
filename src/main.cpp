@@ -4,7 +4,9 @@
 #include "hardware/clocks.h"
 #include <cstdint>
 
+#include <iostream>
 #include "led_control.h"
+#include "led_memory.h"
 
 namespace Pins
 {
@@ -19,18 +21,19 @@ int main()
     gpio_set_dir(Pins::DIN, GPIO_OUT);
 
     // set_sys_clock_khz(133000, true);  // Set the clock to 133 MHz
-    // for some reason first led will not properly work, if another signal hasn't been sent.
-    send_grb(0b00000000, 0b00000000, 0b00000000, Pins::DIN);
-    reset_code();
 
-    setLedColor(5, 2, 0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    reset_code();
-    setLedColor(2, 5, 0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    reset_code();
-    setLedColor(2, 6, 0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    reset_code();
-    setLedColor(2, 7, 0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // send_grb(0b00000000, 0b11111111, 0b00000000);
+    // add small delay, when powered by usb microcontroller, 
+    // otherwise initializing is not correct
+    busy_wait_us(500000); // 500 ms
+
+    storeLed(2, 5,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    storeLed(2, 7,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    storeLed(2, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    storeLed(6, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    storeLed(7, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    storeLed(8, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    sendLed(Pins::DIN);
+
     while (true) {
         // printf("Hello, world!\n");
         // printf("Current system clock speed: %u Hz\n", clock_get_hz(clk_sys));
