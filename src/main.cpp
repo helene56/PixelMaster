@@ -7,6 +7,7 @@
 #include <iostream>
 #include "led_control.h"
 #include "led_memory.h"
+#include "animations.h"
 
 namespace Pins
 {
@@ -26,15 +27,18 @@ int main()
     // otherwise initializing is not correct
     busy_wait_us(500000); // 500 ms
 
-    storeLed(2, 5,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    storeLed(2, 7,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    storeLed(2, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    storeLed(6, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    storeLed(7, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    storeLed(8, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    sendLed(Pins::DIN);
+    // storeLed(2, 5,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    // storeLed(2, 7,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    // storeLed(2, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    // storeLed(6, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    // storeLed(7, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    // storeLed(8, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    // sendLed(Pins::DIN);
 
-    while (true) {
+    while (true) 
+    {
+        run(Pins::DIN);
+        
         // printf("Hello, world!\n");
         // printf("Current system clock speed: %u Hz\n", clock_get_hz(clk_sys));
         // sleep_ms(1000);

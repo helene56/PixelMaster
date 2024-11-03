@@ -59,6 +59,7 @@ target_include_directories(PixelMaster PRIVATE
 target_sources(PixelMaster PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/src/led_control.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/led_memory.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/src/animations.cpp
 
 )
 
