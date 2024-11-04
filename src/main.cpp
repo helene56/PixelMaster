@@ -27,17 +27,41 @@ int main()
     // otherwise initializing is not correct
     busy_wait_us(500000); // 500 ms
 
-    // storeLed(2, 5,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // storeLed(2, 7,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // storeLed(2, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // storeLed(6, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // storeLed(7, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // storeLed(8, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // sendLed(Pins::DIN);
+    // storeLed(5, 2,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(5, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(6, 2,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(6, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
 
+    // storeLed(5, 6,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(5, 7,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(6, 6,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(6, 7,  0b0101, 0b0101, 0b0101, Pins::DIN);
+
+    // storeLed(5, 2,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(6, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(7, 2,  0b0101, 0b0101, 0b0101, Pins::DIN);
+
+    // storeLed(5, 7,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(6, 6,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(7, 7,  0b0101, 0b0101, 0b0101, Pins::DIN);
+
+
+    // storeLed(3, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(2, 4,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(2, 5,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    // storeLed(1, 1,  0b0101, 0b0101, 0b0101, Pins::DIN)
+    
+    // sendLed(Pins::DIN);
+    // need to reset first color for some reason
+    setLedColor(1, 1, 0b00000000, 0b00000000, 0b00000000, Pins::DIN);
+    reset_code();
+    setLedColor(1, 1, 0b00000000, 0b00000000, 0b00000000, Pins::DIN);
+    reset_code();
+    
     while (true) 
     {
-        run(Pins::DIN);
+        // run(Pins::DIN);
+        face(Pins::DIN);
         
         // printf("Hello, world!\n");
         // printf("Current system clock speed: %u Hz\n", clock_get_hz(clk_sys));

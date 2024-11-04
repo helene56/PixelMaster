@@ -127,11 +127,11 @@ void storeLed(int row, int col, std::uint8_t green, std::uint8_t red, std::uint8
     
 }
 
+
 // loops through the led_memory in correct order, and send the ledcolors
 void sendLed(int pin)
 {
     // look through led_memory and send all
-    // loop needs go from the top of the array to the bottom.. dosent work properly
     for (int i = 7; i >= 0; --i)
     {
 
