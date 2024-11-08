@@ -26,8 +26,7 @@ int main()
     // add small delay, when powered by usb microcontroller, 
     // otherwise initializing is not correct
     busy_wait_us(500000); // 500 ms
-
-    // storeLed(5, 2,  0b0101, 0b0101, 0b0101, Pins::DIN);
+    storeLed(1, 1, 0b00000000, 0b1010, 0b00000000, Pins::DIN);
     // storeLed(5, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
     // storeLed(6, 2,  0b0101, 0b0101, 0b0101, Pins::DIN);
     // storeLed(6, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
@@ -51,17 +50,17 @@ int main()
     // storeLed(2, 5,  0b0101, 0b0101, 0b0101, Pins::DIN);
     // storeLed(1, 1,  0b0101, 0b0101, 0b0101, Pins::DIN)
     
-    // sendLed(Pins::DIN);
+    sendLed(Pins::DIN);
     // need to reset first color for some reason
-    setLedColor(1, 1, 0b00000000, 0b00000000, 0b00000000, Pins::DIN);
-    reset_code();
-    setLedColor(1, 1, 0b00000000, 0b00000000, 0b00000000, Pins::DIN);
-    reset_code();
+    // setLedColor(1, 1, 0b00000000, 0b00000000, 0b00000000, Pins::DIN);
+    // reset_code();
+    // setLedColor(1, 1, 0b00000000, 0b00000000, 0b00000000, Pins::DIN);
+    // reset_code();
     
     while (true) 
     {
         // run(Pins::DIN);
-        face(Pins::DIN);
+        // face(Pins::DIN);
         
         // printf("Hello, world!\n");
         // printf("Current system clock speed: %u Hz\n", clock_get_hz(clk_sys));
