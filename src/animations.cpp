@@ -6,8 +6,8 @@
 // makes an led go through all positions in various colors and framerates
 void run(int pin)
 {
-    std::uint8_t greens[3] {0b1010, 0b00000000, 0b00000000};
-    std::uint8_t blues[3] {0b00000000, 0b1010, 0b00000000};
+    std::uint8_t greens[3] {0b00000000, 0b1010, 0b00000000};
+    std::uint8_t blues[3] {0b1010, 0b00000000, 0b00000000};
     std::uint8_t reds[3] {0b00000000, 0b00000000, 0b1010};
     uint sleeps[3] {50, 60, 55};
     for (int l = 0; l < 3; ++l)
