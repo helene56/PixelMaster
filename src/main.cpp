@@ -26,7 +26,9 @@ int main()
     // add small delay, when powered by usb microcontroller, 
     // otherwise initializing is not correct
     busy_wait_us(500000); // 500 ms
-    storeLed(1, 1, 0b00000000, 0b1010, 0b00000000, Pins::DIN);
+    // and clear first led.. there must be some disturbance
+    setLedColor(1, 1, 0b00000000, 0b00000000, 0b00000000, Pins::DIN);
+    reset_code();
     // storeLed(5, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
     // storeLed(6, 2,  0b0101, 0b0101, 0b0101, Pins::DIN);
     // storeLed(6, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
@@ -48,8 +50,15 @@ int main()
     // storeLed(3, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
     // storeLed(2, 4,  0b0101, 0b0101, 0b0101, Pins::DIN);
     // storeLed(2, 5,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(1, 1,  0b0101, 0b0101, 0b0101, Pins::DIN)
+    // storeLed(1, 1,  0b0101, 0b0101, 0b0101, Pins::DIN);
     
+    storeLed(1, 1,  0b00000000, 0b1010, 0b00000000, Pins::DIN);
+    // storeLed(2, 5,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    // storeLed(2, 7,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    // storeLed(2, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    // storeLed(6, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    // storeLed(7, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
+    // storeLed(8, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
     sendLed(Pins::DIN);
     // need to reset first color for some reason
     // setLedColor(1, 1, 0b00000000, 0b00000000, 0b00000000, Pins::DIN);
