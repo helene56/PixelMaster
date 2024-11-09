@@ -34,14 +34,16 @@ void on_pwm_wrap() {
         
     // }
     PwmInternal::cycle_count++;
-    printf("%d\n", PwmInternal::cycle_count);
+    
     if (PwmInternal::cycle_count >= PwmInternal::target_cycle_count) 
     {
+        printf("%d\n", PwmInternal::cycle_count);
         // Disable PWM to stop output
         pwm_set_enabled(PwmInternal::slice_num, false);
         
         // Disable the interrupt as we no longer need it
         pwm_set_irq_enabled(PwmInternal::slice_num, false);
+        // PwmInternal::cycle_count = 0;
     }
 
     // Clear the interrupt flag to allow future interrupts
@@ -105,7 +107,7 @@ void update_pwm(uint pin, std::int8_t color)
     pwm_set_wrap(PwmInternal::slice_num, PwmInternal::wrap - 1);      // Update PWM period
     pwm_set_gpio_level(pin, initial_duty_cycle);    // Update PWM duty cycle
     // Start the PWM for the defined number of cycles
-    start_pwm_for_cycles(8);
+    start_pwm_for_cycles(1);
 }
 
 
