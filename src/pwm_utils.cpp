@@ -1,10 +1,10 @@
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
 #include <cstdint>
-
+#include <stdio.h>
 
 namespace PwmInternal {
-    volatile uint cycle_count {1};  // Internal cycle counter
+    static volatile uint cycle_count {0};  // Internal cycle counter
     static uint slice_num {0};
     static uint target_cycle_count {0};
     static uint pin {0};  // Pin to control, set in setup_pwm
@@ -17,23 +17,25 @@ namespace PwmInternal {
 // Interrupt handler for PWM wrap
 void on_pwm_wrap() {
     
-    if (PwmInternal::cycle_count < 8)
-    {
+    // if (PwmInternal::cycle_count < 8)
+    // {
         
-        bool bit = (PwmInternal::color << (7 - PwmInternal::cycle_count)) & 1;
-        PwmInternal::cycle_count++;
-        // Set the duty cycle based on the current bit
-        if (bit) 
-        {
-            pwm_set_gpio_level(PwmInternal::pin, PwmInternal::duty_cycle_1);
-        } 
-        else 
-        {
-            pwm_set_gpio_level(PwmInternal::pin, PwmInternal::duty_cycle_0);
-        }
-    }
-
-    if (PwmInternal::cycle_count >= 8) 
+    //     bool bit = (PwmInternal::color & (1 << (8 - PwmInternal::cycle_count)));
+        
+    //     // Set the duty cycle based on the current bit
+    //     if (bit) 
+    //     {
+    //         pwm_set_gpio_level(PwmInternal::pin, PwmInternal::duty_cycle_1);
+    //     } 
+    //     else 
+    //     {
+    //         pwm_set_gpio_level(PwmInternal::pin, PwmInternal::duty_cycle_0);
+    //     }
+        
+    // }
+    PwmInternal::cycle_count++;
+    printf("%d\n", PwmInternal::cycle_count);
+    if (PwmInternal::cycle_count >= PwmInternal::target_cycle_count) 
     {
         // Disable PWM to stop output
         pwm_set_enabled(PwmInternal::slice_num, false);
@@ -50,7 +52,7 @@ void on_pwm_wrap() {
 void start_pwm_for_cycles(uint target_cycles) 
 {
     // Reset cycle count to zero
-    PwmInternal::cycle_count = 1;
+    PwmInternal::cycle_count = 0;
     PwmInternal::target_cycle_count = target_cycles;
     // Clear any pending interrupt flag
     pwm_clear_irq(PwmInternal::slice_num);
@@ -98,7 +100,8 @@ void update_pwm(uint pin, std::int8_t color)
 {
     PwmInternal::color = color;
 
-    uint initial_duty_cycle = (PwmInternal::color & (1 << 7)) ? PwmInternal::duty_cycle_1 : PwmInternal::duty_cycle_0;
+    // uint initial_duty_cycle = (PwmInternal::color & (1 << 7)) ? PwmInternal::duty_cycle_1 : PwmInternal::duty_cycle_0;
+    uint initial_duty_cycle = PwmInternal::duty_cycle_0;
     pwm_set_wrap(PwmInternal::slice_num, PwmInternal::wrap - 1);      // Update PWM period
     pwm_set_gpio_level(pin, initial_duty_cycle);    // Update PWM duty cycle
     // Start the PWM for the defined number of cycles
