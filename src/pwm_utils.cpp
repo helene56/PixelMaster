@@ -28,28 +28,6 @@ void on_pwm_wrap()
 
     // Toggle the flag for the next cycle
     PwmInternal::toggle = !PwmInternal::toggle;
-    // if (PwmInternal::cycle_count < PwmInternal::target_cycle_count)
-    // {
-        
-    //     bool bit = (PwmInternal::color & (1 << (PwmInternal::target_cycle_count - PwmInternal::cycle_count)));
-    //     // Print the bit value
-    //     printf("Cycle %u: Bit %u of color is %d\n", 
-    //         PwmInternal::cycle_count, 
-    //         7 - PwmInternal::cycle_count, 
-    //         bit);
-    //     // Set the duty cycle based on the current bit
-    //     if (bit) 
-    //     {
-    //         pwm_set_gpio_level(PwmInternal::pin, PwmInternal::duty_cycle_1);
-    //     } 
-    //     else 
-    //     {
-    //         pwm_set_gpio_level(PwmInternal::pin, PwmInternal::duty_cycle_0);
-    //     }
-    //     // PwmInternal::cycle_count++;
-        
-    // }
-    
 
     // Check if we've reached the target number of cycles
     if (PwmInternal::cycle_count >= PwmInternal::target_cycle_count) {
