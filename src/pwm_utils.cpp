@@ -15,13 +15,28 @@ namespace PwmInternal {
     uint static wrap {156};
 }
 // Interrupt handler for PWM wrap
-void on_pwm_wrap() {
-    
-    // if (PwmInternal::cycle_count < 8)
+void on_pwm_wrap() 
+{
+    PwmInternal::cycle_count++;
+
+    // Alternate between two duty cycles
+    if (PwmInternal::toggle) {
+        pwm_set_gpio_level(PwmInternal::pin, PwmInternal::duty_cycle_0);
+    } else {
+        pwm_set_gpio_level(PwmInternal::pin, PwmInternal::duty_cycle_1);
+    }
+
+    // Toggle the flag for the next cycle
+    PwmInternal::toggle = !PwmInternal::toggle;
+    // if (PwmInternal::cycle_count < PwmInternal::target_cycle_count)
     // {
         
-    //     bool bit = (PwmInternal::color & (1 << (8 - PwmInternal::cycle_count)));
-        
+    //     bool bit = (PwmInternal::color & (1 << (PwmInternal::target_cycle_count - PwmInternal::cycle_count)));
+    //     // Print the bit value
+    //     printf("Cycle %u: Bit %u of color is %d\n", 
+    //         PwmInternal::cycle_count, 
+    //         7 - PwmInternal::cycle_count, 
+    //         bit);
     //     // Set the duty cycle based on the current bit
     //     if (bit) 
     //     {
@@ -31,9 +46,10 @@ void on_pwm_wrap() {
     //     {
     //         pwm_set_gpio_level(PwmInternal::pin, PwmInternal::duty_cycle_0);
     //     }
+    //     // PwmInternal::cycle_count++;
         
     // }
-    PwmInternal::cycle_count++;
+    
 
     // Check if we've reached the target number of cycles
     if (PwmInternal::cycle_count >= PwmInternal::target_cycle_count) {
@@ -55,8 +71,8 @@ void on_pwm_wrap() {
 // Function to start or restart the PWM for the defined cycle count
 void start_pwm_for_cycles(uint target_cycles) 
 {
-    // Reset cycle count to zero
-    PwmInternal::cycle_count = 0;
+    // // Reset cycle count to zero
+    // PwmInternal::cycle_count = 0;
     PwmInternal::target_cycle_count = target_cycles;
     // Clear any pending interrupt flag
     pwm_clear_irq(PwmInternal::slice_num);
@@ -102,6 +118,8 @@ void setup_pwm(int pin)
 
 void update_pwm(uint pin, std::int8_t color) 
 {
+    // Reset cycle count to zero
+    PwmInternal::cycle_count = 0;
     PwmInternal::color = color;
 
     uint initial_duty_cycle = (PwmInternal::color & (1 << 7)) ? PwmInternal::duty_cycle_1 : PwmInternal::duty_cycle_0;
