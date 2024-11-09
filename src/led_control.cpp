@@ -13,7 +13,7 @@ void send_bit_0(int pin)
     // cycle period = 0.4 us + 0.85 us = 1.25
     // wrap = 125 MHz * 1.25 us = 156
     // duty cycle = (0.4 µs / 1.25 µs) * wrap = 50
-    update_pwm(pin, 156, 50, 1);
+    // update_pwm(pin, 156, 50, 1);
     // gpio_put(pin, 0);
 }
 
@@ -27,7 +27,7 @@ void send_bit_1(int pin)
     // cycle period = 0.8 us + 0.45 us = 1.25
     // wrap = 125 MHz * 1.25 us = 156
     // duty cycle = (0.8 µs / 1.25 µs) * wrap = 100
-    update_pwm(pin, 156, 100, 1);
+    // update_pwm(pin, 156, 100, 1);
     // gpio_put(pin, 0);
 }
 // Reset after sending all the color data

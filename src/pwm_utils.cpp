@@ -1,15 +1,38 @@
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
+#include <cstdint>
+#include <stdio.h>
 
 namespace PwmInternal {
-    static volatile uint cycle_count = 0;  // Internal cycle counter
-    static uint slice_num = 0;
-    static uint target_cycle_count = 0;
-    static uint pin = 0;  // Pin to control, set in setup_pwm
+    static volatile uint cycle_count {0};  // Internal cycle counter
+    static uint slice_num {0};
+    static uint target_cycle_count {0};
+    static uint pin {0};  // Pin to control, set in setup_pwm
+    static bool toggle = false;
+    uint static duty_cycle_0 {50};
+    uint static duty_cycle_1 {100};
+    static std::uint8_t color {0};
+    uint static wrap {156};
 }
 // Interrupt handler for PWM wrap
 void on_pwm_wrap() {
-    // Increment the cycle count each time the PWM wraps
+    
+    // if (PwmInternal::cycle_count < 8)
+    // {
+        
+    //     bool bit = (PwmInternal::color & (1 << (8 - PwmInternal::cycle_count)));
+        
+    //     // Set the duty cycle based on the current bit
+    //     if (bit) 
+    //     {
+    //         pwm_set_gpio_level(PwmInternal::pin, PwmInternal::duty_cycle_1);
+    //     } 
+    //     else 
+    //     {
+    //         pwm_set_gpio_level(PwmInternal::pin, PwmInternal::duty_cycle_0);
+    //     }
+        
+    // }
     PwmInternal::cycle_count++;
 
     // Check if we've reached the target number of cycles
@@ -30,7 +53,8 @@ void on_pwm_wrap() {
 }
 
 // Function to start or restart the PWM for the defined cycle count
-void start_pwm_for_cycles(uint target_cycles) {
+void start_pwm_for_cycles(uint target_cycles) 
+{
     // Reset cycle count to zero
     PwmInternal::cycle_count = 0;
     PwmInternal::target_cycle_count = target_cycles;
@@ -76,18 +100,18 @@ void setup_pwm(int pin)
     // start_pwm_for_cycles(target_cycles);
 }
 
-void update_pwm(uint pin, uint new_wrap, uint new_duty_cycle, uint target_cycles) 
+void update_pwm(uint pin, std::int8_t color) 
 {
-    // Set up the GPIO pin for PWM output mode again
-    gpio_set_function(pin, GPIO_FUNC_PWM);
+    PwmInternal::color = color;
 
-    // Get the PWM slice number (if it's not already stored)
-    PwmInternal::slice_num = pwm_gpio_to_slice_num(pin);
-    pwm_set_wrap(PwmInternal::slice_num, new_wrap - 1);      // Update PWM period
-    pwm_set_gpio_level(pin, new_duty_cycle);    // Update PWM duty cycle
+    // uint initial_duty_cycle = (PwmInternal::color & (1 << 7)) ? PwmInternal::duty_cycle_1 : PwmInternal::duty_cycle_0;
+    uint initial_duty_cycle = PwmInternal::duty_cycle_0;
+    pwm_set_wrap(PwmInternal::slice_num, PwmInternal::wrap - 1);      // Update PWM period
+    pwm_set_gpio_level(pin, initial_duty_cycle);    // Update PWM duty cycle
     // Start the PWM for the defined number of cycles
-    start_pwm_for_cycles(target_cycles);
+    start_pwm_for_cycles(1);
 }
+
 
 void clear()
 {
@@ -98,4 +122,9 @@ void clear()
 uint get_cycle_count()
 {
     return PwmInternal::cycle_count;
+}
+
+void set_state(bool toggle)
+{
+    PwmInternal::toggle = toggle;
 }

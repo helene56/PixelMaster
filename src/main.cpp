@@ -82,9 +82,10 @@ int main()
     while (true) 
     {
         sleep_ms(2000);  // Wait 2 seconds
+        update_pwm(Pins::DIN, 0b00000000);
         // Restart the PWM for another set of cycles
         // send_grb(0b00000000, 0b00000000, 0b00000000, Pins::DIN);
-        update_pwm(Pins::DIN, 156, 50, 10);
+        // update_pwm(Pins::DIN, 156, 50, 100, 10);
         // sleep_ms(10);
         // update_pwm(Pins::DIN, 156, 100, 10);
         // update_pwm(Pins::DIN, 156, 100, 10);
