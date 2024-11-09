@@ -109,7 +109,7 @@ void update_pwm(uint pin, std::int8_t color)
     pwm_set_wrap(PwmInternal::slice_num, PwmInternal::wrap - 1);      // Update PWM period
     pwm_set_gpio_level(pin, initial_duty_cycle);    // Update PWM duty cycle
     // Start the PWM for the defined number of cycles
-    start_pwm_for_cycles(1);
+    start_pwm_for_cycles(8);
 }
 
 
