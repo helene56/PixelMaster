@@ -21,7 +21,7 @@ void on_pwm_wrap() {
         // Disable the interrupt as we no longer need it
         pwm_set_irq_enabled(PwmInternal::slice_num, false);
         // Disable PWM to stop output
-        // pwm_set_enabled(PwmInternal::slice_num, false);
+        pwm_set_enabled(PwmInternal::slice_num, false);
 
         }
 
