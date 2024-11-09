@@ -14,18 +14,16 @@ void on_pwm_wrap() {
 
     // Check if we've reached the target number of cycles
     if (PwmInternal::cycle_count >= PwmInternal::target_cycle_count) {
-        // Disable PWM to stop output
-        pwm_set_enabled(PwmInternal::slice_num, false);
+
+        pwm_set_wrap(PwmInternal::slice_num, 0);  // Set wrap to zero
+        pwm_set_gpio_level(PwmInternal::pin, 0);  // Ensure the output level is low
         
         // Disable the interrupt as we no longer need it
         pwm_set_irq_enabled(PwmInternal::slice_num, false);
-        // Reconfigure the pin as a standard GPIO output
-        gpio_set_function(PwmInternal::pin, GPIO_FUNC_SIO);
-        gpio_set_dir(PwmInternal::pin, GPIO_OUT);
+        // Disable PWM to stop output
+        // pwm_set_enabled(PwmInternal::slice_num, false);
 
-        // Set the GPIO pin low
-        gpio_put(PwmInternal::pin, 0);   // Ensure the pin goes low
-    }
+        }
 
     // Clear the interrupt flag to allow future interrupts
     pwm_clear_irq(PwmInternal::slice_num);
