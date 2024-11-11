@@ -8,6 +8,7 @@
 #include "led_control.h"
 #include "led_memory.h"
 #include "animations.h"
+#include "pio.h"
 
 namespace Pins
 {
@@ -19,9 +20,7 @@ int main()
 {
     stdio_init_all();
     gpio_init(Pins::DIN);
-    gpio_set_dir(Pins::DIN, GPIO_OUT);
-
-    // set_sys_clock_khz(133000, true);  // Set the clock to 133 MHz
+    // gpio_set_dir(Pins::DIN, GPIO_OUT);
 
     // add small delay, when powered by usb microcontroller, 
     // otherwise initializing is not correct
@@ -29,48 +28,15 @@ int main()
     // and clear first led.. there must be some disturbance
     setLedColor(1, 1, 0b00000000, 0b00000000, 0b00000000, Pins::DIN);
     reset_code();
-    // storeLed(5, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(6, 2,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(6, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
-
-    // storeLed(5, 6,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(5, 7,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(6, 6,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(6, 7,  0b0101, 0b0101, 0b0101, Pins::DIN);
-
-    // storeLed(5, 2,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(6, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(7, 2,  0b0101, 0b0101, 0b0101, Pins::DIN);
-
-    // storeLed(5, 7,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(6, 6,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(7, 7,  0b0101, 0b0101, 0b0101, Pins::DIN);
-
-
-    // storeLed(3, 3,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(2, 4,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(2, 5,  0b0101, 0b0101, 0b0101, Pins::DIN);
-    // storeLed(1, 1,  0b0101, 0b0101, 0b0101, Pins::DIN);
     
-    storeLed(1, 1,  0b00000000, 0b1010, 0b00000000, Pins::DIN);
-    // storeLed(2, 5,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // storeLed(2, 7,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // storeLed(2, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // storeLed(6, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // storeLed(7, 6,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    // storeLed(8, 1,  0b1010, 0b00000000, 0b00000000, Pins::DIN);
-    sendLed(Pins::DIN);
-    // need to reset first color for some reason
-    // setLedColor(1, 1, 0b00000000, 0b00000000, 0b00000000, Pins::DIN);
-    // reset_code();
-    // setLedColor(1, 1, 0b00000000, 0b00000000, 0b00000000, Pins::DIN);
-    // reset_code();
-    
+    // setup pin for pio machine
+    set_gpio(Pins::DIN);
+    // setup program
+    setup_pio();
     while (true) 
     {
-        // run(Pins::DIN);
-        // face(Pins::DIN);
-        
+        // test pio machine
+        load_color(0b00000000, 0b00000000, 0b11111111);
         // printf("Hello, world!\n");
         // printf("Current system clock speed: %u Hz\n", clock_get_hz(clk_sys));
         // sleep_ms(1000);

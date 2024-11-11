@@ -1,7 +1,9 @@
-#ifndef PIO 
-#define PIO
+#ifndef PIO_MACHINE 
+#define PIO_MACHINE
 
+#include "hardware/pio.h"
 #include <cstdint>
+#include "pico/stdlib.h"
 
 namespace statemachine
 {
@@ -13,4 +15,4 @@ void set_gpio(int pin);
 void setup_pio();
 void load_color(std::uint8_t green, std::uint8_t red, std::uint8_t blue);
 
-#endif // PIO
+#endif // PIO_MACHINE

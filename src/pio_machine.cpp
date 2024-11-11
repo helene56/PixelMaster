@@ -1,6 +1,6 @@
 #include "hardware/pio.h"
 #include "pico/stdlib.h"
-#include "pio.h"
+#include "pio_machine.h"
 #include <cstdint>
 
 #include "build/wave.pio.h"
