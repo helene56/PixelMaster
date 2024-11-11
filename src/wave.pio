@@ -5,23 +5,36 @@
 ; send code 0
 code_0:
     set pins, 1           ; set the configured pin(s) high
-    nop [55]              ; wait 56 cycles, 1 cycle for nop and 55 addional
+    ; delay for 56 cycles, max delay instructions can only be 31
+    nop [31]          ; Delay for 32 cycles
+    nop [23]          ; Delay for 24 cycles
     set pins, 0
-    nop [105]             ; wait 106 cycles
+    ; nop [105]             ; wait 106 cycles
+    nop [31]
+    nop [31]
+    nop [31]
+    nop [9]
     jmp next_bit          ; Go to the next bit
 
 ; send code 1
 code_1:
     set pins, 1  
-    nop [99]              ; wait 100 cycles
+    ; nop [99]              ; wait 100 cycles
+    nop [31]
+    nop [31]
+    nop [31]
+    nop [3]
     set pins, 0
-    nop [55]              ; wait 106 cycles
+    ; nop [55]              ; wait 56 cycles
+    nop [31]
+    nop [23]
     jmp next_bit          ; Go to the next bit
 
 ; reset code, need to be above 50us low voltage (chose 60us)
-reset_code:
-    nop[7499]             ; wait 7500 cycles
-    jmp bit_loop          ; Go back to processing the next byte
+; better to do outside the pio
+; reset_code:
+;     nop[7499]             ; wait 7500 cycles
+;     jmp bit_loop          ; Go back to processing the next byte
 
 
 ; main loop to process each bit
@@ -30,7 +43,7 @@ in null, 24               ; shift 24 bits of null data into ISR, to get to the l
 
 ; looping through bits
 bit_loop:
-    in irs, 1             ; Shift one bit from ISR to OSR
+    in isr, 1             ; Shift one bit from ISR to OSR
     jmp !osre, code_0     ; If the bit is 0, jump to code_0
     jmp code_1            ; Otherwise, jump to code_1
 
