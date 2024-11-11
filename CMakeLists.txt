@@ -46,7 +46,9 @@ pico_enable_stdio_usb(PixelMaster 1)
 
 # Add the standard library to the build
 target_link_libraries(PixelMaster
-        pico_stdlib)
+        pico_stdlib
+        hardware_pio  # This links the PIO library
+        )
 
 # Add the standard include files to the build
 target_include_directories(PixelMaster PRIVATE
@@ -63,6 +65,9 @@ target_sources(PixelMaster PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/src/pio.cpp
 
 )
+
+# Compile the PIO program
+pico_generate_pio_header(PixelMaster ${CMAKE_CURRENT_LIST_DIR}/src/wave.pio)
 
 pico_add_extra_outputs(PixelMaster)
 
