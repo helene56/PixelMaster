@@ -38,8 +38,10 @@ code_1:
 
 
 ; main loop to process each bit
-pull                      ; pull the 8-bit sequence from FIFO to the ISR
-in null, 24               ; shift 24 bits of null data into ISR, to get to the least significant 8 bits.
+pull                ; Pull the 32-bit packed RGB data into the ISR
+out x, 8           ; Move the most significant 8 bits (green) into register X
+out y, 8           ; Move the next 8 bits (red) into register Y
+out null, 8        ; Discard the remaining 8 bits, isolating the blue component in the OSR
 
 ; looping through bits
 bit_loop:
