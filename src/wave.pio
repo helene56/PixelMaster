@@ -1,0 +1,40 @@
+.program wave
+
+; 1 cycle at 125MHz = 1/125 = 8 nanoseconds, 1 nop is by default 8 nanoseconds
+.wrap_target
+; send code 0
+code_0:
+    set pins, 1           ; set the configured pin(s) high
+    nop [55]              ; wait 56 cycles, 1 cycle for nop and 55 addional
+    set pins, 0
+    nop [105]             ; wait 106 cycles
+    jmp next_bit          ; Go to the next bit
+
+; send code 1
+code_1:
+    set pins, 1  
+    nop [99]              ; wait 100 cycles
+    set pins, 0
+    nop [55]              ; wait 106 cycles
+    jmp next_bit          ; Go to the next bit
+
+; reset code, need to be above 50us low voltage (chose 60us)
+reset_code:
+    nop[7499]             ; wait 7500 cycles
+    jmp bit_loop          ; Go back to processing the next byte
+
+
+; main loop to process each bit
+pull                      ; pull the 8-bit sequence from FIFO to the ISR
+in null, 24               ; shift 24 bits of null data into ISR, to get to the least significant 8 bits.
+
+; looping through bits
+bit_loop:
+    in irs, 1             ; Shift one bit from ISR to OSR
+    jmp !osre, code_0     ; If the bit is 0, jump to code_0
+    jmp code_1            ; Otherwise, jump to code_1
+
+next_bit:
+    jmp bit_loop          ; Jump back to `bit_loop` to process the next bit
+
+.wrap
