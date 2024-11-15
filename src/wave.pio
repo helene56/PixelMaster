@@ -1,53 +1,46 @@
 .program wave
 
-; 1 cycle at 125MHz = 1/125 = 8 nanoseconds, 1 nop is by default 8 nanoseconds
+; stealing one delay bit to use for side-set
+.side_set 1 
+
+; define constant for use outside program too
+.define public Time1 3
+.define public Time2 3
+.define public Time3 4
+
 .wrap_target
-; send code 0
-code_0:
-    set pins, 1           ; set the configured pin(s) high
-    ; delay for 56 cycles, max delay instructions can only be 31
-    nop [31]          ; Delay for 32 cycles
-    nop [23]          ; Delay for 24 cycles
-    set pins, 0
-    ; nop [105]             ; wait 106 cycles
-    nop [31]
-    nop [31]
-    nop [31]
-    nop [9]
-    jmp next_bit          ; Go to the next bit
 
-; send code 1
-code_1:
-    set pins, 1  
-    ; nop [99]              ; wait 100 cycles
-    nop [31]
-    nop [31]
-    nop [31]
-    nop [3]
-    set pins, 0
-    ; nop [55]              ; wait 56 cycles
-    nop [31]
-    nop [23]
-    jmp next_bit          ; Go to the next bit
-
-; reset code, need to be above 50us low voltage (chose 60us)
-; better to do outside the pio
-; reset_code:
-;     nop[7499]             ; wait 7500 cycles
-;     jmp bit_loop          ; Go back to processing the next byte
-
-
-; main loop to process each bit
-pull               ; Pull the 32-bit packed RGB data into the ISR
-in null, 8         ; Ignore the upper 8 bits, leaving the 24 RGB bits
+; will try automatic pull
 
 ; looping through bits
 bit_loop:
-    in isr, 1             ; Shift one bit from ISR to OSR
-    jmp !osre, code_0     ; If the bit is 0, jump to code_0
-    jmp code_1            ; Otherwise, jump to code_1
+    out x, 1 side 0 [Time3 - 1]            ; hold data from OSR in x, set side-set to low, delay
+    jmp !x code_0 side 1  [Time1 - 1]     ; If the bit is not 1, go to code_0, delay
+; send code 1
+code_1:
+    jmp bit_loop side 1 [Time2 - 1] ; go to bit loop again, continue being high, delay
 
-next_bit:
-    jmp bit_loop          ; Jump back to `bit_loop` to process the next bit
+; send code 0
+code_0:
+    nop side 0 [Time2 - 1] ; do nothing, set side-set to low, delay
 
 .wrap
+
+% c-sdk {
+static inline void wave_program_init(PIO pio, uint sm, uint offset, uint pin, float freq, uint clock)
+{
+    pio_gpio_init(pio, pin);
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+    pio_sm_config c = wave_program_get_default_config(offset);
+    sm_config_set_sideset_pins(&c, pin);
+    // autopull setup
+    sm_config_set_out_shift(&c, false, true, 32);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+    // setup global constants
+    int cycles_per_bit = wave_Time1 + wave_Time2 + wave_Time3;
+    float div = clock / (freq * cycles_per_bit);
+    sm_config_set_clkdiv(&c, div);
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
