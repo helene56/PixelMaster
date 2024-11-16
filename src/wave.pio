@@ -34,7 +34,7 @@ static inline void wave_program_init(PIO pio, uint sm, uint offset, uint pin, fl
     pio_sm_config c = wave_program_get_default_config(offset);
     sm_config_set_sideset_pins(&c, pin);
     // autopull setup
-    sm_config_set_out_shift(&c, false, true, 32);
+    sm_config_set_out_shift(&c, false, true, 24);
     sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
     // setup global constants
     int cycles_per_bit = wave_Time1 + wave_Time2 + wave_Time3;
