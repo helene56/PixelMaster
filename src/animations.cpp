@@ -1,10 +1,11 @@
 #include "pico/stdlib.h"
 #include "led_control.h"
 #include "led_memory.h"
+#include "pio_utils.h"
 #include <stdio.h>
 
 // makes an led go through all positions in various colors and framerates
-void run(int pin)
+void run()
 {
     std::uint8_t greens[3] {0b00000000, 0b1010, 0b00000000};
     std::uint8_t blues[3] {0b1010, 0b00000000, 0b00000000};
@@ -15,24 +16,26 @@ void run(int pin)
     {
         for (int i = 1; i <= 8; ++i)
         {
+            // clear all leds
+            for (int k = 0; k < 64; ++k)
+            {
+                put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
+            }
             for (int j = 1; j <= 8; ++j)
             {
-                // clear all leds
-                for (int k = 0; k < 64; ++k)
-                {
-                    send_grb(0b00000000, 0b00000000, 0b00000000, pin);
-                }
-                reset_code();
-                setLedColor(i, j, greens[l], reds[l], blues[l], pin);
-                reset_code();
+                
+                setLedColor(i, j, greens[l], reds[l], blues[l]);
                 sleep_ms(sleeps[l]);
+                // sleep_ms(sleeps[l]);
+                // reset_pixel();
+                
 
             }
         }
     }
 }
 
-void face(int pin)
+void face()
 {
     std::uint32_t w {0x050505};
     std::uint32_t face1[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
@@ -78,7 +81,7 @@ void face(int pin)
             // Move the pointer backward
             ++ptr;
         }
-        sendLed(pin);
+        sendLed();
         sleep_ms(500);
     }
     

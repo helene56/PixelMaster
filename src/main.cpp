@@ -22,32 +22,27 @@ namespace Pins
 int main()
 {
     stdio_init_all();
-    // gpio_init(Pins::DIN);
-    // gpio_set_dir(Pins::DIN, GPIO_OUT);
-
-    // add small delay, when powered by usb microcontroller, 
-    // otherwise initializing is not correct
-    // busy_wait_us(500000); // 500 ms
-
+    
     PIO pio = pio0;
     int sm = 0;
     uint offset = pio_add_program(pio, &wave_program);
     uint clock = clock_get_hz(clk_sys);
     wave_program_init(pio, sm, offset, Pins::DIN, 800000, clock);
-
     
     while (true) 
     {
         
-        // test pio machine
-
-        put_pixel(urgb_u32(0b11111111, 0b11111111, 0b00000000));
-        sleep_ms(1000);
-
-
         
-        // put_pixel(urgb_u32(0b11111111, 0b11111111, 0b00000000));
-        // reset_code();
+        // test pio machine
+        face();
+        // storeLed(1, 3, 0b00, 0b1010, 0b00);
+        // storeLed(1, 2, 0b00, 0b1010, 0b00);
+        // storeLed(1, 4, 0b00, 0b1010, 0b00);
+        // storeLed(2, 4, 0b00, 0b1010, 0b00);
+
+        // storeLed(8, 2, 0b00, 0b1010, 0b00);
+        // sendLed();
+        // sleep_ms(1000);
         // printf("Hello, world!\n");
         // printf("Current system clock speed: %u Hz\n", clock_get_hz(clk_sys));
         

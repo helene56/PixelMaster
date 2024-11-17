@@ -21,10 +21,10 @@ void send_bit_0(int pin);
 // send bit 1
 void send_bit_1(int pin);
 // set color at specfic row, col position
-void setLedColor(int row, int col, std::uint8_t green, std::uint8_t red, std::uint8_t blue, int pin);
+void setLedColor(int row, int col, std::uint8_t green, std::uint8_t red, std::uint8_t blue);
 
-void storeLed(int row, int col, std::uint8_t green, std::uint8_t red, std::uint8_t blue, int pin);
+void storeLed(int row, int col, std::uint8_t green, std::uint8_t red, std::uint8_t blue);
 
-void sendLed(int pin);
+void sendLed();
 
 #endif // LED_CONTROL
