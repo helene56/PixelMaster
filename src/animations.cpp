@@ -83,33 +83,5 @@ void face()
         }
         sendLed();
         sleep_ms(500);
-    }
-    
-
-
-
-
-    // for (int k = 0; k < 2; ++k)
-    // {
-    //     for (int i = 0; i < 8; ++i)
-    //     {
-    //         for (int j = 0; j < 8; ++j)
-    //         {
-    //             led_memory[i][j] = faces[k][i][j];
-    //             if (led_memory[i][j] > 0)
-    //             {
-    //                 printf("%d", 1);
-    //             }
-    //             else
-    //             {
-    //                 printf("%d", led_memory[i][j]);
-    //             }
-                
-    //         }
-    //         printf("\n");
-    //     }
-    //     sendLed(pin);
-    //     sleep_ms(500);
-    // }
-    
+    } 
 }
