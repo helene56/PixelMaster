@@ -17,34 +17,117 @@ namespace Pins
 {
     // Data In pin
     constexpr int DIN {16};
+    constexpr int button {15};
 } // namespace Pins
+
+uint32_t last_frame_time = 0;
+uint32_t FRAME_INTERVAL = 500;
+volatile bool button_pressed = false;
+bool is_face_1 = true; // Tracks which face is currently displayed
+void button_callback(uint gpio, uint32_t events) {
+    button_pressed = true; // Set flag when button is pressed
+}
 
 int main()
 {
     stdio_init_all();
-    
+    // initialize button
+    gpio_init(Pins::button);
+    gpio_set_dir(Pins::button, GPIO_IN);
+    gpio_pull_down(Pins::button);
+
+    // Attach interrupt to the button pin
+    gpio_set_irq_enabled_with_callback(Pins::button, GPIO_IRQ_EDGE_FALL, true, &button_callback);
+
     PIO pio = pio0;
     int sm = 0;
     uint offset = pio_add_program(pio, &wave_program);
     uint clock = clock_get_hz(clk_sys);
     wave_program_init(pio, sm, offset, Pins::DIN, 800000, clock);
     
+
+    std::uint32_t w {0x050505};
+    std::uint32_t neutral[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, w, w, 0, 0, w, w, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, w, w, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,};
+
+    std::uint32_t face2[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, w, 0, 0, 0, 0, w, 0,
+                               0, 0, w, 0, 0, w, 0, 0,
+                               0, w, 0, 0, 0, 0, w, 0,
+                               0, 0, 0, w, w, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,};
+
+    std::uint32_t face3[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               w, w, 0, 0, w, w, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, w, w, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,};
+
+    std::uint32_t face4[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, w, w, 0, 0, w, w,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, w, w, 0, 0, 0,
+                               0, 0, w, 0, 0, w, 0, 0,
+                               0, 0, 0, w, w, 0, 0, 0,};
+
+    std::uint32_t happy[8][8]{0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, w, 0, 0, 0, 0, w, 0,
+                               w, 0, w, 0, 0, w, 0, w,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, w, w, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,};
+    
+    std::uint32_t (*annoyed[2])[8] = {neutral, face2};
+    std::uint32_t (*happyface[2])[8] = {neutral, happy};
     while (true) 
     {
-        
-        
-        // test pio machine
-        face();
-        // storeLed(1, 3, 0b00, 0b1010, 0b00);
-        // storeLed(1, 2, 0b00, 0b1010, 0b00);
-        // storeLed(1, 4, 0b00, 0b1010, 0b00);
-        // storeLed(2, 4, 0b00, 0b1010, 0b00);
 
-        // storeLed(8, 2, 0b00, 0b1010, 0b00);
-        // sendLed();
-        // sleep_ms(1000);
-        // printf("Hello, world!\n");
-        // printf("Current system clock speed: %u Hz\n", clock_get_hz(clk_sys));
+        uint32_t current_time = to_ms_since_boot(get_absolute_time());
+
+        
+
+        
+        if (gpio_get(Pins::button))
+        {
+            
+            for (int i = 0; i < 2; ++i)
+            {
+                face(&neutral);
+                sleep_ms(200);
+            }
+            button_pressed = false;
+        }
+        else
+        {
+            // Check if it's time to switch frames
+        if (current_time - last_frame_time >= FRAME_INTERVAL) {
+            if (is_face_1) {
+                face(happy);
+            } else {
+                display_face_1();
+            }
+            is_face_1 = !is_face_1; // Toggle face
+            last_frame_time = current_time;
+        }
+            
+            face(happyface);
+            sleep_ms(300);
+        }
         
     }
 }
