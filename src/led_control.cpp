@@ -58,7 +58,6 @@ void sendLed()
                     std::uint8_t red = (led_memory[i][j] >> 8) & 0xFF; // Extract the green component (8 bits)
                     std::uint8_t blue = led_memory[i][j] & 0xFF;         // Extract the blue component (8 bits)
                     setLedColor(i + 1, j + 1, green, red, blue);
-                    printf("Row: %d, Column: %d, R: %d, G: %d, B: %d\n", i + 1, j + 1, red, green, blue);
                     reset_pixel();
                 }
             }
@@ -73,7 +72,6 @@ void sendLed()
                     std::uint8_t red = (led_memory[i][j] >> 8) & 0xFF; // Extract the green component (8 bits)
                     std::uint8_t blue = led_memory[i][j] & 0xFF;         // Extract the blue component (8 bits)
                     setLedColor(i + 1, j + 1, green, red, blue);
-                    printf("Row: %d, Column: %d, R: %d, G: %d, B: %d\n", i + 1, j + 1, red, green, blue);
                     reset_pixel();
                 }
             }
