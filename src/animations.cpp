@@ -38,7 +38,7 @@ void run()
 void face()
 {
     std::uint32_t w {0x050505};
-    std::uint32_t face1[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
+    std::uint32_t neutral[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, w, w, 0, 0, w, w, 0,
@@ -56,13 +56,44 @@ void face()
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,};
 
+    std::uint32_t face3[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               w, w, 0, 0, w, w, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, w, w, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,};
+
+    std::uint32_t face4[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, w, w, 0, 0, w, w,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, w, w, 0, 0, 0,
+                               0, 0, w, 0, 0, w, 0, 0,
+                               0, 0, 0, w, w, 0, 0, 0,};
+
+    std::uint32_t happy[8][8]{0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, w, 0, 0, 0, 0, w, 0,
+                               w, 0, w, 0, 0, w, 0, w,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, w, w, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,};
+    
 
 
-    std::uint32_t (*faces[2])[8] = {face1, face2};
+
+
+    std::uint32_t (*faces[2])[8] = {neutral, happy};
 
     for (int k = 0; k < 2; ++k)
     {
-         std::uint32_t* ptr = &faces[k][0][0];  
+        // should erase previous frame here
+        
+        std::uint32_t* ptr = &faces[k][0][0];  
 
         for (int i = 0; i < 64; ++i) 
         {  // Iterate over 64 elements
@@ -77,11 +108,17 @@ void face()
 
             // Store the value in led_memory
             led_memory[row][col] = value;
-
             // Move the pointer backward
             ++ptr;
         }
+        // for some reason, it needs a small delay
+        sleep_us(500);
         sendLed();
-        sleep_ms(500);
+
+        sleep_ms(1250);
+        for (int k = 0; k < 64; ++k)
+        {
+            put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
+        }
     } 
 }
