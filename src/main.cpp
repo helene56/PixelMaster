@@ -37,8 +37,6 @@ int main()
     gpio_set_dir(Pins::button, GPIO_IN);
     gpio_pull_up(Pins::button);
 
-    // Attach interrupt to the button pin
-    // gpio_set_irq_enabled_with_callback(Pins::button, GPIO_IRQ_EDGE_FALL, true, &button_callback);
 
     PIO pio = pio0;
     int sm = 0;
@@ -132,7 +130,7 @@ int main()
             frames::last_frame_time = current_time;
         }
         // small delay for button to be read correctly
-        sleep_ms(1);
+        sleep_ms(2);
          
     }
 }
