@@ -20,10 +20,14 @@ namespace Pins
     constexpr int button {15};
 } // namespace Pins
 
-uint32_t last_frame_time = 0;
-uint32_t FRAME_INTERVAL = 500;
-volatile bool button_pressed = false;
-bool is_face_1 = true; // Tracks which face is currently displayed
+
+namespace frames
+{
+    uint32_t last_frame_time = 0;
+    uint32_t FRAME_INTERVAL = 500;
+    volatile bool button_pressed = false;
+    bool is_face_1 = true; // Tracks which face is currently displayed
+} // namespace frames
 
 int main()
 {
@@ -98,10 +102,10 @@ int main()
         printf("Raw pin state: %d\n", gpio_get(Pins::button));
         if (!gpio_get(Pins::button))
         { 
-            button_pressed = true;
+            frames::button_pressed = true;
         }
 
-        if (button_pressed)
+        if (frames::button_pressed)
         {
             for (int i = 0; i < 2; ++i)
             {
@@ -111,12 +115,12 @@ int main()
                 sleep_ms(200);
             }
             sleep_ms(200);
-            button_pressed = false;
+            frames::button_pressed = false;
         }
         // Check if it's time to switch frames
-        if (current_time - last_frame_time >= FRAME_INTERVAL) 
+        if (current_time - frames::last_frame_time >= frames::FRAME_INTERVAL) 
         {
-            if (is_face_1) 
+            if (frames::is_face_1) 
             {
                 face(happy);
             } 
@@ -124,8 +128,8 @@ int main()
             {
                 face(neutral);
             }
-            is_face_1 = !is_face_1; // Toggle face
-            last_frame_time = current_time;
+            frames::is_face_1 = !frames::is_face_1; // Toggle face
+            frames::last_frame_time = current_time;
         }
         // small delay for button to be read correctly
         sleep_ms(1);
