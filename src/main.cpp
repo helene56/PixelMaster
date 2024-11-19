@@ -98,16 +98,14 @@ int main()
     {
 
         uint32_t current_time = to_ms_since_boot(get_absolute_time());
-
-        
-
         
         if (gpio_get(Pins::button))
-        {
-            
+        { 
             for (int i = 0; i < 2; ++i)
             {
-                face(&neutral);
+                face(neutral);
+                sleep_ms(200);
+                face(face2);
                 sleep_ms(200);
             }
             button_pressed = false;
@@ -115,20 +113,20 @@ int main()
         else
         {
             // Check if it's time to switch frames
-        if (current_time - last_frame_time >= FRAME_INTERVAL) {
-            if (is_face_1) {
-                face(happy);
-            } else {
-                display_face_1();
+            if (current_time - last_frame_time >= FRAME_INTERVAL) 
+            {
+                if (is_face_1) 
+                {
+                    face(happy);
+                } 
+                else 
+                {
+                    face(neutral);
+                }
+                is_face_1 = !is_face_1; // Toggle face
+                last_frame_time = current_time;
             }
-            is_face_1 = !is_face_1; // Toggle face
-            last_frame_time = current_time;
-        }
-            
-            face(happyface);
-            sleep_ms(300);
-        }
-        
+        } 
     }
 }
 

@@ -2,6 +2,6 @@
 #define ANIMATIONS
 
 void run();
-void face(std::uint32_t (*face[1])[8]);
+void face(std::uint32_t (*face)[8]);
 
 #endif // ANIMATIONS

@@ -35,7 +35,7 @@ void run()
     }
 }
 
-void face(std::uint32_t (*face[1])[8])
+void face(std::uint32_t (*face)[8])
 {
     // std::uint32_t (*faces[2])[8] = {neutral, happy};
     for (int k = 0; k < 64; ++k)
