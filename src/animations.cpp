@@ -45,7 +45,7 @@ void face(std::uint32_t (*face)[8])
     
     // should erase previous frame here
     
-    std::uint32_t* ptr = face[0][0];  
+    std::uint32_t* ptr = &face[0][0];  
 
     for (int i = 0; i < 64; ++i) 
     {  // Iterate over 64 elements
@@ -66,7 +66,5 @@ void face(std::uint32_t (*face)[8])
     // for some reason, it needs a small delay
     sleep_us(500);
     sendLed();
-
-    sleep_ms(200);
     
 }
