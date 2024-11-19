@@ -24,9 +24,6 @@ uint32_t last_frame_time = 0;
 uint32_t FRAME_INTERVAL = 500;
 volatile bool button_pressed = false;
 bool is_face_1 = true; // Tracks which face is currently displayed
-void button_callback(uint gpio, uint32_t events) {
-    button_pressed = true; // Set flag when button is pressed
-}
 
 int main()
 {
@@ -34,10 +31,10 @@ int main()
     // initialize button
     gpio_init(Pins::button);
     gpio_set_dir(Pins::button, GPIO_IN);
-    gpio_pull_down(Pins::button);
+    gpio_pull_up(Pins::button);
 
     // Attach interrupt to the button pin
-    gpio_set_irq_enabled_with_callback(Pins::button, GPIO_IRQ_EDGE_FALL, true, &button_callback);
+    // gpio_set_irq_enabled_with_callback(Pins::button, GPIO_IRQ_EDGE_FALL, true, &button_callback);
 
     PIO pio = pio0;
     int sm = 0;
@@ -98,9 +95,14 @@ int main()
     {
 
         uint32_t current_time = to_ms_since_boot(get_absolute_time());
-        
-        if (gpio_get(Pins::button))
+        printf("Raw pin state: %d\n", gpio_get(Pins::button));
+        if (!gpio_get(Pins::button))
         { 
+            button_pressed = true;
+        }
+
+        if (button_pressed)
+        {
             for (int i = 0; i < 2; ++i)
             {
                 face(neutral);
@@ -108,25 +110,26 @@ int main()
                 face(face2);
                 sleep_ms(200);
             }
+            sleep_ms(200);
             button_pressed = false;
         }
-        else
+        // Check if it's time to switch frames
+        if (current_time - last_frame_time >= FRAME_INTERVAL) 
         {
-            // Check if it's time to switch frames
-            if (current_time - last_frame_time >= FRAME_INTERVAL) 
+            if (is_face_1) 
             {
-                if (is_face_1) 
-                {
-                    face(happy);
-                } 
-                else 
-                {
-                    face(neutral);
-                }
-                is_face_1 = !is_face_1; // Toggle face
-                last_frame_time = current_time;
+                face(happy);
+            } 
+            else 
+            {
+                face(neutral);
             }
-        } 
+            is_face_1 = !is_face_1; // Toggle face
+            last_frame_time = current_time;
+        }
+        // small delay for button to be read correctly
+        sleep_ms(1);
+         
     }
 }
 
