@@ -149,12 +149,12 @@ int main()
             face(light_bulb1);
             while(gpio_get(Pins::read_light))
             {
-                sleep_ms(200);
+                sleep_ms(400);
                 face(light_bulb2);
-                sleep_ms(200);
+                sleep_ms(400);
                 face(light_bulb1);
             }
-            sleep_ms(100);
+            sleep_ms(2);
         }
         // Check if it's time to switch frames
         if (current_time - frames::last_frame_time >= frames::FRAME_INTERVAL) 
