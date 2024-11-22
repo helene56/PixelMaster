@@ -19,6 +19,7 @@ namespace Pins
     constexpr int DIN {16};
     constexpr int button {15};
     constexpr int light {14};
+    constexpr int read_light {13};
 } // namespace Pins
 
 
@@ -38,6 +39,11 @@ int main()
     gpio_set_dir(Pins::button, GPIO_IN);
     gpio_pull_up(Pins::button);
 
+    // initialize read light
+    gpio_init(Pins::read_light);
+    gpio_set_dir(Pins::read_light, GPIO_IN);
+    gpio_pull_down(Pins::read_light);
+
     // initialize light
     gpio_init(Pins::light);
     gpio_set_dir(Pins::light, GPIO_OUT);
@@ -50,7 +56,7 @@ int main()
     
 
     std::uint32_t w {0x050505};
-    std::uint32_t y {0x373F16};
+    std::uint32_t y {0x030301}; // yellow at 5% brightness
     std::uint32_t neutral[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
@@ -96,14 +102,23 @@ int main()
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,};
     
-    std::uint32_t light_bulb[8][8] {0, 0, y, 0, 0, y, 0, 0,
-                                    0, y, 0, y, y, 0, y, 0,
-                                    0, 0, y, w, w, y, 0, 0,
-                                    y, y, w, 0, 0, w, y, y,
-                                    0, 0, w, 0, 0, w, 0, 0,
-                                    0, y, 0, w, w, 0, y, 0,
-                                    y, 0, y, w, w, y, 0, y,
-                                    0, y, 0, 0, 0, 0, y, 0,};
+    std::uint32_t light_bulb1[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
+                                     0, 0, 0, y, y, 0, 0, 0,
+                                     0, 0, y, w, w, y, 0, 0,
+                                     0, y, w, 0, 0, w, y, 0,
+                                     0, 0, w, 0, 0, w, 0, 0,
+                                     0, y, 0, w, w, 0, y, 0,
+                                     0, 0, y, w, w, y, 0, 0,
+                                     0, 0, 0, 0, 0, 0, 0, 0,};
+    
+    std::uint32_t light_bulb2[8][8] {0, 0, y, 0, 0, y, 0, 0,
+                                     0, y, 0, y, y, 0, y, 0,
+                                     0, 0, y, w, w, y, 0, 0,
+                                     y, y, w, 0, 0, w, y, y,
+                                     0, 0, w, 0, 0, w, 0, 0,
+                                     0, y, 0, w, w, 0, y, 0,
+                                     y, 0, y, w, w, y, 0, y,
+                                     0, y, 0, 0, 0, 0, y, 0,};
     
     std::uint32_t (*annoyed[2])[8] = {neutral, face2};
     std::uint32_t (*happyface[2])[8] = {neutral, happy};
@@ -127,6 +142,19 @@ int main()
             }
             sleep_ms(200);
             frames::button_pressed = false;
+        }
+
+        if (gpio_get(Pins::read_light))
+        {
+            face(light_bulb1);
+            while(gpio_get(Pins::read_light))
+            {
+                sleep_ms(200);
+                face(light_bulb2);
+                sleep_ms(200);
+                face(light_bulb1);
+            }
+            sleep_ms(100);
         }
         // Check if it's time to switch frames
         if (current_time - frames::last_frame_time >= frames::FRAME_INTERVAL) 
