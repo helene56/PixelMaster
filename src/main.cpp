@@ -50,6 +50,7 @@ int main()
     
 
     std::uint32_t w {0x050505};
+    std::uint32_t y {0x373F16};
     std::uint32_t neutral[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
@@ -95,6 +96,14 @@ int main()
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,};
     
+    std::uint32_t light_bulb[8][8] {0, 0, y, 0, 0, y, 0, 0,
+                                    0, y, 0, y, y, 0, y, 0,
+                                    0, 0, y, w, w, y, 0, 0,
+                                    y, y, w, 0, 0, w, y, y,
+                                    0, 0, w, 0, 0, w, 0, 0,
+                                    0, y, 0, w, w, 0, y, 0,
+                                    y, 0, y, w, w, y, 0, y,
+                                    0, y, 0, 0, 0, 0, y, 0,};
     
     std::uint32_t (*annoyed[2])[8] = {neutral, face2};
     std::uint32_t (*happyface[2])[8] = {neutral, happy};
