@@ -18,6 +18,7 @@ namespace Pins
     // Data In pin
     constexpr int DIN {16};
     constexpr int button {15};
+    constexpr int light {14};
 } // namespace Pins
 
 
@@ -37,7 +38,10 @@ int main()
     gpio_set_dir(Pins::button, GPIO_IN);
     gpio_pull_up(Pins::button);
 
-
+    // initialize light
+    gpio_init(Pins::light);
+    gpio_set_dir(Pins::light, GPIO_OUT);
+    gpio_put(Pins::light, 1);
     PIO pio = pio0;
     int sm = 0;
     uint offset = pio_add_program(pio, &wave_program);
@@ -82,7 +86,7 @@ int main()
                                0, 0, w, 0, 0, w, 0, 0,
                                0, 0, 0, w, w, 0, 0, 0,};
 
-    std::uint32_t happy[8][8]{0, 0, 0, 0, 0, 0, 0, 0,
+    std::uint32_t happy[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, w, 0, 0, 0, 0, w, 0,
                                w, 0, w, 0, 0, w, 0, w,
@@ -91,13 +95,13 @@ int main()
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,};
     
+    
     std::uint32_t (*annoyed[2])[8] = {neutral, face2};
     std::uint32_t (*happyface[2])[8] = {neutral, happy};
     while (true) 
     {
 
         uint32_t current_time = to_ms_since_boot(get_absolute_time());
-        printf("Raw pin state: %d\n", gpio_get(Pins::button));
         if (!gpio_get(Pins::button))
         { 
             frames::button_pressed = true;
