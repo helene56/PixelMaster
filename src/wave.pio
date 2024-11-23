@@ -8,6 +8,8 @@
 .define public Time2 3
 .define public Time3 4
 
+.define count 480
+
 .wrap_target
 
 ; will try automatic pull
@@ -16,6 +18,12 @@
 bit_loop:
     out x, 1 side 0 [Time3 - 1]            ; hold data from OSR in x, set side-set to low, delay
     jmp !x code_0 side 1  [Time1 - 1]     ; If the bit is not 1, go to code_0, delay
+
+check_flag:
+    in null 24 ; remove 24 bits, leaving ontle the flag
+    mov y, isr ; move flag to y
+    jmp y==1 start_delay ; if lfag is set, jump to delay logic
+
 ; send code 1
 code_1:
     jmp bit_loop side 1 [Time2 - 1] ; go to bit loop again, continue being high, delay
@@ -23,7 +31,14 @@ code_1:
 ; send code 0
 code_0:
     nop side 0 [Time2 - 1] ; do nothing, set side-set to low, delay
+    jmp bit_loop
 
+start_delay:
+    mov y, count  ; load the counter value into register y
+delay:
+    nop side 0 ; need to delay for 60 us
+    jmp y-- delay_loop ; decrement y and repeat until y == 0
+    
 .wrap
 
 
@@ -36,7 +51,7 @@ static inline void wave_program_init(PIO pio, uint sm, uint offset, uint pin, fl
     pio_sm_config c = wave_program_get_default_config(offset);
     sm_config_set_sideset_pins(&c, pin);
     // autopull setup
-    sm_config_set_out_shift(&c, false, true, 24);
+    sm_config_set_out_shift(&c, false, true, 25);
     sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
     // setup global constants
     int cycles_per_bit = wave_Time1 + wave_Time2 + wave_Time3;
