@@ -51,8 +51,8 @@ int main()
     PIO pio = pio0;
     int sm = 0;
     uint offset = pio_add_program(pio, &wave_program);
-    uint clock = clock_get_hz(clk_sys);
-    wave_program_init(pio, sm, offset, Pins::DIN, 800000, clock);
+    // uint clock = clock_get_hz(clk_sys);
+    wave_program_init(pio, sm, offset, Pins::DIN, 800000);
     
 
     std::uint32_t w {0x050505};
@@ -101,6 +101,15 @@ int main()
                                0, 0, 0, w, w, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,};
+
+    std::uint32_t light_bulb0[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
+                                     0, 0, 0, 0, 0, 0, 0, 0,
+                                     0, 0, 0, w, w, 0, 0, 0,
+                                     0, 0, w, 0, 0, w, 0, 0,
+                                     0, 0, w, 0, 0, w, 0, 0,
+                                     0, 0, 0, w, w, 0, 0, 0,
+                                     0, 0, 0, w, w, 0, 0, 0,
+                                     0, 0, 0, 0, 0, 0, 0, 0,};
     
     std::uint32_t light_bulb1[8][8] {0, 0, 0, 0, 0, 0, 0, 0,
                                      0, 0, 0, y, y, 0, 0, 0,
@@ -146,13 +155,15 @@ int main()
 
         if (gpio_get(Pins::read_light))
         {
-            face(light_bulb1);
+            face(light_bulb0);
             while(gpio_get(Pins::read_light))
             {
                 sleep_ms(400);
+                face(light_bulb1);
+                sleep_ms(400);
                 face(light_bulb2);
                 sleep_ms(400);
-                face(light_bulb1);
+                face(light_bulb0);
             }
             sleep_ms(2);
         }

@@ -26,8 +26,10 @@ code_0:
 
 .wrap
 
+
 % c-sdk {
-static inline void wave_program_init(PIO pio, uint sm, uint offset, uint pin, float freq, uint clock)
+#include "hardware/clocks.h"
+static inline void wave_program_init(PIO pio, uint sm, uint offset, uint pin, float freq)
 {
     pio_gpio_init(pio, pin);
     pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
@@ -38,6 +40,7 @@ static inline void wave_program_init(PIO pio, uint sm, uint offset, uint pin, fl
     sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
     // setup global constants
     int cycles_per_bit = wave_Time1 + wave_Time2 + wave_Time3;
+    uint clock = clock_get_hz(clk_sys);
     float div = clock / (freq * cycles_per_bit);
     sm_config_set_clkdiv(&c, div);
     pio_sm_init(pio, sm, offset, &c);
