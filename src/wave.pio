@@ -8,21 +8,38 @@
 .define public Time2 3
 .define public Time3 4
 
-.define count 480
+; .define count 480
 
 .wrap_target
 
 ; will try automatic pull
 
+
+; check_flag:
+;     out x, 1 side 0
+;     jmp !x bit_start side 0
+;     ; if flag is 1 perform the delay
+
+; start_delay:
+;     set y, 16 side 0     ; Outer loop counter
+; outer_loop:
+;     set x, 30 side 0     ; Inner loop counter
+; delay:
+;     nop side 0 ; need to delay for 60 us
+;     jmp x-- delay side 0   ; Decrement x and repeat inner loop
+;     jmp y-- outer_loop side 0   ; Decrement y and repeat outer loop
+
+; discard_bits: 
+;     out null, 23 side 0 ; Shift out 24 bits to the null destination jmp check_flag ; Check the flag again
+;     jmp check_flag side 0
+
+; bit_start:
+;     out x, 1 side 0
+set y, 2 side 0
 ; looping through bits
 bit_loop:
     out x, 1 side 0 [Time3 - 1]            ; hold data from OSR in x, set side-set to low, delay
     jmp !x code_0 side 1  [Time1 - 1]     ; If the bit is not 1, go to code_0, delay
-
-check_flag:
-    in null 24 ; remove 24 bits, leaving ontle the flag
-    mov y, isr ; move flag to y
-    jmp y==1 start_delay ; if lfag is set, jump to delay logic
 
 ; send code 1
 code_1:
@@ -31,14 +48,8 @@ code_1:
 ; send code 0
 code_0:
     nop side 0 [Time2 - 1] ; do nothing, set side-set to low, delay
-    jmp bit_loop
+    jmp bit_loop side 0
 
-start_delay:
-    mov y, count  ; load the counter value into register y
-delay:
-    nop side 0 ; need to delay for 60 us
-    jmp y-- delay_loop ; decrement y and repeat until y == 0
-    
 .wrap
 
 
@@ -51,7 +62,7 @@ static inline void wave_program_init(PIO pio, uint sm, uint offset, uint pin, fl
     pio_sm_config c = wave_program_get_default_config(offset);
     sm_config_set_sideset_pins(&c, pin);
     // autopull setup
-    sm_config_set_out_shift(&c, false, true, 25);
+    sm_config_set_out_shift(&c, false, true, 24);
     sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
     // setup global constants
     int cycles_per_bit = wave_Time1 + wave_Time2 + wave_Time3;

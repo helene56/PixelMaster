@@ -131,58 +131,70 @@ int main()
     
     std::uint32_t (*annoyed[2])[8] = {neutral, face2};
     std::uint32_t (*happyface[2])[8] = {neutral, happy};
+    uint32_t delay_command = (1 << 31);
     while (true) 
     {
+        // setLedColor(1, 1, 0b00000101, 0b00000000, 0b00000000);
+        pio_sm_put_blocking(pio0, 0, 0b00000000111111111111111111111111);
+        
+        sleep_ms(1);
+        // For 60 µs delay
+        pio_sm_put_blocking(pio0, 0, delay_command);
 
-        uint32_t current_time = to_ms_since_boot(get_absolute_time());
-        if (!gpio_get(Pins::button))
-        { 
-            frames::button_pressed = true;
-        }
+        sleep_ms(1);
+        // setLedColor(1, 1, 0b00000101, 0b00000000, 0b00000000);
+        pio_sm_put_blocking(pio0, 0, 0b1111111111111111111111111);
+        sleep_ms(1000);
 
-        if (frames::button_pressed)
-        {
-            for (int i = 0; i < 2; ++i)
-            {
-                face(neutral);
-                sleep_ms(200);
-                face(face2);
-                sleep_ms(200);
-            }
-            sleep_ms(200);
-            frames::button_pressed = false;
-        }
+        // uint32_t current_time = to_ms_since_boot(get_absolute_time());
+        // if (!gpio_get(Pins::button))
+        // { 
+        //     frames::button_pressed = true;
+        // }
 
-        if (gpio_get(Pins::read_light))
-        {
-            face(light_bulb0);
-            while(gpio_get(Pins::read_light))
-            {
-                sleep_ms(400);
-                face(light_bulb1);
-                sleep_ms(400);
-                face(light_bulb2);
-                sleep_ms(400);
-                face(light_bulb0);
-            }
-            sleep_ms(2);
-        }
-        // Check if it's time to switch frames
-        if (current_time - frames::last_frame_time >= frames::FRAME_INTERVAL) 
-        {
-            if (frames::is_face_1) 
-            {
-                face(happy);
-            } 
-            else 
-            {
-                face(neutral);
-            }
-            frames::is_face_1 = !frames::is_face_1; // Toggle face
-            frames::last_frame_time = current_time;
-        }
-        // small delay for button to be read correctly
-        sleep_ms(2);
+        // if (frames::button_pressed)
+        // {
+        //     for (int i = 0; i < 2; ++i)
+        //     {
+        //         face(neutral);
+        //         sleep_ms(200);
+        //         face(face2);
+        //         sleep_ms(200);
+        //     }
+        //     sleep_ms(200);
+        //     frames::button_pressed = false;
+        // }
+
+        // if (gpio_get(Pins::read_light))
+        // {
+        //     face(light_bulb0);
+        //     while(gpio_get(Pins::read_light))
+        //     {
+        //         sleep_ms(400);
+        //         face(light_bulb1);
+        //         sleep_ms(400);
+        //         face(light_bulb2);
+        //         sleep_ms(400);
+        //         face(light_bulb0);
+        //     }
+        //     sleep_ms(2);
+        // }
+        // // Check if it's time to switch frames
+        // if (current_time - frames::last_frame_time >= frames::FRAME_INTERVAL) 
+        // {
+        //     if (frames::is_face_1) 
+        //     {
+        //         face(happy);
+        //     } 
+        //     else 
+        //     {
+        //         face(neutral);
+        //     }
+        //     frames::is_face_1 = !frames::is_face_1; // Toggle face
+        //     frames::last_frame_time = current_time;
+        // }
+        // // small delay for button to be read correctly
+        // sleep_ms(2);
          
     }
 }

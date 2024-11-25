@@ -5,7 +5,9 @@
 
 inline void put_pixel(uint32_t pixel_grb) 
 {  
-    pio_sm_put_blocking(pio0, 0, pixel_grb << 8);
+    // to get the first bit as 0
+    pio_sm_put_blocking(pio0, 0, pixel_grb << 7);
+    // pio_sm_put_blocking(pio0, 0, pixel_grb << 8);
 }
 
 inline uint32_t ugrb_u32(uint8_t g, uint8_t r, uint8_t b)
