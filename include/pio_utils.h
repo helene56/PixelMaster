@@ -15,7 +15,7 @@ inline uint32_t ugrb_u32(uint8_t g, uint8_t r, uint8_t b)
 
 inline void reset_pixel()
 {
-    sleep_us(400);
+    sleep_us(100);
 }
 
 #endif // PIO_UTILS
