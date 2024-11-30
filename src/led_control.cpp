@@ -40,6 +40,19 @@ void storeLed(int row, int col, std::uint8_t green, std::uint8_t red, std::uint8
     
 }
 
+void resetLedmemory()
+{
+    for (int i = 0; i < 64; ++i) 
+    {  // Iterate over 64 elements
+
+        // Calculate row and column for led_memory in reverse order
+        int row = (i / 8);  // Reverse the row index
+        int col = (i % 8);  // Reverse the column index
+
+        // Store the value in led_memory
+        led_memory[row][col] = 0;
+    }
+}
 
 // loops through the led_memory in correct order, and send the ledcolors
 void sendLed()
