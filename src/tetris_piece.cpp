@@ -34,8 +34,9 @@ int random_generator(std::uint16_t X, int range)
 
 
 
-void generate_piece(std::uint8_t green, std::uint8_t red, std::uint8_t blue)
+void generate_piece()
 {
+    printf("random number: %d\n", random::ran_num);
     
     switch (random::ran_num)
     {
@@ -50,8 +51,6 @@ void generate_piece(std::uint8_t green, std::uint8_t red, std::uint8_t blue)
             break;
         case 4:
             break;
-        
-
         
         default:
             break;
@@ -72,54 +71,55 @@ void piece1()
     storeLed(8, 4, 0b00001101, 0b00001101, 00000000);
     storeLed(8, 5, 0b00001101, 0b00001101, 00000000);
     sendLed();
+    // clear memory
+    resetLedmemory();
     static int i {7};
-
-    if (Time::switch_frame)
+    if (i >= 0)
     {
-
-        if (first_frame)
+        if (Time::switch_frame)
         {
-            // clear pixels
-            for (int k = 0; k < 64; ++k)
+
+            if (first_frame)
             {
-                put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
+                // clear pixels on display
+                for (int k = 0; k < 64; ++k)
+                {
+                    put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
+                }
+                // set new leds
+                storeLed(8, 4, 0b00001101, 0b00001101, 00000000);
+                storeLed(7, 3, 0b00001101, 0b00001101, 00000000);
+                storeLed(7, 4, 0b00001101, 0b00001101, 00000000);
+                storeLed(7, 5, 0b00001101, 0b00001101, 00000000);
+                sendLed();
+                first_frame = false;
+                Time::last_frame_time = Time::current_time;
             }
-            // set new leds
-            storeLed(8, 4, 0b00001101, 0b00001101, 00000000);
-            storeLed(7, 3, 0b00001101, 0b00001101, 00000000);
-            storeLed(7, 4, 0b00001101, 0b00001101, 00000000);
-            storeLed(7, 5, 0b00001101, 0b00001101, 00000000);
-            sendLed();
-            first_frame = false;
-            Time::last_frame_time = Time::current_time;
-        }
-        else
-        {
-            // move one row down till it reaches first row
-            // clear pixels
-            for (int k = 0; k < 64; ++k)
+            else
             {
-                put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
+                // move one row down till it reaches first row
+                // clear pixels
+                for (int k = 0; k < 64; ++k)
+                {
+                    put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
+                }
+                
+                storeLed(i+1, 4, 0b00001101, 0b00001101, 00000000);
+                storeLed(i, 3, 0b00001101, 0b00001101, 00000000);
+                storeLed(i, 4, 0b00001101, 0b00001101, 00000000);
+                storeLed(i, 5, 0b00001101, 0b00001101, 00000000);
+                sendLed();
+                --i;
+                Time::last_frame_time = Time::current_time;
+                
+            
             }
-            
-            storeLed(i+1, 4, 0b00001101, 0b00001101, 00000000);
-            storeLed(i, 3, 0b00001101, 0b00001101, 00000000);
-            storeLed(i, 4, 0b00001101, 0b00001101, 00000000);
-            storeLed(i, 5, 0b00001101, 0b00001101, 00000000);
-            sendLed();
-            --i;
-            Time::last_frame_time = Time::current_time;
-            
-           
+            // clear memory
+            resetLedmemory();   
+
         }
-
-        
-
-
-        
-        
-
     }
+    
     // step 2:
     // move down one row and turn led in the middle on
     // step 3:
