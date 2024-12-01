@@ -224,4 +224,5 @@ bool check_Ledplacement(int row, int col)
 // for easy clear_Ledmemory access, just to clean code up a bit
 // 2. add a function to check if row col is already taken up by one piece, 
 // if so, the other piece should stop moving
+// 3. apply 2. to the beginning frames of the piece as well and add to piece1 as well
 
