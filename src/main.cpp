@@ -8,6 +8,7 @@
 #include "led_control.h"
 #include "led_memory.h"
 #include "animations.h"
+#include "tetris_piece.h"
 
 #include "build/wave.pio.h"
 
@@ -49,18 +50,24 @@ int main()
     std::uint32_t w {0x050505};
     std::uint32_t y {0x030301}; // yellow at 5% brightness
     
-
+    // storeLed(8, 4, 0b00001101, 0b00001101, 00000000);
+    // storeLed(7, 3, 0b00001101, 0b00001101, 00000000);
+    // storeLed(7, 4, 0b00001101, 0b00001101, 00000000);
+    // storeLed(7, 5, 0b00001101, 0b00001101, 00000000);
+    // sendLed();
 
     while (true) 
     {
 
-        uint32_t current_time = to_ms_since_boot(get_absolute_time());
+        // uint32_t current_time = to_ms_since_boot(get_absolute_time());
         
-        // Check if it's time to switch frames
-        if (current_time - frames::last_frame_time >= frames::FRAME_INTERVAL) 
-        {
+        // // Check if it's time to switch frames
+        // if (current_time - frames::last_frame_time >= frames::FRAME_INTERVAL) 
+        // {
             
-        }
+        // }
+
+        piece1();
         // small delay for button to be read correctly
         sleep_ms(2);
          
