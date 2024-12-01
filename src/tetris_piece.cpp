@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include "led_control.h"
+#include "tetris_piece.h"
 #include "pico/stdlib.h"
 #include "pio_utils.h"
+#include "led_memory.h"
 // steps
 // generate random piece at random location, start in the top of the matrix
 // move it down till it reaches the bottom
@@ -14,14 +16,17 @@ namespace random
 
 namespace Time
 {
-    uint32_t interval = 500;
+    uint32_t interval = 800;
     static uint32_t last_frame_time = 0;
     static uint32_t current_time = to_ms_since_boot(get_absolute_time());
     //  frames::last_frame_time = current_time;
-    bool switch_frame = {(current_time - last_frame_time >= interval)};
+    bool switch_frame = (current_time - last_frame_time >= interval);
 } // namespace Time
 
-
+bool time_to_switch_frame()
+{
+    return (Time::current_time - Time::last_frame_time >= Time::interval);
+}
 
 int random_generator(std::uint16_t X, int range)
 {
@@ -63,22 +68,27 @@ void piece1()
     Time::current_time = to_ms_since_boot(get_absolute_time());
     static bool first_frame {true};
 
-    int i = 7;
+    
     // step 1:
     // turn 3 leds on
     // for now col is hardcoded
-    storeLed(8, 3, 0b00001101, 0b00001101, 00000000);
-    storeLed(8, 4, 0b00001101, 0b00001101, 00000000);
-    storeLed(8, 5, 0b00001101, 0b00001101, 00000000);
-    sendLed();
-    // clear memory
-    resetLedmemory();
-    static int i {7};
+    if (first_frame)
+    {
+        storeLed(8, 3, 0b00001101, 0b00001101, 00000000);
+        storeLed(8, 4, 0b00001101, 0b00001101, 00000000);
+        storeLed(8, 5, 0b00001101, 0b00001101, 00000000);
+        sendLed();
+        // clear memory
+        resetLedmemory();
+    }
+    
+    static int i {6};
+   
     if (i >= 0)
     {
-        if (Time::switch_frame)
+        if (time_to_switch_frame())
         {
-
+            
             if (first_frame)
             {
                 // clear pixels on display
@@ -86,6 +96,7 @@ void piece1()
                 {
                     put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
                 }
+                reset_pixel();
                 // set new leds
                 storeLed(8, 4, 0b00001101, 0b00001101, 00000000);
                 storeLed(7, 3, 0b00001101, 0b00001101, 00000000);
@@ -103,19 +114,26 @@ void piece1()
                 {
                     put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
                 }
-                
+                reset_pixel();
                 storeLed(i+1, 4, 0b00001101, 0b00001101, 00000000);
                 storeLed(i, 3, 0b00001101, 0b00001101, 00000000);
                 storeLed(i, 4, 0b00001101, 0b00001101, 00000000);
                 storeLed(i, 5, 0b00001101, 0b00001101, 00000000);
                 sendLed();
+                
                 --i;
                 Time::last_frame_time = Time::current_time;
                 
             
             }
-            // clear memory
-            resetLedmemory();   
+            
+            if (i > 0)
+            {
+                // clear memory
+                resetLedmemory(); 
+            }
+            
+              
 
         }
     }
