@@ -76,7 +76,9 @@ void piece1()
         storeLed(8, 5, 0b00001101, 0b00001101, 00000000);
         sendLed();
         // clear memory
-        resetLedmemory();
+        clear_Ledmemory(8, 3);
+        clear_Ledmemory(8, 4);
+        clear_Ledmemory(8, 5);
     }
     
     static int i {6};
@@ -102,6 +104,12 @@ void piece1()
                 sendLed();
                 first_frame = false;
                 Time::last_frame_time = Time::current_time;
+                
+                clear_Ledmemory(8, 4);
+                clear_Ledmemory(7, 3);
+                clear_Ledmemory(7, 4);
+                clear_Ledmemory(7, 5);
+                
             }
             else
             {
@@ -117,18 +125,17 @@ void piece1()
                 storeLed(i, 4, 0b00001101, 0b00001101, 00000000);
                 storeLed(i, 5, 0b00001101, 0b00001101, 00000000);
                 sendLed();
-                
+
+                if (i > 1)
+                {
+                    clear_Ledmemory(i+1, 4);
+                    clear_Ledmemory(i, 3);
+                    clear_Ledmemory(i, 4);
+                    clear_Ledmemory(i, 5);
+                }
                 --i;
                 Time::last_frame_time = Time::current_time;
-                
-            
             }
-            
-            if (i > 0)
-            {
-                // clear memory
-                resetLedmemory(); 
-            }  
 
         }
     }
