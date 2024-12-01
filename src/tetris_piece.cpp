@@ -71,9 +71,9 @@ int piece1()
     // for now col is hardcoded
     if (first_frame)
     {
-        storeLed(8, 3, 0b00001101, 0b00001101, 00000000);
-        storeLed(8, 4, 0b00001101, 0b00001101, 00000000);
-        storeLed(8, 5, 0b00001101, 0b00001101, 00000000);
+        storeLed(8, 3, 0b00001101, 0b00000000, 00000000);
+        storeLed(8, 4, 0b00001101, 0b00000000, 00000000);
+        storeLed(8, 5, 0b00001101, 0b00000000, 00000000);
         sendLed();
         // clear memory
         clear_Ledmemory(8, 3);
@@ -97,10 +97,10 @@ int piece1()
                 }
                 reset_pixel();
                 // set new leds
-                storeLed(8, 4, 0b00001101, 0b00001101, 00000000);
-                storeLed(7, 3, 0b00001101, 0b00001101, 00000000);
-                storeLed(7, 4, 0b00001101, 0b00001101, 00000000);
-                storeLed(7, 5, 0b00001101, 0b00001101, 00000000);
+                storeLed(8, 4, 0b00001101, 0b00000000, 00000000);
+                storeLed(7, 3, 0b00001101, 0b00000000, 00000000);
+                storeLed(7, 4, 0b00001101, 0b00000000, 00000000);
+                storeLed(7, 5, 0b00001101, 0b00000000, 00000000);
                 sendLed();
                 first_frame = false;
                 Time::last_frame_time = Time::current_time;
@@ -120,10 +120,10 @@ int piece1()
                     put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
                 }
                 reset_pixel();
-                storeLed(i+1, 4, 0b00001101, 0b00001101, 00000000);
-                storeLed(i, 3, 0b00001101, 0b00001101, 00000000);
-                storeLed(i, 4, 0b00001101, 0b00001101, 00000000);
-                storeLed(i, 5, 0b00001101, 0b00001101, 00000000);
+                storeLed(i+1, 4, 0b00001101, 0b00000000, 00000000);
+                storeLed(i, 3, 0b00001101, 0b00000000, 00000000);
+                storeLed(i, 4, 0b00001101, 0b00000000, 00000000);
+                storeLed(i, 5, 0b00001101, 0b00000000, 00000000);
                 sendLed();
 
                 if (i > 1)
@@ -176,34 +176,36 @@ void piece2()
             clear_Ledmemory(5, 4);
         }
     }
-    else
+    else if (check_Ledplacement(j-3, 4))
     {
-        if (time_to_switch_frame())
+        return;
+    }
+    else if (time_to_switch_frame())
+    {
+        
+        if (j >= 4)
         {
-            if (j >= 4)
+            // move one row down till it reaches first row
+            // clear pixels
+            for (int k = 0; k < 64; ++k)
             {
-                // move one row down till it reaches first row
-                // clear pixels
-                for (int k = 0; k < 64; ++k)
-                {
-                    put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
-                }
-                reset_pixel();
-                storeLed(j, 4, 0b00001101, 0b00001101, 00000000);
-                storeLed(j-1, 4, 0b00001101, 0b00001101, 00000000);
-                storeLed(j-2, 4, 0b00001101, 0b00001101, 00000000);
-                storeLed(j-3, 4, 0b00001101, 0b00001101, 00000000);
-                sendLed();
-                if (j > 4)
-                {
-                    clear_Ledmemory(j, 4);
-                    clear_Ledmemory(j-1, 4);
-                    clear_Ledmemory(j-2, 4);
-                    clear_Ledmemory(j-3, 4);
-                }
-                --j;
-                Time::last_frame_time = Time::current_time;
+                put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
             }
+            reset_pixel();
+            storeLed(j, 4, 0b00001101, 0b00001101, 00000000);
+            storeLed(j-1, 4, 0b00001101, 0b00001101, 00000000);
+            storeLed(j-2, 4, 0b00001101, 0b00001101, 00000000);
+            storeLed(j-3, 4, 0b00001101, 0b00001101, 00000000);
+            sendLed();
+            if (j > 4)
+            {
+                clear_Ledmemory(j, 4);
+                clear_Ledmemory(j-1, 4);
+                clear_Ledmemory(j-2, 4);
+                clear_Ledmemory(j-3, 4);
+            }
+            --j;
+            Time::last_frame_time = Time::current_time;
         }
         
     }
@@ -214,7 +216,7 @@ void piece2()
 bool check_Ledplacement(int row, int col)
 {
 
-    return (led_memory[row][col] > 0);
+    return (led_memory[row - 1][col - 1] > 0);
 }
 
 // todo:
