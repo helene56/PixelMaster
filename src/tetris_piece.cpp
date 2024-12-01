@@ -16,7 +16,7 @@ namespace random
 
 namespace Time
 {
-    uint32_t interval = 800;
+    uint32_t interval = 400;
     static uint32_t last_frame_time = 0;
     static uint32_t current_time = to_ms_since_boot(get_absolute_time());
     //  frames::last_frame_time = current_time;
@@ -45,20 +45,20 @@ void generate_piece()
     
     switch (random::ran_num)
     {
-        case 0:
-            piece1();
-            break;
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            break;
-        
-        default:
-            break;
+    case 0:
+        piece1();
+        break;
+    case 1:
+        break;
+    case 2:
+        break;
+    case 3:
+        break;
+    case 4:
+        break;
+    
+    default:
+        break;
     }
 }
 
@@ -68,9 +68,6 @@ void piece1()
     Time::current_time = to_ms_since_boot(get_absolute_time());
     static bool first_frame {true};
 
-    
-    // step 1:
-    // turn 3 leds on
     // for now col is hardcoded
     if (first_frame)
     {
@@ -131,15 +128,12 @@ void piece1()
             {
                 // clear memory
                 resetLedmemory(); 
-            }
-            
-              
+            }  
 
         }
     }
-    
-    // step 2:
-    // move down one row and turn led in the middle on
-    // step 3:
-    // move down the 'piece' until its time
 }
+
+// todo:
+// make function which only clear memory for moving piece, the pieces at the bottom, should still be displayed
+
