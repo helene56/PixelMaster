@@ -3,6 +3,8 @@
 
 #include "hardware/pio.h"
 
+// function to send pixel data to the sm, 
+// remember to send reset_pixel() after this is done
 inline void put_pixel(uint32_t pixel_grb) 
 {  
     pio_sm_put_blocking(pio0, 0, pixel_grb << 8);
@@ -15,7 +17,9 @@ inline uint32_t ugrb_u32(uint8_t g, uint8_t r, uint8_t b)
 
 inline void reset_pixel()
 {
-    sleep_us(100);
+    sleep_us(400);
+
+    // busy_wait_us_32(100);
 }
 
 #endif // PIO_UTILS
