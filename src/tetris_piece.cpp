@@ -16,7 +16,7 @@ namespace random
 
 namespace Time
 {
-    uint32_t interval = 400;
+    uint32_t interval = 800;
     static uint32_t last_frame_time = 0;
     static uint32_t current_time = to_ms_since_boot(get_absolute_time());
     //  frames::last_frame_time = current_time;
@@ -63,7 +63,7 @@ void generate_piece()
 }
 
 
-void piece1()
+int piece1()
 {
     Time::current_time = to_ms_since_boot(get_absolute_time());
     static bool first_frame {true};
@@ -139,8 +139,81 @@ void piece1()
 
         }
     }
+    return i;
 }
 
+
+void piece2()
+{
+    // 4 dots: 4 rows, one column
+    Time::current_time = to_ms_since_boot(get_absolute_time());
+    static bool first_frame {true};
+
+    static int i {8};
+    static int j {7};
+
+    // for now col is hardcoded
+    if (first_frame)
+    {
+        if (time_to_switch_frame())
+        {
+            if (i >= 5)
+            {
+                storeLed(i, 4, 0b00001101, 0b00001101, 00000000);
+                sendLed();
+                --i;
+                Time::last_frame_time = Time::current_time;
+            }
+            
+        }
+        // clear memory
+        if (i == 5)
+        {
+            first_frame = !first_frame;
+            clear_Ledmemory(8, 4);
+            clear_Ledmemory(7, 4);
+            clear_Ledmemory(6, 4);
+            clear_Ledmemory(5, 4);
+        }
+    }
+    else
+    {
+        if (time_to_switch_frame())
+        {
+            if (j >= 4)
+            {
+                // move one row down till it reaches first row
+                // clear pixels
+                for (int k = 0; k < 64; ++k)
+                {
+                    put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
+                }
+                reset_pixel();
+                storeLed(j, 4, 0b00001101, 0b00001101, 00000000);
+                storeLed(j-1, 4, 0b00001101, 0b00001101, 00000000);
+                storeLed(j-2, 4, 0b00001101, 0b00001101, 00000000);
+                storeLed(j-3, 4, 0b00001101, 0b00001101, 00000000);
+                sendLed();
+                if (j > 4)
+                {
+                    clear_Ledmemory(j, 4);
+                    clear_Ledmemory(j-1, 4);
+                    clear_Ledmemory(j-2, 4);
+                    clear_Ledmemory(j-3, 4);
+                }
+                --j;
+                Time::last_frame_time = Time::current_time;
+            }
+        }
+        
+    }
+    
+
+    
+}
+
+
 // todo:
-// make function which only clear memory for moving piece, the pieces at the bottom, should still be displayed
+// make a way to store the different frames for the pieces, 
+// for easy clear_Ledmemory access, just to clean code up a bit
 
