@@ -208,12 +208,18 @@ void piece2()
         
     }
     
-
-    
 }
 
 
+bool check_Ledplacement(int row, int col)
+{
+
+    return (led_memory[row][col] > 0);
+}
+
 // todo:
-// make a way to store the different frames for the pieces, 
+// 1. make a way to store the different frames for the pieces, 
 // for easy clear_Ledmemory access, just to clean code up a bit
+// 2. add a function to check if row col is already taken up by one piece, 
+// if so, the other piece should stop moving
 
