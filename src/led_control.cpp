@@ -39,7 +39,7 @@ void storeLed(int row, int col, std::uint8_t green, std::uint8_t red, std::uint8
     led_memory[row - 1][col - 1] = grb;
     
 }
-
+// reset all led memory to 0
 void resetLedmemory()
 {
     for (int i = 0; i < 64; ++i) 
@@ -90,5 +90,20 @@ void sendLed()
             }
         }
         
+    }
+}
+
+// reset certain row and col to 0 in led memory
+void clear_Ledmemory(int row, int col)
+{
+    for (int i = 0; i < 8; ++i)
+    {
+        for (int j = 0; j < 8; ++j)
+        {
+            if (j == row && i == col)
+            {
+                led_memory[i][j] = 0;
+            }
+        }
     }
 }
