@@ -14,4 +14,6 @@ void resetLedmemory();
 
 void clear_Ledmemory(int row, int col);
 
+void debug_Ledmemory();
+
 #endif // LED_CONTROL

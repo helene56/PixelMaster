@@ -96,14 +96,26 @@ void sendLed()
 // reset certain row and col to 0 in led memory
 void clear_Ledmemory(int row, int col)
 {
+    led_memory[row - 1][col -1] = 0;
+}
+
+void debug_Ledmemory()
+{
     for (int i = 0; i < 8; ++i)
     {
         for (int j = 0; j < 8; ++j)
         {
-            if (j == row && i == col)
+            if (led_memory[i][j] > 0)
             {
-                led_memory[i][j] = 0;
+                printf("%d ", 1);
             }
+            else
+            {
+                printf("%u ", led_memory[i][j]);
+            }
+            
         }
+        printf("\n");
     }
+    printf("\n");
 }
