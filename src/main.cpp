@@ -57,23 +57,25 @@ int main()
     // sendLed();
     // sleep_ms(7000);
     
-    // storeLed(1, 4, 0b00001101, 0b00000000, 00000000);
+    storeLed(6, 4, 0b00001101, 0b00000000, 00000000);
+    sendLed();
+
     while (true) 
     {
 
         // uint32_t current_time = to_ms_since_boot(get_absolute_time());
-        
         // // Check if it's time to switch frames
         // if (current_time - frames::last_frame_time >= frames::FRAME_INTERVAL) 
         // {
             
         // }
+        // piece1();
+        // if (piece1() <= 0)
+        // {
+        //     piece2();
+        // }
         piece1();
-        if (piece1() <= 0)
-        {
-            piece2();
-        }
-        // piece2();
+        
         // small delay for button to be read correctly
         sleep_ms(2);
          
