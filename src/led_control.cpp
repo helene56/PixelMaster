@@ -119,3 +119,13 @@ void debug_Ledmemory()
     }
     printf("\n");
 }
+
+// consider making inline, test it
+void clear_all_pixels()
+{
+    for (int k = 0; k < 64; ++k)
+    {
+        put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
+    }
+    reset_pixel();
+}
