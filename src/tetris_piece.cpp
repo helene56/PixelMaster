@@ -14,6 +14,14 @@ namespace random
     static int ran_num {random_generator(seed, 5)};
 } // namespace random
 
+
+namespace color
+{
+    std::uint32_t green = (0b00001101 << 16) | (0b00000000 << 8) | 0b00000000;
+
+} // namespace color
+
+
 namespace Time
 {
     uint32_t interval = 800;
@@ -63,6 +71,38 @@ void generate_piece()
 }
 
 
+void call_frame(int *rows, int *cols, int size, std::int32_t grb)
+{
+    int *p = rows;
+    int *p2 = cols;
+    std::uint8_t green = (grb >> 16) & 0xFF;  // Extract the red component (8 bits)
+    std::uint8_t red = (grb >> 8) & 0xFF; // Extract the green component (8 bits)
+    std::uint8_t blue = grb & 0xFF;         // Extract the blue component (8 bits)
+
+    for (int i = 0; i < size; ++i)
+    {  
+        storeLed(*p, *p2, green, red, blue);
+        ++p;
+        ++p2;
+    }
+    sendLed();
+        
+
+}
+
+void clear_frame(int *rows, int *cols, int size)
+{
+    int *p = rows;
+    int *p2 = cols;
+    for (int i = 0; i < size; ++i)
+    {  
+        clear_Ledmemory(*p, *p2);
+        ++p;
+        ++p2;
+    }
+}
+
+
 int piece1()
 {
     Time::current_time = to_ms_since_boot(get_absolute_time());
@@ -70,14 +110,19 @@ int piece1()
     static bool second_frame {false};
     static int i {6};
 
+    int first_frame_rows[3] {8, 8, 8};
+    int first_frame_cols[3] {3, 4, 5};
+
     if (time_to_switch_frame())
     {
         if (first_frame)
         {
-            storeLed(8, 3, 0b00001101, 0b00000000, 00000000);
-            storeLed(8, 4, 0b00001101, 0b00000000, 00000000);
-            storeLed(8, 5, 0b00001101, 0b00000000, 00000000);
-            sendLed();
+
+            // storeLed(8, 3, 0b00001101, 0b00000000, 00000000);
+            // storeLed(8, 4, 0b00001101, 0b00000000, 00000000);
+            // storeLed(8, 5, 0b00001101, 0b00000000, 00000000);
+            // sendLed();
+            call_frame(first_frame_rows, first_frame_cols, sizeof(first_frame_rows), color::green);
             if (check_Ledplacement(8-1, 4))
             {
                 return -1;
@@ -87,18 +132,15 @@ int piece1()
             Time::last_frame_time = Time::current_time;
 
             // clear memory
-            clear_Ledmemory(8, 3);
-            clear_Ledmemory(8, 4);
-            clear_Ledmemory(8, 5);
+            // clear_Ledmemory(8, 3);
+            // clear_Ledmemory(8, 4);
+            // clear_Ledmemory(8, 5);
+            clear_frame(first_frame_rows, first_frame_cols, sizeof(first_frame_rows));
         }
         else if (second_frame)
         {
             // clear pixels on display
-            for (int k = 0; k < 64; ++k)
-            {
-                put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
-            }
-            reset_pixel();
+            clear_all_pixels();
             // set new leds
             storeLed(8, 4, 0b00001101, 0b00000000, 00000000);
             storeLed(7, 3, 0b00001101, 0b00000000, 00000000);
@@ -119,8 +161,6 @@ int piece1()
         }
         else
         {
-            
-   
             if (i >= 0)
             {
                 if (check_Ledplacement(i, 4) || check_Ledplacement(i, 5) || check_Ledplacement(i, 3))
@@ -131,11 +171,7 @@ int piece1()
                 {
                     // move one row down till it reaches first row
                     // clear pixels
-                    for (int k = 0; k < 64; ++k)
-                    {
-                        put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
-                    }
-                    reset_pixel();
+                    clear_all_pixels();
                     storeLed(i+1, 4, 0b00001101, 0b00000000, 00000000);
                     storeLed(i, 3, 0b00001101, 0b00000000, 00000000);
                     storeLed(i, 4, 0b00001101, 0b00000000, 00000000);
@@ -209,11 +245,7 @@ void piece2()
         {
             // move one row down till it reaches first row
             // clear pixels
-            for (int k = 0; k < 64; ++k)
-            {
-                put_pixel(ugrb_u32(0b00000000, 0b00000000, 0b00000000));
-            }
-            reset_pixel();
+            clear_all_pixels();
             storeLed(j, 4, 0b00001101, 0b00001101, 00000000);
             storeLed(j-1, 4, 0b00001101, 0b00001101, 00000000);
             storeLed(j-2, 4, 0b00001101, 0b00001101, 00000000);
