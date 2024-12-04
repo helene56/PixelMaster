@@ -108,13 +108,13 @@ int piece1()
     Time::current_time = to_ms_since_boot(get_absolute_time());
     static bool first_frame {true};
     static bool second_frame {false};
-    static int i {6};
+    static int current_row {6};
 
     int first_frame_rows[3] {8, 8, 8};
     int first_frame_cols[3] {3, 4, 5};
     int second_frame_rows[4] {8, 7, 7, 7};
     int second_frame_cols[4] {4, 3, 4, 5};
-    int normal_frame_rows[4] {i+1, i, i, i};
+    int normal_frame_rows[4] {current_row+1, current_row, current_row, current_row};
     int normal_frame_cols[4] {4, 3, 4, 5};
 
     if (time_to_switch_frame())
@@ -140,11 +140,6 @@ int piece1()
             // clear pixels on display
             clear_all_pixels();
             // set new leds
-            // storeLed(8, 4, 0b00001101, 0b00000000, 00000000);
-            // storeLed(7, 3, 0b00001101, 0b00000000, 00000000);
-            // storeLed(7, 4, 0b00001101, 0b00000000, 00000000);
-            // storeLed(7, 5, 0b00001101, 0b00000000, 00000000);
-            // sendLed();
             call_frame(second_frame_rows, second_frame_cols, 
             sizeof(second_frame_rows) / sizeof(second_frame_rows[0]), color::green);
             if (check_Ledplacement(7-1, 4))
@@ -154,18 +149,14 @@ int piece1()
             second_frame = false;
             Time::last_frame_time = Time::current_time;
             
-            // clear_Ledmemory(8, 4);
-            // clear_Ledmemory(7, 3);
-            // clear_Ledmemory(7, 4);
-            // clear_Ledmemory(7, 5);
             clear_frame(second_frame_rows, second_frame_cols, 
             sizeof(second_frame_rows) / sizeof(second_frame_rows[0]));   
         }
         else
         {
-            if (i >= 0)
+            if (current_row >= 0)
             {
-                if (check_Ledplacement(i, 4) || check_Ledplacement(i, 5) || check_Ledplacement(i, 3))
+                if (check_Ledplacement(current_row, 4) || check_Ledplacement(current_row, 5) || check_Ledplacement(current_row, 3))
                 {
                     return -1;
                 }
@@ -178,19 +169,19 @@ int piece1()
                     call_frame(normal_frame_rows, normal_frame_cols, 
                     sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]), color::green);
 
-                    if (i > 1)
+                    if (current_row > 1)
                     {
                         clear_frame(normal_frame_rows, normal_frame_cols, 
                         sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0])); 
                     }
-                    --i;
+                    --current_row;
                     Time::last_frame_time = Time::current_time;
                 }
 
             }
         }
     }
-    return i;
+    return current_row;
 }
 
 
