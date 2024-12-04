@@ -112,17 +112,18 @@ int piece1()
 
     int first_frame_rows[3] {8, 8, 8};
     int first_frame_cols[3] {3, 4, 5};
+    int second_frame_rows[4] {8, 7, 7, 7};
+    int second_frame_cols[4] {4, 3, 4, 5};
+    int normal_frame_rows[4] {i+1, i, i, i};
+    int normal_frame_cols[4] {4, 3, 4, 5};
 
     if (time_to_switch_frame())
     {
         if (first_frame)
         {
 
-            // storeLed(8, 3, 0b00001101, 0b00000000, 00000000);
-            // storeLed(8, 4, 0b00001101, 0b00000000, 00000000);
-            // storeLed(8, 5, 0b00001101, 0b00000000, 00000000);
-            // sendLed();
-            call_frame(first_frame_rows, first_frame_cols, sizeof(first_frame_rows) / sizeof(first_frame_rows[0]), color::green);
+            call_frame(first_frame_rows, first_frame_cols, 
+            sizeof(first_frame_rows) / sizeof(first_frame_rows[0]), color::green);
             if (check_Ledplacement(8-1, 4))
             {
                 return -1;
@@ -131,22 +132,21 @@ int piece1()
             second_frame = true;
             Time::last_frame_time = Time::current_time;
 
-            // clear memory
-            // clear_Ledmemory(8, 3);
-            // clear_Ledmemory(8, 4);
-            // clear_Ledmemory(8, 5);
-            clear_frame(first_frame_rows, first_frame_cols, sizeof(first_frame_rows) / sizeof(first_frame_rows[0]));
+            clear_frame(first_frame_rows, first_frame_cols, 
+            sizeof(first_frame_rows) / sizeof(first_frame_rows[0]));
         }
         else if (second_frame)
         {
             // clear pixels on display
             clear_all_pixels();
             // set new leds
-            storeLed(8, 4, 0b00001101, 0b00000000, 00000000);
-            storeLed(7, 3, 0b00001101, 0b00000000, 00000000);
-            storeLed(7, 4, 0b00001101, 0b00000000, 00000000);
-            storeLed(7, 5, 0b00001101, 0b00000000, 00000000);
-            sendLed();
+            // storeLed(8, 4, 0b00001101, 0b00000000, 00000000);
+            // storeLed(7, 3, 0b00001101, 0b00000000, 00000000);
+            // storeLed(7, 4, 0b00001101, 0b00000000, 00000000);
+            // storeLed(7, 5, 0b00001101, 0b00000000, 00000000);
+            // sendLed();
+            call_frame(second_frame_rows, second_frame_cols, 
+            sizeof(second_frame_rows) / sizeof(second_frame_rows[0]), color::green);
             if (check_Ledplacement(7-1, 4))
             {
                 return -1;
@@ -154,10 +154,12 @@ int piece1()
             second_frame = false;
             Time::last_frame_time = Time::current_time;
             
-            clear_Ledmemory(8, 4);
-            clear_Ledmemory(7, 3);
-            clear_Ledmemory(7, 4);
-            clear_Ledmemory(7, 5);   
+            // clear_Ledmemory(8, 4);
+            // clear_Ledmemory(7, 3);
+            // clear_Ledmemory(7, 4);
+            // clear_Ledmemory(7, 5);
+            clear_frame(second_frame_rows, second_frame_cols, 
+            sizeof(second_frame_rows) / sizeof(second_frame_rows[0]));   
         }
         else
         {
@@ -172,18 +174,14 @@ int piece1()
                     // move one row down till it reaches first row
                     // clear pixels
                     clear_all_pixels();
-                    storeLed(i+1, 4, 0b00001101, 0b00000000, 00000000);
-                    storeLed(i, 3, 0b00001101, 0b00000000, 00000000);
-                    storeLed(i, 4, 0b00001101, 0b00000000, 00000000);
-                    storeLed(i, 5, 0b00001101, 0b00000000, 00000000);
-                    sendLed();
+
+                    call_frame(normal_frame_rows, normal_frame_cols, 
+                    sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]), color::green);
 
                     if (i > 1)
                     {
-                        clear_Ledmemory(i+1, 4);
-                        clear_Ledmemory(i, 3);
-                        clear_Ledmemory(i, 4);
-                        clear_Ledmemory(i, 5);
+                        clear_frame(normal_frame_rows, normal_frame_cols, 
+                        sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0])); 
                     }
                     --i;
                     Time::last_frame_time = Time::current_time;
