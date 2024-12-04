@@ -90,7 +90,7 @@ void call_frame(int *rows, int *cols, int size, std::int32_t grb)
 
 }
 
-void clear_frame(int *rows, int *cols, int size)
+void clear_frame(int *rows, int *cols, size_t size)
 {
     int *p = rows;
     int *p2 = cols;
@@ -122,7 +122,7 @@ int piece1()
             // storeLed(8, 4, 0b00001101, 0b00000000, 00000000);
             // storeLed(8, 5, 0b00001101, 0b00000000, 00000000);
             // sendLed();
-            call_frame(first_frame_rows, first_frame_cols, sizeof(first_frame_rows), color::green);
+            call_frame(first_frame_rows, first_frame_cols, sizeof(first_frame_rows) / sizeof(first_frame_rows[0]), color::green);
             if (check_Ledplacement(8-1, 4))
             {
                 return -1;
@@ -135,7 +135,7 @@ int piece1()
             // clear_Ledmemory(8, 3);
             // clear_Ledmemory(8, 4);
             // clear_Ledmemory(8, 5);
-            clear_frame(first_frame_rows, first_frame_cols, sizeof(first_frame_rows));
+            clear_frame(first_frame_rows, first_frame_cols, sizeof(first_frame_rows) / sizeof(first_frame_rows[0]));
         }
         else if (second_frame)
         {
