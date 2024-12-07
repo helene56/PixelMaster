@@ -70,7 +70,7 @@ void generate_piece()
     }
 }
 
-
+// refactor these two functions under here somehow, they almost do the same
 void call_frame(int *rows, int *cols, int size, std::int32_t grb)
 {
     int *p = rows;
@@ -88,6 +88,21 @@ void call_frame(int *rows, int *cols, int size, std::int32_t grb)
     sendLed();
         
 
+}
+
+void store_latestLed(int *rows, int *cols, int size, std::int32_t grb)
+{
+    std::uint8_t green = (grb >> 16) & 0xFF;  // Extract the red component (8 bits)
+    std::uint8_t red = (grb >> 8) & 0xFF; // Extract the green component (8 bits)
+    std::uint8_t blue = grb & 0xFF;         // Extract the blue component (8 bits)
+    int *p = rows;
+    int *p2 = cols;
+    for (int i = 0; i < size; ++i)
+    {  
+        storeLed(*p, *p2, green, red, blue);
+        ++p;
+        ++p2;
+    }
 }
 
 void clear_frame(int *rows, int *cols, size_t size)
@@ -118,6 +133,7 @@ int piece1()
     int second_frame_cols[4] {4, 3, 4, 5};
     int normal_frame_rows[4] {current_row+1, current_row, current_row, current_row};
     int normal_frame_cols[4] {4, 3, 4, 5};
+    size_t normal_frame_size = sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]);
 
     if (time_to_switch_frame())
     {
@@ -159,6 +175,7 @@ int piece1()
         {
             if (current_row >= 0)
             {
+                
                 if (check_Ledplacement(current_row, 4) || check_Ledplacement(current_row, 5) || check_Ledplacement(current_row, 3))
                 {
                     return -1;
@@ -172,7 +189,7 @@ int piece1()
                     call_frame(normal_frame_rows, normal_frame_cols, 
                     sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]), color::green);
 
-                    if (current_row > 1)
+                    if (current_row > 1 && !(check_Ledplacement(current_row-1, 4) || check_Ledplacement(current_row-1, 5) || check_Ledplacement(current_row-1, 3)))
                     {
                         clear_frame(normal_frame_rows, normal_frame_cols, 
                         sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0])); 
@@ -196,7 +213,13 @@ void piece2()
 
     static int i {8};
     static int j {7};
+    // static bool test_output {true};
 
+    // if (test_output)
+    // {
+    //     debug_Ledmemory();
+    //     test_output = !test_output;
+    // }
     // for now col is hardcoded
     if (first_frame)
     {
@@ -271,4 +294,4 @@ bool check_Ledplacement(int row, int col)
 // 2. add a function to check if row col is already taken up by one piece, 
 // if so, the other piece should stop moving
 // 3. apply 2. to the beginning frames of the piece as well and add to piece1 as well
-
+// 4. retain memoery of other piece when they stop moving
