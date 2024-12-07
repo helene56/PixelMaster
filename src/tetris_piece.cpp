@@ -188,7 +188,7 @@ int piece1()
 
                     call_frame(normal_frame_rows, normal_frame_cols, 
                     sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]), color::green);
-
+                    // check that the current row is above 1 and nothing is in its next row path, to clear ledmemory
                     if (current_row > 1 && !(check_Ledplacement(current_row-1, 4) || check_Ledplacement(current_row-1, 5) || check_Ledplacement(current_row-1, 3)))
                     {
                         clear_frame(normal_frame_rows, normal_frame_cols, 
@@ -212,15 +212,7 @@ void piece2()
     static bool first_frame {true};
 
     static int i {8};
-    static int j {7};
-    // static bool test_output {true};
 
-    // if (test_output)
-    // {
-    //     debug_Ledmemory();
-    //     test_output = !test_output;
-    // }
-    // for now col is hardcoded
     if (first_frame)
     {
         if (time_to_switch_frame())
@@ -243,37 +235,27 @@ void piece2()
         if (i == 5)
         {
             first_frame = !first_frame;
-            clear_Ledmemory(8, 4);
-            clear_Ledmemory(7, 4);
-            clear_Ledmemory(6, 4);
-            clear_Ledmemory(5, 4);
+
         }
     }
     // already the next placement because of the j-- at the end of the loop
-    else if (check_Ledplacement(j-3, 4))
+    else if (check_Ledplacement(i, 4) || i == 1)
     {
         return;
     }
     else if (time_to_switch_frame())
     {
-        if (j >= 4)
+        if (i >= 0)
         {
             // move one row down till it reaches first row
             // clear pixels
             clear_all_pixels();
-            storeLed(j, 4, 0b00001101, 0b00001101, 00000000);
-            storeLed(j-1, 4, 0b00001101, 0b00001101, 00000000);
-            storeLed(j-2, 4, 0b00001101, 0b00001101, 00000000);
-            storeLed(j-3, 4, 0b00001101, 0b00001101, 00000000);
+
+            storeLed(i, 4, 0b00001101, 0b00001101, 00000000);
+            clear_Ledmemory(i+4, 4);
             sendLed();
-            if (j > 4)
-            {
-                clear_Ledmemory(j, 4);
-                clear_Ledmemory(j-1, 4);
-                clear_Ledmemory(j-2, 4);
-                clear_Ledmemory(j-3, 4);
-            }
-            --j;
+
+            --i;
             Time::last_frame_time = Time::current_time;
         }
         
