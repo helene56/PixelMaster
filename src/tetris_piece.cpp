@@ -106,8 +106,10 @@ void clear_frame(int *rows, int *cols, size_t size)
 int piece1()
 {
     Time::current_time = to_ms_since_boot(get_absolute_time());
-    static bool first_frame {true};
-    static bool second_frame {false};
+
+    enum Framestate {first_frame, second_frame, normal_frame};
+    static Framestate current_frame {first_frame};
+
     static int current_row {6};
 
     int first_frame_rows[3] {8, 8, 8};
@@ -119,7 +121,7 @@ int piece1()
 
     if (time_to_switch_frame())
     {
-        if (first_frame)
+        if (current_frame == first_frame)
         {
 
             call_frame(first_frame_rows, first_frame_cols, 
@@ -128,14 +130,14 @@ int piece1()
             {
                 return -1;
             }
-            first_frame = false;
-            second_frame = true;
+
+            current_frame = second_frame;
             Time::last_frame_time = Time::current_time;
 
             clear_frame(first_frame_rows, first_frame_cols, 
             sizeof(first_frame_rows) / sizeof(first_frame_rows[0]));
         }
-        else if (second_frame)
+        else if (current_frame == second_frame)
         {
             // clear pixels on display
             clear_all_pixels();
@@ -146,7 +148,8 @@ int piece1()
             {
                 return -1;
             }
-            second_frame = false;
+
+            current_frame = normal_frame;
             Time::last_frame_time = Time::current_time;
             
             clear_frame(second_frame_rows, second_frame_cols, 
