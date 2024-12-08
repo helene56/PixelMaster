@@ -55,9 +55,9 @@ int main()
     // storeLed(7, 4, 0b00001101, 0b00001101, 00000000);
     // storeLed(7, 5, 0b00001101, 0b00001101, 00000000);
     // sendLed();
-    // sleep_ms(7000);
-    
-    storeLed(6, 4, 0b00001101, 0b00000000, 00000000);
+    sleep_ms(7000);
+
+    storeLed(2, 4, 0b0000000, 0b00001101, 0b0000000);
     sendLed();
 
     while (true) 
@@ -69,12 +69,8 @@ int main()
         // {
             
         // }
-        // piece1();
-        // if (piece1() <= 0)
-        // {
-        //     piece2();
-        // }
-        piece1();
+
+        generate_piece();
         
         // small delay for button to be read correctly
         sleep_ms(2);
