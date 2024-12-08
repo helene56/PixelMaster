@@ -31,6 +31,15 @@ namespace Time
     bool switch_frame = (current_time - last_frame_time >= interval);
 } // namespace Time
 
+
+namespace piece_settings
+{
+    enum Framestate {first_frame, second_frame, normal_frame};
+    static Framestate current_frame {first_frame};
+    static int current_row {6};
+} // namespace piece_settings
+
+
 bool time_to_switch_frame()
 {
     return (Time::current_time - Time::last_frame_time >= Time::interval);
@@ -53,27 +62,34 @@ int random_generator(std::uint16_t &X, int range)
 void generate_piece()
 {
     static int result {1};
-    printf("random num: %d\n", random::ran_num);
-    if (result <= 0)
+    // temp count otherwise the led will reset it self indefinitely. 
+    // needs some kind of look up to check if it should be refreshed or not..
+    // pieces have different length so only works with piece1
+    static int count {0};
+    if (result <= 0 && count < 3)
     {
-        printf("new random num\n");
+        // the piece that just ran should be reset now, but the last leds should remain
+        piece_settings::current_frame = piece_settings::first_frame;
+        piece_settings::current_row = 6;
         random::ran_num = random_generator(random::seed, 5);
         result = 1;
+        count++;
     }
-    
+
+    printf("current row: %d\n", piece_settings::current_row);
     switch (random::ran_num)
     {
     case 0:
         result = piece1();
         break;
     case 1:
-        result = piece2();
+        result = piece1();
         break;
     case 2:
         result = piece1();
         break;
     case 3:
-        result = piece2();
+        result = piece1();
         break;
     case 4:
         result = piece1();
@@ -133,54 +149,56 @@ void clear_frame(int *rows, int *cols, size_t size)
 }
 
 
+
+
 int piece1()
 {
     Time::current_time = to_ms_since_boot(get_absolute_time());
 
-    enum Framestate {first_frame, second_frame, normal_frame};
-    static Framestate current_frame {first_frame};
+    // enum Framestate {first_frame, second_frame, normal_frame};
+    // static Framestate current_frame {first_frame};
 
-    static int current_row {6};
+    // static int current_row {6};
 
     int first_frame_rows[3] {8, 8, 8};
     int first_frame_cols[3] {3, 4, 5};
     int second_frame_rows[4] {8, 7, 7, 7};
     int second_frame_cols[4] {4, 3, 4, 5};
-    int normal_frame_rows[4] {current_row+1, current_row, current_row, current_row};
+    int normal_frame_rows[4] {piece_settings::current_row+1, piece_settings::current_row, piece_settings::current_row, piece_settings::current_row};
     int normal_frame_cols[4] {4, 3, 4, 5};
     size_t normal_frame_size = sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]);
 
     if (time_to_switch_frame())
     {
-        if (current_frame == first_frame)
+        if (piece_settings::current_frame == piece_settings::first_frame)
         {
 
-            call_frame(first_frame_rows, first_frame_cols, 
-            sizeof(first_frame_rows) / sizeof(first_frame_rows[0]), color::green);
-            if (check_Ledplacement(8-1, 4))
+            if (check_Ledplacement(8, 4))
             {
                 return -1;
             }
-
-            current_frame = second_frame;
+            call_frame(first_frame_rows, first_frame_cols, 
+            sizeof(first_frame_rows) / sizeof(first_frame_rows[0]), color::green);
+            
+            piece_settings::current_frame = piece_settings::second_frame;
             Time::last_frame_time = Time::current_time;
 
             clear_frame(first_frame_rows, first_frame_cols, 
             sizeof(first_frame_rows) / sizeof(first_frame_rows[0]));
         }
-        else if (current_frame == second_frame)
+        else if (piece_settings::current_frame == piece_settings::second_frame)
         {
             // clear pixels on display
             clear_all_pixels();
-            // set new leds
-            call_frame(second_frame_rows, second_frame_cols, 
-            sizeof(second_frame_rows) / sizeof(second_frame_rows[0]), color::green);
-            if (check_Ledplacement(7-1, 4))
+            if (check_Ledplacement(8-1, 4))
             {
                 return -1;
             }
-
-            current_frame = normal_frame;
+            // set new leds
+            call_frame(second_frame_rows, second_frame_cols, 
+            sizeof(second_frame_rows) / sizeof(second_frame_rows[0]), color::green);
+            
+            piece_settings::current_frame = piece_settings::normal_frame;
             Time::last_frame_time = Time::current_time;
             
             clear_frame(second_frame_rows, second_frame_cols, 
@@ -188,10 +206,12 @@ int piece1()
         }
         else
         {
-            if (current_row >= 0)
+            if (piece_settings::current_row >= 0)
             {
                 
-                if (check_Ledplacement(current_row, 4) || check_Ledplacement(current_row, 5) || check_Ledplacement(current_row, 3))
+                if (check_Ledplacement(piece_settings::current_row, 4) || 
+                    check_Ledplacement(piece_settings::current_row, 5) || 
+                    check_Ledplacement(piece_settings::current_row, 3))
                 {
                     return -1;
                 }
@@ -204,19 +224,20 @@ int piece1()
                     call_frame(normal_frame_rows, normal_frame_cols, 
                     sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]), color::green);
                     // check that the current row is above 1 and nothing is in its next row path, to clear ledmemory
-                    if (current_row > 1 && !(check_Ledplacement(current_row-1, 4) || check_Ledplacement(current_row-1, 5) || check_Ledplacement(current_row-1, 3)))
+                    if (piece_settings::current_row > 1 && 
+                    !(check_Ledplacement(piece_settings::current_row-1, 4) || check_Ledplacement(piece_settings::current_row-1, 5) || check_Ledplacement(piece_settings::current_row-1, 3)))
                     {
                         clear_frame(normal_frame_rows, normal_frame_cols, 
                         sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0])); 
                     }
-                    --current_row;
+                    --piece_settings::current_row;
                     Time::last_frame_time = Time::current_time;
                 }
 
             }
         }
     }
-    return current_row;
+    return piece_settings::current_row;
 }
 
 // could probably refactor this a bit..
@@ -289,3 +310,4 @@ bool check_Ledplacement(int row, int col)
 
 // todo:
 // 4. retain memoery of other piece when they stop moving
+// 5. retain memory of the piece when it stopped moving and then reset the piece, so it can start its frames over.
