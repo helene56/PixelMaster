@@ -11,7 +11,7 @@
 namespace random
 {
     std::uint16_t seed {42};
-    static int ran_num {random_generator(seed, 5)};
+    int ran_num {random_generator(seed, 5)};
 } // namespace random
 
 
@@ -36,33 +36,47 @@ bool time_to_switch_frame()
     return (Time::current_time - Time::last_frame_time >= Time::interval);
 }
 
-int random_generator(std::uint16_t X, int range)
+int random_generator(std::uint16_t &X, int range)
 {
     X ^= (X << 13);  // XOR X with itself shifted left by 13 bits
     X ^= (X >> 17);  // XOR result with itself shifted right by 17 bits
     X ^= (X << 5);   // XOR result with itself shifted left by 5 bits
 
-    return X % range; // range of num 0-4
+    int result = X % range;
+    X ^= (X >> 5);  // Update seed to prepare for next call
+    // return X % range; // range of num 0-4
+    return result;
 }
 
 
 
 void generate_piece()
 {
-    printf("random number: %d\n", random::ran_num);
+    static int result {1};
+    printf("random num: %d\n", random::ran_num);
+    if (result <= 0)
+    {
+        printf("new random num\n");
+        random::ran_num = random_generator(random::seed, 5);
+        result = 1;
+    }
     
     switch (random::ran_num)
     {
     case 0:
-        piece1();
+        result = piece1();
         break;
     case 1:
+        result = piece2();
         break;
     case 2:
+        result = piece1();
         break;
     case 3:
+        result = piece2();
         break;
     case 4:
+        result = piece1();
         break;
     
     default:
@@ -105,6 +119,7 @@ void store_latestLed(int *rows, int *cols, int size, std::int32_t grb)
     }
 }
 
+// clear the rows and cols in ledmemory
 void clear_frame(int *rows, int *cols, size_t size)
 {
     int *p = rows;
@@ -204,8 +219,8 @@ int piece1()
     return current_row;
 }
 
-
-void piece2()
+// could probably refactor this a bit..
+int piece2()
 {
     // 4 dots: 4 rows, one column
     Time::current_time = to_ms_since_boot(get_absolute_time());
@@ -223,7 +238,7 @@ void piece2()
                 sendLed();
                 if (check_Ledplacement(i-1, 4))
                 {
-                    return;
+                    return -1;
                 }
                 --i;
                 Time::last_frame_time = Time::current_time;
@@ -241,7 +256,7 @@ void piece2()
     // already the next placement because of the j-- at the end of the loop
     else if (check_Ledplacement(i, 4) || i == 1)
     {
-        return;
+        return -1;
     }
     else if (time_to_switch_frame())
     {
@@ -260,6 +275,7 @@ void piece2()
         }
         
     }
+    return i;
     
 }
 
@@ -270,10 +286,6 @@ bool check_Ledplacement(int row, int col)
     return (led_memory[row - 1][col - 1] > 0);
 }
 
+
 // todo:
-// 1. make a way to store the different frames for the pieces, 
-// for easy clear_Ledmemory access, just to clean code up a bit
-// 2. add a function to check if row col is already taken up by one piece, 
-// if so, the other piece should stop moving
-// 3. apply 2. to the beginning frames of the piece as well and add to piece1 as well
 // 4. retain memoery of other piece when they stop moving
