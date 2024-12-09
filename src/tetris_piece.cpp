@@ -65,18 +65,27 @@ void generate_piece()
     // temp count otherwise the led will reset it self indefinitely. 
     // needs some kind of look up to check if it should be refreshed or not..
     // pieces have different length so only works with piece1
-    static int count {0};
-    if (result <= 0 && count < 3)
+    // static int count {0};
+    printf("ledmemory[8][4] = %d\n", led_memory[7][3]);
+    if (result <= 0 && !game_end())
     {
         // the piece that just ran should be reset now, but the last leds should remain
-        piece_settings::current_frame = piece_settings::first_frame;
-        piece_settings::current_row = 6;
+        // piece_settings::current_frame = piece_settings::first_frame;
+        // piece_settings::current_row = 6;
         random::ran_num = random_generator(random::seed, 5);
         result = 1;
-        count++;
+        // count++;
     }
-
-    printf("current row: %d\n", piece_settings::current_row);
+    // if (piece_settings::first_frame)
+    // {
+    //     printf("first frame\n");
+    // }
+    // else if (piece_settings::second_frame)
+    // {
+    //     printf("second frame\n");
+    // }
+    
+    
     switch (random::ran_num)
     {
     case 0:
@@ -177,23 +186,28 @@ int piece1()
             {
                 return -1;
             }
+            
             call_frame(first_frame_rows, first_frame_cols, 
             sizeof(first_frame_rows) / sizeof(first_frame_rows[0]), color::green);
             
             piece_settings::current_frame = piece_settings::second_frame;
             Time::last_frame_time = Time::current_time;
-
-            clear_frame(first_frame_rows, first_frame_cols, 
-            sizeof(first_frame_rows) / sizeof(first_frame_rows[0]));
+            
         }
         else if (piece_settings::current_frame == piece_settings::second_frame)
         {
-            // clear pixels on display
-            clear_all_pixels();
+            // // debug led light
+            // storeLed(8, 8, 0b0000000, 0b00001101, 0b0000000);
+            // sendLed();
+            // // debug led light
             if (check_Ledplacement(8-1, 4))
             {
                 return -1;
             }
+            clear_frame(first_frame_rows, first_frame_cols, 
+            sizeof(first_frame_rows) / sizeof(first_frame_rows[0]));
+            // clear pixels on display
+            clear_all_pixels();
             // set new leds
             call_frame(second_frame_rows, second_frame_cols, 
             sizeof(second_frame_rows) / sizeof(second_frame_rows[0]), color::green);
@@ -220,7 +234,7 @@ int piece1()
                     // move one row down till it reaches first row
                     // clear pixels
                     clear_all_pixels();
-
+                    // printf("hey\n");
                     call_frame(normal_frame_rows, normal_frame_cols, 
                     sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]), color::green);
                     // check that the current row is above 1 and nothing is in its next row path, to clear ledmemory
@@ -305,6 +319,23 @@ bool check_Ledplacement(int row, int col)
 {
 
     return (led_memory[row - 1][col - 1] > 0);
+}
+
+bool game_end()
+{
+    bool game_off {true};
+    for (int col = 0; col < 8; ++col)
+    {
+        for (int row = 0; row < 8; ++row)
+        {
+            if (led_memory[row][col] == 0)
+            {
+                game_off = false;
+            }
+        }
+    }
+    printf("game_off: %d\n", game_off);
+    return game_off;
 }
 
 
