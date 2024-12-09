@@ -62,10 +62,7 @@ int random_generator(std::uint16_t &X, int range)
 void generate_piece()
 {
     static int result {1};
-    // temp count otherwise the led will reset it self indefinitely. 
-    // needs some kind of look up to check if it should be refreshed or not..
-    // pieces have different length so only works with piece1
-    // static int count {0};
+
     printf("ledmemory[8][4] = %d\n", led_memory[7][3]);
     if (result <= 0 && !game_end())
     {
@@ -76,15 +73,6 @@ void generate_piece()
         result = 1;
         // count++;
     }
-    // if (piece_settings::first_frame)
-    // {
-    //     printf("first frame\n");
-    // }
-    // else if (piece_settings::second_frame)
-    // {
-    //     printf("second frame\n");
-    // }
-    
     
     switch (random::ran_num)
     {
