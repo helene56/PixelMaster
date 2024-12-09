@@ -70,8 +70,8 @@ void generate_piece()
     if (result <= 0 && !game_end())
     {
         // the piece that just ran should be reset now, but the last leds should remain
-        // piece_settings::current_frame = piece_settings::first_frame;
-        // piece_settings::current_row = 6;
+        piece_settings::current_frame = piece_settings::first_frame;
+        piece_settings::current_row = 6;
         random::ran_num = random_generator(random::seed, 5);
         result = 1;
         // count++;
@@ -204,6 +204,7 @@ int piece1()
             {
                 return -1;
             }
+            // clear first frame here
             clear_frame(first_frame_rows, first_frame_cols, 
             sizeof(first_frame_rows) / sizeof(first_frame_rows[0]));
             // clear pixels on display
@@ -214,9 +215,7 @@ int piece1()
             
             piece_settings::current_frame = piece_settings::normal_frame;
             Time::last_frame_time = Time::current_time;
-            
-            clear_frame(second_frame_rows, second_frame_cols, 
-            sizeof(second_frame_rows) / sizeof(second_frame_rows[0]));   
+               
         }
         else
         {
@@ -231,6 +230,9 @@ int piece1()
                 }
                 else
                 {
+                    // clear second frame here
+                    clear_frame(second_frame_rows, second_frame_cols, 
+                    sizeof(second_frame_rows) / sizeof(second_frame_rows[0])); 
                     // move one row down till it reaches first row
                     // clear pixels
                     clear_all_pixels();
