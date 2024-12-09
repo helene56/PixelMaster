@@ -196,10 +196,6 @@ int piece1()
         }
         else if (piece_settings::current_frame == piece_settings::second_frame)
         {
-            // // debug led light
-            // storeLed(8, 8, 0b0000000, 0b00001101, 0b0000000);
-            // sendLed();
-            // // debug led light
             if (check_Ledplacement(8-1, 4))
             {
                 return -1;
