@@ -67,11 +67,11 @@ void generate_piece()
     if (result <= 0 && !game_end())
     {
         // the piece that just ran should be reset now, but the last leds should remain
+        // need to add some resets for the second piece as well.. maybe some other way to keep it organized..
         piece_settings::current_frame = piece_settings::first_frame;
         piece_settings::current_row = 6;
         random::ran_num = random_generator(random::seed, 5);
         result = 1;
-        // count++;
     }
     
     switch (random::ran_num)
@@ -145,7 +145,42 @@ void clear_frame(int *rows, int *cols, size_t size)
     }
 }
 
-
+int play_piece()
+{
+    Time::current_time = to_ms_since_boot(get_absolute_time());
+    //somehow initialize use the pieces first frames, that are different from the rest
+    if (time_to_switch_frame())
+    {   
+        // if one of the first frames
+            // if (check_Ledplacement(row, col)) use the specific pieces conditions
+            // call_frame()
+            // switch frame to the next
+            // Time::last_frame_time = Time::current_time;
+        // if next frame is normal frame
+            // if (check_Ledplacement(row, col)) use the specific pieces conditions
+            // clear last frame
+            // clear_all_pixels();
+            // call_frame()
+            // check that the next place is bottom or occupied
+            // if bottom or occopied, return -1
+            // else go to next row, update time
+        // if next frame is unique
+            //if (check_Ledplacement(row, col)) use the specific pieces conditions
+            // clear frame
+            // clear_all_pixels();
+            // call_frame()
+            // switch to next frame
+            // Time::last_frame_time = Time::current_time;
+        // if frames (first or unique)
+            //if (check_Ledplacement(row, col)) use the specific pieces conditions
+            // if unique
+                // clear frame
+                // clear_all_pixels();
+            // call_frame()
+            // switch to next frame
+            // Time::last_frame_time = Time::current_time;
+    }
+}
 
 
 int piece1()
@@ -326,5 +361,6 @@ bool game_end()
 
 
 // todo:
+// 3. make a function for pieces, that will work with multiple pieces, so avoiding repeating code
 // 4. retain memoery of other piece when they stop moving
 // 5. retain memory of the piece when it stopped moving and then reset the piece, so it can start its frames over.
