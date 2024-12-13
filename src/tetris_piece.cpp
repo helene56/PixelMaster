@@ -149,6 +149,7 @@ int play_piece()
 {
     Time::current_time = to_ms_since_boot(get_absolute_time());
     //somehow initialize use the pieces first frames, that are different from the rest
+    // maybe an enum so: first_frame, normal_frame, or could be first_frame, second_frame, normal_frame
     if (time_to_switch_frame())
     {   
         // if next frame is normal frame
