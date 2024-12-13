@@ -151,11 +151,6 @@ int play_piece()
     //somehow initialize use the pieces first frames, that are different from the rest
     if (time_to_switch_frame())
     {   
-        // if one of the first frames
-            // if (check_Ledplacement(row, col)) use the specific pieces conditions
-            // call_frame()
-            // switch frame to the next
-            // Time::last_frame_time = Time::current_time;
         // if next frame is normal frame
             // if (check_Ledplacement(row, col)) use the specific pieces conditions
             // clear last frame
@@ -164,13 +159,6 @@ int play_piece()
             // check that the next place is bottom or occupied
             // if bottom or occopied, return -1
             // else go to next row, update time
-        // if next frame is unique
-            //if (check_Ledplacement(row, col)) use the specific pieces conditions
-            // clear frame
-            // clear_all_pixels();
-            // call_frame()
-            // switch to next frame
-            // Time::last_frame_time = Time::current_time;
         // if frames (first or unique)
             //if (check_Ledplacement(row, col)) use the specific pieces conditions
             // if unique
