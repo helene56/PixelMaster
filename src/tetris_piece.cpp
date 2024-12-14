@@ -23,13 +23,16 @@ namespace Pattern
         PATTERN2,
         PATTERN3,
         PATTERN4,
-        NORMAL
+        NORMAL,
+        LAST_PATTERN = NORMAL // explicitly setting the last item
     };
+    bool initialized_piece {false};
     // define the frame struct
     struct Tetrispiece
     {
         static const int max_rows {4};
         static const int max_cols {2};
+        // initialize these variables
         int current_row {0};
         int pattern1[max_rows][max_cols];
         int pattern2[max_rows][max_cols];
@@ -37,14 +40,24 @@ namespace Pattern
         int pattern4[max_rows][max_cols];
         int normal_pattern[max_rows][max_cols];
         std::uint32_t color {0};
+        int patterns_holder[5];
+        // do not initialize
+        patterns current_pattern {PATTERN1};
+        void (*stop_moving)(); // funciton pointer for desired behavior
+        // function for behaviour
+        void stop(void (*func)())
+        {
+            stop_moving = func;
+        }
+        
     };
     
     // declare frames
     // piece1
     static int p1_row {6}; // consider passing this as a variable to functions instead of global variable
-    void initializePiece()
+    void initializePiece(Tetrispiece &piece)
     {
-        Tetrispiece piece1 
+        piece =
         {
             p1_row,      // current row 
             {            // pattern1
@@ -67,9 +80,10 @@ namespace Pattern
                 {p1_row,   4},
                 {p1_row,   5}
             },
-            color::green
+            color::green,         
         };
         
+        initialized_piece = true;
     }
     
     
@@ -122,6 +136,15 @@ int random_generator(std::uint16_t &X, int range)
 
 void generate_piece()
 {
+    Pattern::Tetrispiece piece11;
+    int (*patterns[5])[4][2];
+    if (!Pattern::initialized_piece)
+    {
+        Pattern::initializePiece(piece11);
+        int (*patterns[5])[4][2] = {&piece11.pattern1, &piece11.pattern2, 
+                                    &piece11.pattern3, &piece11.pattern4, 
+                                    &piece11.normal_pattern};
+    }
     static int result {1};
 
     printf("ledmemory[8][4] = %d\n", led_memory[7][3]);
@@ -138,19 +161,24 @@ void generate_piece()
     switch (random::ran_num)
     {
     case 0:
-        result = piece1();
+        // result = piece1();
+        result = play_piece(piece11, patterns);
         break;
     case 1:
-        result = piece1();
+        // result = piece1();
+        result = play_piece(piece11, patterns);
         break;
     case 2:
-        result = piece1();
+        // result = piece1();
+        result = play_piece(piece11, patterns);
         break;
     case 3:
-        result = piece1();
+        // result = piece1();
+        result = play_piece(piece11, patterns);
         break;
     case 4:
-        result = piece1();
+        // result = piece1();
+        result = play_piece(piece11, patterns);
         break;
     
     default:
@@ -206,31 +234,36 @@ void clear_frame(int *rows, int *cols, size_t size)
     }
 }
 
-// int play_piece()
-// {
-//     Time::current_time = to_ms_since_boot(get_absolute_time());
-//     //somehow initialize use the pieces first frames, that are different from the rest
-//     // maybe an enum so: first_frame, normal_frame, or could be first_frame, second_frame, normal_frame
-//     if (time_to_switch_frame())
-//     {   
-//         // if next frame is normal frame
-//             // if (check_Ledplacement(row, col)) use the specific pieces conditions
-//             // clear last frame
-//             // clear_all_pixels();
-//             // call_frame()
-//             // check that the next place is bottom or occupied
-//             // if bottom or occopied, return -1
-//             // else go to next row, update time
-//         // if frames (first or unique)
-//             //if (check_Ledplacement(row, col)) use the specific pieces conditions
-//             // if unique
-//                 // clear frame
-//                 // clear_all_pixels();
-//             // call_frame()
-//             // switch to next frame
-//             // Time::last_frame_time = Time::current_time;
-//     }
-// }
+int play_piece(Pattern::Tetrispiece &piece, int (*patterns[5])[4][2])
+{
+    Time::current_time = to_ms_since_boot(get_absolute_time());
+    //somehow initialize use the pieces first frames, that are different from the rest
+    // maybe an enum so: first_frame, normal_frame, or could be first_frame, second_frame, normal_frame
+    int (*current_pattern_array)[4][2] = patterns[piece.current_pattern]; // dereference to get the correct pattern
+    if (time_to_switch_frame())
+    {   
+        // if next frame is normal frame
+            // if (check_Ledplacement(row, col)) use the specific pieces conditions
+            // clear last frame
+            // clear_all_pixels();
+            // call_frame()
+            // check that the next place is bottom or occupied
+            // if bottom or occopied, return -1
+            // else go to next row, update time
+        // if frames (first or unique)
+            //if (check_Ledplacement(row, col)) use the specific pieces conditions
+            // if unique
+                // clear frame
+                // clear_all_pixels();
+            // call_frame()
+            // switch to next frame
+            // Time::last_frame_time = Time::current_time;
+        if (piece.current_pattern != Pattern::LAST_PATTERN)
+        {
+
+        }
+    }
+}
 
 
 int piece1()
