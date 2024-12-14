@@ -28,66 +28,47 @@ namespace Pattern
     // define the frame struct
     struct Tetrispiece
     {
-        // use the word pattern instead of frame?
-        static const int max_rows {8};
-        static const int max_cols {8};
-        static const int max_frames {3};
+        static const int max_rows {4};
+        static const int max_cols {2};
         int current_row {0};
-        int pattern1[max_rows][max_cols] {0};
-        int pattern2[max_rows][max_cols] {0};
-        int pattern3[max_rows][max_cols] {0};
-        int pattern4[max_rows][max_cols] {0};
-        int normal_pattern[max_rows][max_cols] {0};
+        int pattern1[max_rows][max_cols];
+        int pattern2[max_rows][max_cols];
+        int pattern3[max_rows][max_cols];
+        int pattern4[max_rows][max_cols];
+        int normal_pattern[max_rows][max_cols];
         std::uint32_t color {0};
     };
     
     // declare frames
     // piece1
-    static int p1_row {6};
-    int p1_pattern1[3][2]
-    {
-        {8, 3},  // Row 1
-        {8, 4},  // Row 2
-        {8, 5}   // Row 3
-    };
-    int p1_pattern2[4][2]
-    {
-        {8, 4},
-        {7, 3},
-        {7, 4},
-        {7, 5}
-    };
-    int p1_normal[4][2]
-    {
-        {p1_row+1, 4},
-        {p1_row,   3},
-        {p1_row,   4},
-        {p1_row,   5}
-    };
-
-    void initializeArray(size_t row, size_t col, int patternArray[][8], int *array)
-    {
-        int *p {array};
-        for (size_t i = 0; i < row; ++i)
-        {
-            for (size_t j = 0; j < col; ++j)
-            {
-                patternArray[i][j] = *p;
-                ++p;
-            }
-            
-        }
-    }
-
+    static int p1_row {6}; // consider passing this as a variable to functions instead of global variable
     void initializePiece()
     {
-        Tetrispiece piece1;
-        piece1.current_row = p1_row;
-        // the rest of the array is filled with 0, either this or i need to make arrays dynamically
-        initializeArray(3, 2, piece1.pattern1, &p1_pattern1[0][0]);
-        initializeArray(4, 2, piece1.pattern2, &p1_pattern2[0][0]);
-        initializeArray(4, 2, piece1.normal_pattern, &p1_normal[0][0]);
-        piece1.color = color::green;
+        Tetrispiece piece1 
+        {
+            p1_row,      // current row 
+            {            // pattern1
+                {8, 3},  // Row 1
+                {8, 4},  // Row 2
+                {8, 5}   // Row 3
+            },
+            {            // pattern2
+                {8, 4},
+                {7, 3},
+                {7, 4},
+                {7, 5}
+            },
+            {0},         // pattern3
+            {0},         // pattern4
+            {            // normal
+                {p1_row+1, 4},
+                {p1_row,   3},
+                {p1_row,   4},
+                {p1_row,   5}
+            },
+            color::green
+        };
+        
     }
     
     
