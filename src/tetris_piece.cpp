@@ -51,6 +51,7 @@ namespace Pattern
                 {8, 3},  // Row 1
                 {8, 4},  // Row 2
                 {8, 5}   // Row 3
+                // this will be initialized as 0.. need to rework the code to only work with + numbers
             },
             {            // pattern2
                 {8, 4},
