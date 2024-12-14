@@ -15,6 +15,85 @@ namespace random
 } // namespace random
 
 
+namespace Pattern
+{
+    enum patterns
+    {
+        PATTERN1,
+        PATTERN2,
+        PATTERN3,
+        PATTERN4,
+        NORMAL
+    };
+    // define the frame struct
+    struct Tetrispiece
+    {
+        // use the word pattern instead of frame?
+        static const int max_rows {8};
+        static const int max_cols {8};
+        static const int max_frames {3};
+        int current_row {0};
+        int pattern1[max_rows][max_cols] {0};
+        int pattern2[max_rows][max_cols] {0};
+        int pattern3[max_rows][max_cols] {0};
+        int pattern4[max_rows][max_cols] {0};
+        int normal_pattern[max_rows][max_cols] {0};
+        std::uint32_t color {0};
+    };
+    
+    // declare frames
+    // piece1
+    static int p1_row {6};
+    int p1_pattern1[3][2]
+    {
+        {8, 3},  // Row 1
+        {8, 4},  // Row 2
+        {8, 5}   // Row 3
+    };
+    int p1_pattern2[4][2]
+    {
+        {8, 4},
+        {7, 3},
+        {7, 4},
+        {7, 5}
+    };
+    int p1_normal[4][2]
+    {
+        {p1_row+1, 4},
+        {p1_row,   3},
+        {p1_row,   4},
+        {p1_row,   5}
+    };
+
+    void initializeArray(size_t row, size_t col, int patternArray[][8], int *array)
+    {
+        int *p {array};
+        for (size_t i = 0; i < row; ++i)
+        {
+            for (size_t j = 0; j < col; ++j)
+            {
+                patternArray[i][j] = *p;
+                ++p;
+            }
+            
+        }
+    }
+
+    void initializePiece()
+    {
+        Tetrispiece piece1;
+        piece1.current_row = p1_row;
+        // the rest of the array is filled with 0, either this or i need to make arrays dynamically
+        initializeArray(3, 2, piece1.pattern1, &p1_pattern1[0][0]);
+        initializeArray(4, 2, piece1.pattern2, &p1_pattern2[0][0]);
+        initializeArray(4, 2, piece1.normal_pattern, &p1_normal[0][0]);
+        piece1.color = color::green;
+    }
+    
+    
+} // namespace Pattern
+
+
 namespace color
 {
     std::uint32_t green = (0b00001101 << 16) | (0b00000000 << 8) | 0b00000000;
@@ -145,31 +224,31 @@ void clear_frame(int *rows, int *cols, size_t size)
     }
 }
 
-int play_piece()
-{
-    Time::current_time = to_ms_since_boot(get_absolute_time());
-    //somehow initialize use the pieces first frames, that are different from the rest
-    // maybe an enum so: first_frame, normal_frame, or could be first_frame, second_frame, normal_frame
-    if (time_to_switch_frame())
-    {   
-        // if next frame is normal frame
-            // if (check_Ledplacement(row, col)) use the specific pieces conditions
-            // clear last frame
-            // clear_all_pixels();
-            // call_frame()
-            // check that the next place is bottom or occupied
-            // if bottom or occopied, return -1
-            // else go to next row, update time
-        // if frames (first or unique)
-            //if (check_Ledplacement(row, col)) use the specific pieces conditions
-            // if unique
-                // clear frame
-                // clear_all_pixels();
-            // call_frame()
-            // switch to next frame
-            // Time::last_frame_time = Time::current_time;
-    }
-}
+// int play_piece()
+// {
+//     Time::current_time = to_ms_since_boot(get_absolute_time());
+//     //somehow initialize use the pieces first frames, that are different from the rest
+//     // maybe an enum so: first_frame, normal_frame, or could be first_frame, second_frame, normal_frame
+//     if (time_to_switch_frame())
+//     {   
+//         // if next frame is normal frame
+//             // if (check_Ledplacement(row, col)) use the specific pieces conditions
+//             // clear last frame
+//             // clear_all_pixels();
+//             // call_frame()
+//             // check that the next place is bottom or occupied
+//             // if bottom or occopied, return -1
+//             // else go to next row, update time
+//         // if frames (first or unique)
+//             //if (check_Ledplacement(row, col)) use the specific pieces conditions
+//             // if unique
+//                 // clear frame
+//                 // clear_all_pixels();
+//             // call_frame()
+//             // switch to next frame
+//             // Time::last_frame_time = Time::current_time;
+//     }
+// }
 
 
 int piece1()
