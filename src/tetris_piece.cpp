@@ -40,7 +40,6 @@ namespace Pattern
         int pattern4[max_rows][max_cols];
         int normal_pattern[max_rows][max_cols];
         std::uint32_t color {0};
-        int patterns_holder[5];
         // do not initialize
         patterns current_pattern {PATTERN1};
         void (*stop_moving)(); // funciton pointer for desired behavior
@@ -84,6 +83,15 @@ namespace Pattern
         };
         
         initialized_piece = true;
+    }
+
+    void initializePatterns(Tetrispiece &piece, int (*(&patterns)[5])[4][2])
+    {
+        patterns[0] = &piece.pattern1;
+        patterns[1] = &piece.pattern2;
+        patterns[2] = &piece.pattern3;
+        patterns[3] = &piece.pattern4;
+        patterns[4] = &piece.normal_pattern;
     }
     
     
@@ -136,18 +144,15 @@ int random_generator(std::uint16_t &X, int range)
 
 void generate_piece()
 {
-    Pattern::Tetrispiece piece11;
-    int (*patterns[5])[4][2];
+    static Pattern::Tetrispiece piece11;
+    static int (*patterns[5])[4][2];
     if (!Pattern::initialized_piece)
     {
         Pattern::initializePiece(piece11);
-        int (*patterns[5])[4][2] = {&piece11.pattern1, &piece11.pattern2, 
-                                    &piece11.pattern3, &piece11.pattern4, 
-                                    &piece11.normal_pattern};
+        Pattern::initializePatterns(piece11, patterns)
     }
     static int result {1};
 
-    printf("ledmemory[8][4] = %d\n", led_memory[7][3]);
     if (result <= 0 && !game_end())
     {
         // the piece that just ran should be reset now, but the last leds should remain
