@@ -40,16 +40,30 @@ namespace Pattern
         int pattern4[max_rows][max_cols];
         int normal_pattern[max_rows][max_cols];
         std::uint32_t color {0};
+        int (*stop_moving1)() {NULL}; // function pointer for desired behavior
+        int (*stop_moving2)() {NULL};
+        int (*stop_moving3)() {NULL};
+        int (*stop_moving4)() {NULL};
+        int (*stop_moving_normal)() {NULL};
         // do not initialize
         patterns current_pattern {PATTERN1};
-        void (*stop_moving)(); // funciton pointer for desired behavior
         // function for behaviour
-        void stop(void (*func)())
+        void set_stop(int (*func)(), int (**stop_func)())
         {
-            stop_moving = func;
+            *stop_func = func;
         }
         
     };
+
+    // stop moving functions
+    // piece1
+    int p1_stop_moving1()
+    {
+        if (check_Ledplacement(8, 4))
+            {
+                return -1;
+            }
+    }
     
     // declare frames
     // piece1
@@ -79,9 +93,11 @@ namespace Pattern
                 {p1_row,   4},
                 {p1_row,   5}
             },
-            color::green,         
+            color::green,       
         };
-        
+        // set stop moving functions
+        piece.set_stop(p1_stop_moving1, &piece.stop_moving1);
+        // piece is initialized
         initialized_piece = true;
     }
 
@@ -93,7 +109,11 @@ namespace Pattern
         patterns[3] = &piece.pattern4;
         patterns[4] = &piece.normal_pattern;
     }
-    
+
+    void initialize_stop_functions()
+    {
+        // int (*stop_moving[4])() {stop_moving_strategy1, stop_moving_strategy2, stop_moving_strategy3, stop_moving_normal};
+    }
     
 } // namespace Pattern
 
@@ -149,7 +169,7 @@ void generate_piece()
     if (!Pattern::initialized_piece)
     {
         Pattern::initializePiece(piece11);
-        Pattern::initializePatterns(piece11, patterns)
+        Pattern::initializePatterns(piece11, patterns);
     }
     static int result {1};
 
