@@ -262,7 +262,7 @@ void call_frame(int *rows, int *cols, int size, std::int32_t grb)
             storeLed(*p, *p2, green, red, blue);
             ++p;
             ++p2;
-        }  
+        }
     }
     sendLed();
 }
@@ -324,6 +324,9 @@ int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
         // switch to next frame
         // Time::last_frame_time = Time::current_time;
 
+        // keeps track of the rows and cols, only update when needed
+        int static current_rows[piece.max_rows] {0};
+        int static current_cols[piece.max_rows] {0};
         // if the piece pattern is not normal yet
         if (piece.current_pattern != Pattern::LAST_PATTERN)
         {
@@ -334,19 +337,33 @@ int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
 
             if (piece.current_pattern == Pattern::PATTERN1)
             {
-                // gives the number of rows
-                int array_size = sizeof(current_pattern_array) / sizeof(current_pattern_array[0]);
 
-                // make the col and row arrays now with correct size
-                int current_rows[array_size] {0};
-                int current_cols[array_size] {0};
-                for (int i = 0; i < array_size; ++i)
+                for (int i = 0; i < piece.max_rows; ++i)
                 {
                     current_rows[i] = (*current_pattern_array)[i][0];
                     current_cols[i] = (*current_pattern_array)[i][1];
                 }
-                call_frame(current_rows, current_cols, array_size, color::green);
+                call_frame(current_rows, current_cols, piece.max_rows, piece.color);
                 piece.current_pattern = switch_pattern(piece, patterns);
+                Time::last_frame_time = Time::current_time;
+            }
+            else
+            {
+                // clear previous patterns
+                // clear first frame here
+                clear_frame(current_rows, current_cols, piece.max_rows);
+                // clear pixels on display
+                clear_all_pixels();
+                // set new leds
+                for (int i = 0; i < piece.max_rows; ++i)
+                {
+                    current_rows[i] = (*current_pattern_array)[i][0];
+                    current_cols[i] = (*current_pattern_array)[i][1];
+                }
+                call_frame(current_rows, current_cols, piece.max_rows, piece.color);
+                // update pattern setting
+                piece.current_pattern = switch_pattern(piece, patterns);
+                // update time
                 Time::last_frame_time = Time::current_time;
             }
         }
