@@ -1,18 +1,9 @@
-BasedOnStyle: LLVM
 IndentWidth: 4
+NamespaceIndentation: All
 BreakBeforeBraces: Allman
-BraceWrapping:
-  AfterFunction: true
-  AfterControlStatement: true
-  AfterNamespace: true
-  AfterClass: true
-  AfterStruct: true
-  AfterUnion: true
-  IndentBraces: true
-SpaceBeforeParens: ControlStatements
 SpaceBeforeCpp11BracedList: true
-
-
-
-
-
+AlignConsecutiveAssignments: true
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 2
+  MaxEmptyLinesToKeep: 2
