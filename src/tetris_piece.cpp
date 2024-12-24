@@ -239,13 +239,11 @@ void generate_piece()
 // refactor these two functions under here somehow, they almost do the same
 void call_frame(int *rows, int *cols, int size, std::int32_t grb)
 {
-    int *p  = rows;
-    int *p2 = cols;
-    std::uint8_t green =
-        (grb >> 16) & 0xFF;         // Extract the red component (8 bits)
-    std::uint8_t red =
-        (grb >> 8) & 0xFF;          // Extract the green component (8 bits)
-    std::uint8_t blue = grb & 0xFF; // Extract the blue component (8 bits)
+    int *p             = rows;
+    int *p2            = cols;
+    std::uint8_t green = (grb >> 16) & 0xFF; // Extract the red component (8 bits)
+    std::uint8_t red   = (grb >> 8) & 0xFF;  // Extract the green component (8 bits)
+    std::uint8_t blue  = grb & 0xFF;         // Extract the blue component (8 bits)
 
     for (int i = 0; i < size; ++i)
     {
@@ -258,13 +256,11 @@ void call_frame(int *rows, int *cols, int size, std::int32_t grb)
 
 void store_latestLed(int *rows, int *cols, int size, std::int32_t grb)
 {
-    std::uint8_t green =
-        (grb >> 16) & 0xFF;         // Extract the red component (8 bits)
-    std::uint8_t red =
-        (grb >> 8) & 0xFF;          // Extract the green component (8 bits)
-    std::uint8_t blue = grb & 0xFF; // Extract the blue component (8 bits)
-    int *p            = rows;
-    int *p2           = cols;
+    std::uint8_t green = (grb >> 16) & 0xFF; // Extract the red component (8 bits)
+    std::uint8_t red   = (grb >> 8) & 0xFF;  // Extract the green component (8 bits)
+    std::uint8_t blue  = grb & 0xFF;         // Extract the blue component (8 bits)
+    int *p             = rows;
+    int *p2            = cols;
     for (int i = 0; i < size; ++i)
     {
         storeLed(*p, *p2, green, red, blue);
@@ -294,8 +290,7 @@ int play_piece(Pattern::Tetrispiece &piece, int (*patterns[5])[4][2])
     //  maybe an enum so: first_frame, normal_frame, or could be first_frame,
     //  second_frame, normal_frame
     int(*current_pattern_array)[4][2] =
-        patterns[piece.current_pattern]; // dereference to get the correct
-                                         // pattern
+        patterns[piece.current_pattern]; // dereference to get the correct pattern
     if (time_to_switch_frame())
     {
         // if next frame is normal frame
@@ -314,6 +309,8 @@ int play_piece(Pattern::Tetrispiece &piece, int (*patterns[5])[4][2])
         // call_frame()
         // switch to next frame
         // Time::last_frame_time = Time::current_time;
+
+        // if the piece is not normal yet
         if (piece.current_pattern != Pattern::LAST_PATTERN)
         {
         }
@@ -333,12 +330,10 @@ int piece1()
     int first_frame_cols[3] {3, 4, 5};
     int second_frame_rows[4] {8, 7, 7, 7};
     int second_frame_cols[4] {4, 3, 4, 5};
-    int normal_frame_rows[4] {
-        piece_settings::current_row + 1, piece_settings::current_row,
-        piece_settings::current_row, piece_settings::current_row};
+    int normal_frame_rows[4] {piece_settings::current_row + 1, piece_settings::current_row,
+                              piece_settings::current_row, piece_settings::current_row};
     int normal_frame_cols[4] {4, 3, 4, 5};
-    size_t normal_frame_size =
-        sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]);
+    size_t normal_frame_size = sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]);
 
     if (time_to_switch_frame())
     {
@@ -351,8 +346,7 @@ int piece1()
             }
 
             call_frame(first_frame_rows, first_frame_cols,
-                       sizeof(first_frame_rows) / sizeof(first_frame_rows[0]),
-                       color::green);
+                       sizeof(first_frame_rows) / sizeof(first_frame_rows[0]), color::green);
 
             piece_settings::current_frame = piece_settings::second_frame;
             Time::last_frame_time         = Time::current_time;
@@ -370,8 +364,7 @@ int piece1()
             clear_all_pixels();
             // set new leds
             call_frame(second_frame_rows, second_frame_cols,
-                       sizeof(second_frame_rows) / sizeof(second_frame_rows[0]),
-                       color::green);
+                       sizeof(second_frame_rows) / sizeof(second_frame_rows[0]), color::green);
 
             piece_settings::current_frame = piece_settings::normal_frame;
             Time::last_frame_time         = Time::current_time;
@@ -391,29 +384,23 @@ int piece1()
                 {
                     // clear second frame here
                     clear_frame(second_frame_rows, second_frame_cols,
-                                sizeof(second_frame_rows) /
-                                    sizeof(second_frame_rows[0]));
+                                sizeof(second_frame_rows) / sizeof(second_frame_rows[0]));
                     // move one row down till it reaches first row
                     // clear pixels
                     clear_all_pixels();
                     // printf("hey\n");
                     call_frame(normal_frame_rows, normal_frame_cols,
-                               sizeof(normal_frame_rows) /
-                                   sizeof(normal_frame_rows[0]),
+                               sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]),
                                color::green);
                     // check that the current row is above 1 and nothing is in
                     // its next row path, to clear ledmemory
                     if (piece_settings::current_row > 1 &&
-                        !(check_Ledplacement(piece_settings::current_row - 1,
-                                             4) ||
-                          check_Ledplacement(piece_settings::current_row - 1,
-                                             5) ||
-                          check_Ledplacement(piece_settings::current_row - 1,
-                                             3)))
+                        !(check_Ledplacement(piece_settings::current_row - 1, 4) ||
+                          check_Ledplacement(piece_settings::current_row - 1, 5) ||
+                          check_Ledplacement(piece_settings::current_row - 1, 3)))
                     {
                         clear_frame(normal_frame_rows, normal_frame_cols,
-                                    sizeof(normal_frame_rows) /
-                                        sizeof(normal_frame_rows[0]));
+                                    sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]));
                     }
                     --piece_settings::current_row;
                     Time::last_frame_time = Time::current_time;
@@ -480,11 +467,7 @@ int piece2()
     return i;
 }
 
-bool check_Ledplacement(int row, int col)
-{
-
-    return (led_memory[row - 1][col - 1] > 0);
-}
+bool check_Ledplacement(int row, int col) { return (led_memory[row - 1][col - 1] > 0); }
 
 bool game_end()
 {
