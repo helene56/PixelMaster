@@ -42,8 +42,6 @@ namespace Pattern
         std::uint32_t color {0};
         // do not initialize
         patterns_state current_pattern {PATTERN1};
-        // function for behaviour
-        void set_stop(int (*func)(), int (**stop_func)()) { *stop_func = func; }
     };
 
     // a general function to stop pieces from moving.
@@ -116,6 +114,39 @@ namespace Pattern
         patterns[2] = &piece.pattern3;
         patterns[3] = &piece.pattern4;
         patterns[4] = &piece.normal_pattern;
+    }
+
+    constexpr int patterns_state_count {6}; // including last pattern twice
+    // returns the next pattern in order
+    patterns_state switch_pattern(Tetrispiece &piece, int (*(&patterns)[5])[4][2])
+    {
+        if (piece.current_pattern != LAST_PATTERN)
+        {
+            bool all_zero {true};
+            int index                   = static_cast<int>(piece.current_pattern) + 1;
+            int(*current_pattern)[4][2] = patterns[index];
+
+            int size {sizeof(current_pattern) / sizeof(current_pattern[0])};
+            for (int i = 0; i < size; ++i)
+            {
+                if (current_pattern[i] > 0)
+                {
+                    all_zero = false;
+                }
+            }
+            // if it is not all 0, meaning there is a next pattern, return that pattern
+            if (!all_zero)
+            {
+                return static_cast<patterns_state>((static_cast<int>(piece.current_pattern) + 1) %
+                                                   patterns_state_count);
+            }
+            // if it is all 0, it means that there are no more unique patterns and it should be set
+            // to normal
+            else
+            {
+                return NORMAL;
+            }
+        }
     }
 
 } // namespace Pattern
@@ -300,9 +331,8 @@ int play_piece(Pattern::Tetrispiece &piece, int (*patterns[5])[4][2])
             {
                 call_frame;
                 piece.current_pattern == Pattern::PATTERN2;
-                Time::last_frame_time         = Time::current_time;
+                Time::last_frame_time = Time::current_time;
             }
-
         }
     }
 }
