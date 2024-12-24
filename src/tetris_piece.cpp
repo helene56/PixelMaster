@@ -17,7 +17,7 @@ namespace random
 
 namespace Pattern
 {
-    enum patterns
+    enum patterns_state
     {
         PATTERN1,
         PATTERN2,
@@ -33,6 +33,7 @@ namespace Pattern
         static const int max_rows {4};
         static const int max_cols {2};
         // initialize these variables
+        int id {0};
         int current_row {0};
         int pattern1[max_rows][max_cols];
         int pattern2[max_rows][max_cols];
@@ -46,7 +47,7 @@ namespace Pattern
         int (*stop_moving4)() {NULL};
         int (*stop_moving_normal)() {NULL};
         // do not initialize
-        patterns current_pattern {PATTERN1};
+        patterns_state current_pattern {PATTERN1};
         // function for behaviour
         void set_stop(int (*func)(), int (**stop_func)())
         {
@@ -64,14 +65,42 @@ namespace Pattern
                 return -1;
             }
     }
+    // a general function to stop pieces from moving.
+    // provide an id to identify the specific conditon.
+    bool piece_stop_moving(int id, const Tetrispiece &piece)
+    {
+        switch (id)
+        {
+        case 1:
+            if (piece.current_pattern == PATTERN1)
+            {
+               return (check_Ledplacement(8, 4)); 
+            }
+            else if (piece.current_pattern == PATTERN2)
+            {
+                return (check_Ledplacement(8-1, 4));
+            }
+            else if (piece.current_row >= 0)
+            {
+                return ((check_Ledplacement(piece_settings::current_row, 4) || 
+                    check_Ledplacement(piece_settings::current_row, 5) || 
+                    check_Ledplacement(piece_settings::current_row, 3)));
+            }
+        
+        default:
+            break;
+        }
+    }
     
     // declare frames
     // piece1
     static int p1_row {6}; // consider passing this as a variable to functions instead of global variable
+    int p1_id {1};
     void initializePiece(Tetrispiece &piece)
     {
         piece =
         {
+            p1_id,       // id
             p1_row,      // current row 
             {            // pattern1
                 {8, 3},  // Row 1
