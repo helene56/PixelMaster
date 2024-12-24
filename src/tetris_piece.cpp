@@ -40,26 +40,12 @@ namespace Pattern
         int pattern4[max_rows][max_cols];
         int normal_pattern[max_rows][max_cols];
         std::uint32_t color {0};
-        int (*stop_moving1)() {NULL}; // function pointer for desired behavior
-        int (*stop_moving2)() {NULL};
-        int (*stop_moving3)() {NULL};
-        int (*stop_moving4)() {NULL};
-        int (*stop_moving_normal)() {NULL};
         // do not initialize
         patterns_state current_pattern {PATTERN1};
         // function for behaviour
         void set_stop(int (*func)(), int (**stop_func)()) { *stop_func = func; }
     };
 
-    // stop moving functions
-    // piece1
-    int p1_stop_moving1()
-    {
-        if (check_Ledplacement(8, 4))
-        {
-            return -1;
-        }
-    }
     // a general function to stop pieces from moving.
     // provide an id to identify the specific conditon.
     bool piece_stop_moving(const Tetrispiece &piece)
@@ -119,8 +105,6 @@ namespace Pattern
              {p1_row, 5}},
             color::green,
         };
-        // set stop moving functions
-        piece.set_stop(p1_stop_moving1, &piece.stop_moving1);
         // piece is initialized
         initialized_piece = true;
     }
@@ -132,12 +116,6 @@ namespace Pattern
         patterns[2] = &piece.pattern3;
         patterns[3] = &piece.pattern4;
         patterns[4] = &piece.normal_pattern;
-    }
-
-    void initialize_stop_functions()
-    {
-        // int (*stop_moving[4])() {stop_moving_strategy1,
-        // stop_moving_strategy2, stop_moving_strategy3, stop_moving_normal};
     }
 
 } // namespace Pattern
@@ -310,13 +288,21 @@ int play_piece(Pattern::Tetrispiece &piece, int (*patterns[5])[4][2])
         // switch to next frame
         // Time::last_frame_time = Time::current_time;
 
-        // if the piece is not normal yet
+        // if the piece pattern is not normal yet
         if (piece.current_pattern != Pattern::LAST_PATTERN)
         {
             if (piece_stop_moving(piece))
             {
                 return -1;
             }
+
+            if (piece.current_pattern == Pattern::PATTERN1)
+            {
+                call_frame;
+                piece.current_pattern == Pattern::PATTERN2;
+                Time::last_frame_time         = Time::current_time;
+            }
+
         }
     }
 }
