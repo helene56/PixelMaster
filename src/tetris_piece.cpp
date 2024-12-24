@@ -62,9 +62,9 @@ namespace Pattern
     }
     // a general function to stop pieces from moving.
     // provide an id to identify the specific conditon.
-    bool piece_stop_moving(int id, const Tetrispiece &piece)
+    bool piece_stop_moving(const Tetrispiece &piece)
     {
-        switch (id)
+        switch (piece.id)
         {
         case 1:
             if (piece.current_pattern == PATTERN1)
@@ -313,6 +313,10 @@ int play_piece(Pattern::Tetrispiece &piece, int (*patterns[5])[4][2])
         // if the piece is not normal yet
         if (piece.current_pattern != Pattern::LAST_PATTERN)
         {
+            if (piece_stop_moving(piece))
+            {
+                return -1;
+            }
         }
     }
 }
