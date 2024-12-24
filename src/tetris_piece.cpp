@@ -325,15 +325,20 @@ int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
         // Time::last_frame_time = Time::current_time;
 
         // keeps track of the rows and cols, only update when needed
+
+        // check to see if the piece is blocked, then stop moving
+        if (piece_stop_moving(piece))
+        {
+            return -1;
+        }
+
         int static current_rows[piece.max_rows] {0};
         int static current_cols[piece.max_rows] {0};
+        
         // if the piece pattern is not normal yet
         if (piece.current_pattern != Pattern::LAST_PATTERN)
         {
-            if (piece_stop_moving(piece))
-            {
-                return -1;
-            }
+            
 
             if (piece.current_pattern == Pattern::PATTERN1)
             {
