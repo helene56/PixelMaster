@@ -8,6 +8,12 @@
 // generate random piece at random location, start in the top of the matrix
 // move it down till it reaches the bottom
 
+namespace color
+{
+    std::uint32_t green = (0b00001101 << 16) | (0b00000000 << 8) | 0b00000000;
+
+} // namespace color
+
 namespace random
 {
     std::uint16_t seed {42};
@@ -61,13 +67,13 @@ namespace Pattern
             }
             else if (piece.current_row >= 0)
             {
-                return ((check_Ledplacement(piece_settings::current_row, 4) ||
-                         check_Ledplacement(piece_settings::current_row, 5) ||
-                         check_Ledplacement(piece_settings::current_row, 3)));
+                return ((check_Ledplacement(piece.current_row, 4) ||
+                         check_Ledplacement(piece.current_row, 5) ||
+                         check_Ledplacement(piece.current_row, 3)));
             }
 
         default:
-            break;
+            return false;
         }
     }
 
@@ -124,12 +130,13 @@ namespace Pattern
         {
             bool all_zero {true};
             int index                   = static_cast<int>(piece.current_pattern) + 1;
-            int(*current_pattern)[4][2] = patterns[index];
+            int (*current_pattern)[4][2] = patterns[index];
 
             int size {sizeof(current_pattern) / sizeof(current_pattern[0])};
             for (int i = 0; i < size; ++i)
             {
-                if (current_pattern[i] > 0)
+                
+                if ((*current_pattern)[i][0] > 0 || (*current_pattern)[i][1])
                 {
                     all_zero = false;
                 }
@@ -147,15 +154,16 @@ namespace Pattern
                 return NORMAL;
             }
         }
+        else
+        {
+            return NORMAL;
+        }
+        
     }
 
 } // namespace Pattern
 
-namespace color
-{
-    std::uint32_t green = (0b00001101 << 16) | (0b00000000 << 8) | 0b00000000;
 
-} // namespace color
 
 namespace Time
 {
@@ -194,6 +202,79 @@ int random_generator(std::uint16_t &X, int range)
     // return X % range; // range of num 0-4
     return result;
 }
+
+
+int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
+{
+    Time::current_time = to_ms_since_boot(get_absolute_time());
+    // somehow initialize use the pieces first frames, that are different from
+    // the rest
+    //  maybe an enum so: first_frame, normal_frame, or could be first_frame,
+    //  second_frame, normal_frame
+
+    int(*current_pattern_array)[4][2] =
+        patterns[static_cast<int>(piece.current_pattern)]; // dereference to get the correct pattern
+    if (time_to_switch_frame())
+    {
+        // check to see if the piece is blocked, then stop moving
+        if (piece_stop_moving(piece))
+        {
+            return -1;
+        }
+
+        int static current_rows[piece.max_rows] {0};
+        int static current_cols[piece.max_rows] {0};
+        
+
+        if (piece.current_pattern == Pattern::PATTERN1)
+        {
+
+            for (int i = 0; i < piece.max_rows; ++i)
+            {
+                current_rows[i] = (*current_pattern_array)[i][0];
+                current_cols[i] = (*current_pattern_array)[i][1];
+            }
+            call_frame(current_rows, current_cols, piece.max_rows, piece.color);
+            piece.current_pattern = switch_pattern(piece, patterns);
+            Time::last_frame_time = Time::current_time;
+        }
+        // if the current row is 0, it should not do anything more
+        else if (piece.current_row > 0)
+        {
+            // clear previous patterns
+            // clear first frame here
+            clear_frame(current_rows, current_cols, piece.max_rows);
+            // clear pixels on display
+            clear_all_pixels();
+            // set new leds
+            for (int i = 0; i < piece.max_rows; ++i)
+            {
+                current_rows[i] = (*current_pattern_array)[i][0];
+                current_cols[i] = (*current_pattern_array)[i][1];
+            }
+            call_frame(current_rows, current_cols, piece.max_rows, piece.color);
+
+            // depend on the pattern setting
+            if (piece.current_pattern != Pattern::LAST_PATTERN)
+            {
+                // update pattern setting if it is a unique pattern
+                piece.current_pattern = switch_pattern(piece, patterns);
+            }
+            // if normal/last
+            else
+            {
+                // go to next row
+                --piece.current_row;
+            }
+            // update time
+            Time::last_frame_time = Time::current_time;
+            
+        }
+        printf("current row: %d\n", piece.current_row);
+    }
+    return piece.current_row;
+}
+
 
 void generate_piece()
 {
@@ -295,75 +376,7 @@ void clear_frame(int *rows, int *cols, size_t size)
     }
 }
 
-int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
-{
-    Time::current_time = to_ms_since_boot(get_absolute_time());
-    // somehow initialize use the pieces first frames, that are different from
-    // the rest
-    //  maybe an enum so: first_frame, normal_frame, or could be first_frame,
-    //  second_frame, normal_frame
 
-    int(*current_pattern_array)[4][2] =
-        patterns[static_cast<int>(piece.current_pattern)]; // dereference to get the correct pattern
-    if (time_to_switch_frame())
-    {
-        // check to see if the piece is blocked, then stop moving
-        if (piece_stop_moving(piece))
-        {
-            return -1;
-        }
-
-        int static current_rows[piece.max_rows] {0};
-        int static current_cols[piece.max_rows] {0};
-        
-
-        if (piece.current_pattern == Pattern::PATTERN1)
-        {
-
-            for (int i = 0; i < piece.max_rows; ++i)
-            {
-                current_rows[i] = (*current_pattern_array)[i][0];
-                current_cols[i] = (*current_pattern_array)[i][1];
-            }
-            call_frame(current_rows, current_cols, piece.max_rows, piece.color);
-            piece.current_pattern = switch_pattern(piece, patterns);
-            Time::last_frame_time = Time::current_time;
-        }
-        // if the current row is 0, it should not do anything more
-        else if (piece.current_row > 0)
-        {
-            // clear previous patterns
-            // clear first frame here
-            clear_frame(current_rows, current_cols, piece.max_rows);
-            // clear pixels on display
-            clear_all_pixels();
-            // set new leds
-            for (int i = 0; i < piece.max_rows; ++i)
-            {
-                current_rows[i] = (*current_pattern_array)[i][0];
-                current_cols[i] = (*current_pattern_array)[i][1];
-            }
-            call_frame(current_rows, current_cols, piece.max_rows, piece.color);
-
-            // depend on the pattern setting
-            if (piece.current_pattern != Pattern::LAST_PATTERN)
-            {
-                // update pattern setting if it is a unique pattern
-                piece.current_pattern = switch_pattern(piece, patterns);
-            }
-            // if normal/last
-            else
-            {
-                // go to next row
-                --piece.current_row;
-            }
-            // update time
-            Time::last_frame_time = Time::current_time;
-            
-        }
-        printf("current row: %d\n", piece.current_row);
-    }
-}
 
 int piece1()
 {

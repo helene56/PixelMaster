@@ -2,13 +2,13 @@
 #define TETRIS_PIECE
 
 #include <cstdint>
-
+#include <stdio.h>
 int random_generator(std::uint16_t &X, int range);
 void generate_piece();
 int piece1();
 int piece2();
 bool check_Ledplacement(int row, int col);
-void clear_frame(int *rows, int *cols, int size);
+void clear_frame(int *rows, int *cols, size_t size);
 void call_frame(int *rows, int *cols, int size, std::int32_t grb);
 bool game_end();
 
