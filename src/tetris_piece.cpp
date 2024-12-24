@@ -256,9 +256,13 @@ void call_frame(int *rows, int *cols, int size, std::int32_t grb)
 
     for (int i = 0; i < size; ++i)
     {
-        storeLed(*p, *p2, green, red, blue);
-        ++p;
-        ++p2;
+        // check to assure no 0 is passed
+        if (*p != 0 || *p2 != 0)
+        {
+            storeLed(*p, *p2, green, red, blue);
+            ++p;
+            ++p2;
+        }  
     }
     sendLed();
 }
@@ -291,15 +295,16 @@ void clear_frame(int *rows, int *cols, size_t size)
     }
 }
 
-int play_piece(Pattern::Tetrispiece &piece, int (*patterns[5])[4][2])
+int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
 {
     Time::current_time = to_ms_since_boot(get_absolute_time());
     // somehow initialize use the pieces first frames, that are different from
     // the rest
     //  maybe an enum so: first_frame, normal_frame, or could be first_frame,
     //  second_frame, normal_frame
+
     int(*current_pattern_array)[4][2] =
-        patterns[piece.current_pattern]; // dereference to get the correct pattern
+        patterns[static_cast<int>(piece.current_pattern)]; // dereference to get the correct pattern
     if (time_to_switch_frame())
     {
         // if next frame is normal frame
@@ -329,8 +334,19 @@ int play_piece(Pattern::Tetrispiece &piece, int (*patterns[5])[4][2])
 
             if (piece.current_pattern == Pattern::PATTERN1)
             {
-                call_frame;
-                piece.current_pattern == Pattern::PATTERN2;
+                // gives the number of rows
+                int array_size = sizeof(current_pattern_array) / sizeof(current_pattern_array[0]);
+
+                // make the col and row arrays now with correct size
+                int current_rows[array_size] {0};
+                int current_cols[array_size] {0};
+                for (int i = 0; i < array_size; ++i)
+                {
+                    current_rows[i] = (*current_pattern_array)[i][0];
+                    current_cols[i] = (*current_pattern_array)[i][1];
+                }
+                call_frame(current_rows, current_cols, array_size, color::green);
+                piece.current_pattern = switch_pattern(piece, patterns);
                 Time::last_frame_time = Time::current_time;
             }
         }
