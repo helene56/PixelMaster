@@ -307,25 +307,6 @@ int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
         patterns[static_cast<int>(piece.current_pattern)]; // dereference to get the correct pattern
     if (time_to_switch_frame())
     {
-        // if next frame is normal frame
-        // if (check_Ledplacement(row, col)) use the specific pieces conditions
-        // clear last frame
-        // clear_all_pixels();
-        // call_frame()
-        // check that the next place is bottom or occupied
-        // if bottom or occopied, return -1
-        // else go to next row, update time
-        // if frames (first or unique)
-        // if (check_Ledplacement(row, col)) use the specific pieces conditions
-        // if unique
-        // clear frame
-        // clear_all_pixels();
-        // call_frame()
-        // switch to next frame
-        // Time::last_frame_time = Time::current_time;
-
-        // keeps track of the rows and cols, only update when needed
-
         // check to see if the piece is blocked, then stop moving
         if (piece_stop_moving(piece))
         {
@@ -335,43 +316,52 @@ int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
         int static current_rows[piece.max_rows] {0};
         int static current_cols[piece.max_rows] {0};
         
-        // if the piece pattern is not normal yet
-        if (piece.current_pattern != Pattern::LAST_PATTERN)
+
+        if (piece.current_pattern == Pattern::PATTERN1)
         {
-            
 
-            if (piece.current_pattern == Pattern::PATTERN1)
+            for (int i = 0; i < piece.max_rows; ++i)
             {
-
-                for (int i = 0; i < piece.max_rows; ++i)
-                {
-                    current_rows[i] = (*current_pattern_array)[i][0];
-                    current_cols[i] = (*current_pattern_array)[i][1];
-                }
-                call_frame(current_rows, current_cols, piece.max_rows, piece.color);
-                piece.current_pattern = switch_pattern(piece, patterns);
-                Time::last_frame_time = Time::current_time;
+                current_rows[i] = (*current_pattern_array)[i][0];
+                current_cols[i] = (*current_pattern_array)[i][1];
             }
+            call_frame(current_rows, current_cols, piece.max_rows, piece.color);
+            piece.current_pattern = switch_pattern(piece, patterns);
+            Time::last_frame_time = Time::current_time;
+        }
+        // if the current row is 0, it should not do anything more
+        else if (piece.current_row > 0)
+        {
+            // clear previous patterns
+            // clear first frame here
+            clear_frame(current_rows, current_cols, piece.max_rows);
+            // clear pixels on display
+            clear_all_pixels();
+            // set new leds
+            for (int i = 0; i < piece.max_rows; ++i)
+            {
+                current_rows[i] = (*current_pattern_array)[i][0];
+                current_cols[i] = (*current_pattern_array)[i][1];
+            }
+            call_frame(current_rows, current_cols, piece.max_rows, piece.color);
+
+            // depend on the pattern setting
+            if (piece.current_pattern != Pattern::LAST_PATTERN)
+            {
+                // update pattern setting if it is a unique pattern
+                piece.current_pattern = switch_pattern(piece, patterns);
+            }
+            // if normal/last
             else
             {
-                // clear previous patterns
-                // clear first frame here
-                clear_frame(current_rows, current_cols, piece.max_rows);
-                // clear pixels on display
-                clear_all_pixels();
-                // set new leds
-                for (int i = 0; i < piece.max_rows; ++i)
-                {
-                    current_rows[i] = (*current_pattern_array)[i][0];
-                    current_cols[i] = (*current_pattern_array)[i][1];
-                }
-                call_frame(current_rows, current_cols, piece.max_rows, piece.color);
-                // update pattern setting
-                piece.current_pattern = switch_pattern(piece, patterns);
-                // update time
-                Time::last_frame_time = Time::current_time;
+                // go to next row
+                --piece.current_row;
             }
+            // update time
+            Time::last_frame_time = Time::current_time;
+            
         }
+        printf("current row: %d\n", piece.current_row);
     }
 }
 
