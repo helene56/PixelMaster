@@ -7,3 +7,4 @@ AlignTrailingComments:
   Kind: Always
   OverEmptyLines: 2
   MaxEmptyLinesToKeep: 2
+ColumnLimit: 100
