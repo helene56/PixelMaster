@@ -1,0 +1,18 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+BreakBeforeBraces: Allman
+BraceWrapping:
+  AfterFunction: true
+  AfterControlStatement: true
+  AfterNamespace: true
+  AfterClass: true
+  AfterStruct: true
+  AfterUnion: true
+  IndentBraces: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeCpp11BracedList: true
+
+
+
+
+
