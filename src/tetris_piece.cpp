@@ -130,10 +130,10 @@ namespace Pattern
             bool all_zero {true};
             int index                   = static_cast<int>(piece.current_pattern) + 1;
             int (*current_pattern)[4][2] = piece.collection_patterns[index];
-
-            int size {sizeof(current_pattern) / sizeof(current_pattern[0])};
-            for (int i = 0; i < size; ++i)
+            
+            for (int i = 0; i < piece.max_rows; ++i)
             {
+                printf("hey\n");
                 printf("row: %d, col: %d\n", (*current_pattern)[i][0], (*current_pattern)[i][1]);
                 if ((*current_pattern)[i][0] > 0 || (*current_pattern)[i][1] > 0)
                 {
@@ -298,8 +298,6 @@ void generate_piece()
         }
         printf("\n");
     }
-    std::cout << "Address of pattern1: " << &piece11.pattern1 << "\n";
-    std::cout << "Address in collection_patterns[0]: " << piece11.collection_patterns[0] << "\n";
 
     sleep_ms(2000);
     printf("initial pattern: %d\n", static_cast<int>(piece11.current_pattern));
