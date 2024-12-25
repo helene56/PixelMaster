@@ -50,16 +50,6 @@ namespace Pattern
         // do not initialize
         patterns_state current_pattern {PATTERN1};
         int (*collection_patterns[5])[4][2] {};
-
-        // constructor to initialize
-        Tetrispiece()
-        {
-            collection_patterns[0] = &pattern1;
-            collection_patterns[1] = &pattern2;
-            collection_patterns[2] = &pattern3;
-            collection_patterns[3] = &pattern4;
-            collection_patterns[4] = &normal_pattern;
-        }
     };
 
     // a general function to stop pieces from moving.
@@ -123,6 +113,11 @@ namespace Pattern
         };
         // piece is initialized
         initialized_piece = true;
+        piece.collection_patterns[0] = &piece.pattern1;
+        piece.collection_patterns[1] = &piece.pattern2;
+        piece.collection_patterns[2] = &piece.pattern3;
+        piece.collection_patterns[3] = &piece.pattern4;
+        piece.collection_patterns[4] = &piece.normal_pattern;
     }
 
     constexpr int patterns_state_count {6}; // including last pattern twice
