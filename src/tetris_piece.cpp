@@ -4,8 +4,9 @@
 #include "pico/stdlib.h"
 #include "pio_utils.h"
 #include <stdio.h>
+#include <iostream>
 // steps
-// generate random piece at random location, start in the top of the matrix
+// generate randomv piece at randomv location, start in the top of the matrix
 // move it down till it reaches the bottom
 
 namespace color
@@ -14,11 +15,11 @@ namespace color
 
 } // namespace color
 
-namespace random
+namespace randomv
 {
     std::uint16_t seed {42};
     int ran_num {random_generator(seed, 5)};
-} // namespace random
+} // namespace randomv
 
 namespace Pattern
 {
@@ -35,19 +36,30 @@ namespace Pattern
     // define the frame struct
     struct Tetrispiece
     {
-        static const int max_rows {4};
-        static const int max_cols {2};
+        static constexpr int max_rows {4};
+        static constexpr int max_cols {2};
         // initialize these variables
         int id {0};
         int current_row {0};
-        int pattern1[max_rows][max_cols];
-        int pattern2[max_rows][max_cols];
-        int pattern3[max_rows][max_cols];
-        int pattern4[max_rows][max_cols];
-        int normal_pattern[max_rows][max_cols];
+        int pattern1[max_rows][max_cols] {};
+        int pattern2[max_rows][max_cols] {};
+        int pattern3[max_rows][max_cols] {};
+        int pattern4[max_rows][max_cols] {};
+        int normal_pattern[max_rows][max_cols] {};
         std::uint32_t color {0};
         // do not initialize
         patterns_state current_pattern {PATTERN1};
+        int (*collection_patterns[5])[4][2] {};
+
+        // constructor to initialize
+        Tetrispiece()
+        {
+            collection_patterns[0] = &pattern1;
+            collection_patterns[1] = &pattern2;
+            collection_patterns[2] = &pattern3;
+            collection_patterns[3] = &pattern4;
+            collection_patterns[4] = &normal_pattern;
+        }
     };
 
     // a general function to stop pieces from moving.
@@ -91,8 +103,8 @@ namespace Pattern
                 // pattern1
                 {8, 3}, // Row 1
                 {8, 4}, // Row 2
-                {8, 5}  // Row 3
-                        // this will be initialized as 0.. need to rework the
+                {8, 5},  // Row 3
+                {0, 0}        // this will be initialized as 0.. need to rework the
                         // code to only work with + numbers
             },
             {           // pattern2
@@ -113,34 +125,28 @@ namespace Pattern
         initialized_piece = true;
     }
 
-    void initializePatterns(Tetrispiece &piece, int (*(&patterns)[5])[4][2])
-    {
-        patterns[0] = &piece.pattern1;
-        patterns[1] = &piece.pattern2;
-        patterns[2] = &piece.pattern3;
-        patterns[3] = &piece.pattern4;
-        patterns[4] = &piece.normal_pattern;
-    }
-
     constexpr int patterns_state_count {6}; // including last pattern twice
     // returns the next pattern in order
-    patterns_state switch_pattern(Tetrispiece &piece, int (*(&patterns)[5])[4][2])
+    patterns_state switch_pattern(Tetrispiece &piece)
     {
+        printf("current patterin in switch_pattern: %d\n", static_cast<int>(piece.current_pattern));
         if (piece.current_pattern != LAST_PATTERN)
         {
             bool all_zero {true};
             int index                   = static_cast<int>(piece.current_pattern) + 1;
-            int (*current_pattern)[4][2] = patterns[index];
+            int (*current_pattern)[4][2] = piece.collection_patterns[index];
 
             int size {sizeof(current_pattern) / sizeof(current_pattern[0])};
             for (int i = 0; i < size; ++i)
             {
-                
-                if ((*current_pattern)[i][0] > 0 || (*current_pattern)[i][1])
+                printf("row: %d, col: %d\n", (*current_pattern)[i][0], (*current_pattern)[i][1]);
+                if ((*current_pattern)[i][0] > 0 || (*current_pattern)[i][1] > 0)
                 {
                     all_zero = false;
                 }
+                sleep_ms(3000);
             }
+            printf("result of all_zero: %d\n", all_zero);
             // if it is not all 0, meaning there is a next pattern, return that pattern
             if (!all_zero)
             {
@@ -204,16 +210,17 @@ int random_generator(std::uint16_t &X, int range)
 }
 
 
-int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
+int play_piece(Pattern::Tetrispiece &piece)
 {
     Time::current_time = to_ms_since_boot(get_absolute_time());
     // somehow initialize use the pieces first frames, that are different from
     // the rest
     //  maybe an enum so: first_frame, normal_frame, or could be first_frame,
     //  second_frame, normal_frame
-
+    printf("frame num start: %d\n", static_cast<int>(piece.current_pattern));
+    sleep_ms(1000);
     int(*current_pattern_array)[4][2] =
-        patterns[static_cast<int>(piece.current_pattern)]; // dereference to get the correct pattern
+        piece.collection_patterns[static_cast<int>(piece.current_pattern)]; // dereference to get the correct pattern
     if (time_to_switch_frame())
     {
         // check to see if the piece is blocked, then stop moving
@@ -235,7 +242,8 @@ int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
                 current_cols[i] = (*current_pattern_array)[i][1];
             }
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
-            piece.current_pattern = switch_pattern(piece, patterns);
+            piece.current_pattern = switch_pattern(piece);
+            printf("frame num switch: %d\n", static_cast<int>(piece.current_pattern));
             Time::last_frame_time = Time::current_time;
         }
         // if the current row is 0, it should not do anything more
@@ -258,7 +266,7 @@ int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
             if (piece.current_pattern != Pattern::LAST_PATTERN)
             {
                 // update pattern setting if it is a unique pattern
-                piece.current_pattern = switch_pattern(piece, patterns);
+                piece.current_pattern = switch_pattern(piece);
             }
             // if normal/last
             else
@@ -279,12 +287,27 @@ int play_piece(Pattern::Tetrispiece &piece, int (*(&patterns)[5])[4][2])
 void generate_piece()
 {
     static Pattern::Tetrispiece piece11;
-    static int(*patterns[5])[4][2];
     if (!Pattern::initialized_piece)
     {
         Pattern::initializePiece(piece11);
-        Pattern::initializePatterns(piece11, patterns);
+
     }
+
+    int(*current_pattern_array)[4][2] = piece11.collection_patterns[0];
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 2; ++j)
+        {
+            printf("%d ", *current_pattern_array[i][j]);
+
+        }
+        printf("\n");
+    }
+    std::cout << "Address of pattern1: " << &piece11.pattern1 << "\n";
+    std::cout << "Address in collection_patterns[0]: " << piece11.collection_patterns[0] << "\n";
+
+    sleep_ms(2000);
+    printf("initial pattern: %d\n", static_cast<int>(piece11.current_pattern));
     static int result {1};
 
     if (result <= 0 && !game_end())
@@ -294,31 +317,31 @@ void generate_piece()
         // some other way to keep it organized..
         piece_settings::current_frame = piece_settings::first_frame;
         piece_settings::current_row   = 6;
-        random::ran_num               = random_generator(random::seed, 5);
+        randomv::ran_num               = random_generator(randomv::seed, 5);
         result                        = 1;
     }
 
-    switch (random::ran_num)
+    switch (randomv::ran_num)
     {
     case 0:
         // result = piece1();
-        result = play_piece(piece11, patterns);
+        result = play_piece(piece11);
         break;
     case 1:
         // result = piece1();
-        result = play_piece(piece11, patterns);
+        result = play_piece(piece11);
         break;
     case 2:
         // result = piece1();
-        result = play_piece(piece11, patterns);
+        result = play_piece(piece11);
         break;
     case 3:
         // result = piece1();
-        result = play_piece(piece11, patterns);
+        result = play_piece(piece11);
         break;
     case 4:
         // result = piece1();
-        result = play_piece(piece11, patterns);
+        result = play_piece(piece11);
         break;
 
     default:
