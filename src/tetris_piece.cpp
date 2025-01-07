@@ -11,8 +11,8 @@
 
 namespace color
 {
-    std::uint32_t green = (0b00001101 << 16) | (0b00000000 << 8) | 0b00000000;
-    std::uint32_t yellow = (0b00001101<< 16) | (0b00001101 << 8) | 0b00000000;
+    std::uint32_t green  = (0b00001101 << 16) | (0b00000000 << 8) | 0b00000000;
+    std::uint32_t yellow = (0b00001101 << 16) | (0b00001101 << 8) | 0b00000000;
 
 } // namespace color
 
@@ -57,6 +57,7 @@ namespace Pattern
     // provide an id to identify the specific conditon.
     bool piece_stop_moving(const Tetrispiece &piece)
     {
+        // TODO: implement same switch for id = 2
         switch (piece.id)
         {
         case 1:
@@ -85,7 +86,7 @@ namespace Pattern
     static int p1_row {6}; // consider passing this as a variable to functions
                            // instead of global variable
     int p1_id {1};
-    void initializePiece(Tetrispiece &piece)
+    void initializePiece1(Tetrispiece &piece)
     {
         piece = {
             p1_id,  // id
@@ -121,6 +122,48 @@ namespace Pattern
         piece.collection_patterns[4] = &piece.normal_pattern;
     }
 
+    // piece1
+    static int p2_row {5}; // consider passing this as a variable to functions
+                           // instead of global variable
+    int p2_id {2};
+    void initializePiece2(Tetrispiece &piece)
+    {
+        piece = {
+            p2_id,  // id
+            p2_row, // current row
+            {
+                // pattern1
+            {8, 4}, // Row 1
+            {0, 0}, // Row 2
+            {0, 0}, // Row 3
+            {0, 0}
+            },
+            {           // pattern2
+             {8, 4},
+             {7, 4},
+             {0, 0},
+             {0, 0}},
+            {{8, 4},
+             {7, 4},
+             {6, 4},
+             {0, 0}}, // pattern3
+            {{0}}, // pattern4
+            {    // normal
+             {8, 4},
+             {7, 4},
+             {6, 4},
+             {5, 4}},
+            color::yellow,
+        };
+        // piece is initialized
+        initialized_piece            = true;
+        piece.collection_patterns[0] = &piece.pattern1;
+        piece.collection_patterns[1] = &piece.pattern2;
+        piece.collection_patterns[2] = &piece.pattern3;
+        piece.collection_patterns[3] = &piece.pattern4;
+        piece.collection_patterns[4] = &piece.normal_pattern;
+    }
+    // constant to keep track of the total amount of availible patterns
     constexpr int patterns_state_count {6}; // including last pattern twice
     // returns the next pattern in order
     patterns_state switch_pattern(Tetrispiece &piece)
@@ -216,8 +259,26 @@ int play_piece(Pattern::Tetrispiece &piece)
             piece.current_pattern = switch_pattern(piece);
             Time::last_frame_time = Time::current_time;
         }
+        else if (piece.current_pattern != Pattern::LAST_PATTERN)
+        {
+            clear_frame(current_rows, current_cols, piece.max_rows);
+            // clear pixels on display
+            clear_all_pixels();
+            
+            for (int i = 0; i < piece.max_rows; ++i)
+            {
+                current_rows[i] = (*current_pattern_array)[i][0];
+                current_cols[i] = (*current_pattern_array)[i][1];
+            }
+
+            call_frame(current_rows, current_cols, piece.max_rows, piece.color);
+            // update time
+            piece.current_pattern = switch_pattern(piece);
+            Time::last_frame_time = Time::current_time;
+        }
         // if the current row is 0, it should not do anything more
-        else if (piece.current_row > 0)
+        // if last pattern
+        else if (piece.current_row > 0 && piece.current_pattern == Pattern::LAST_PATTERN)
         {
             // clear previous patterns
             // clear first frame here
@@ -246,18 +307,9 @@ int play_piece(Pattern::Tetrispiece &piece)
 
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
 
-            // depend on the pattern setting
-            if (piece.current_pattern != Pattern::LAST_PATTERN)
-            {
-                // update pattern setting if it is a unique pattern
-                piece.current_pattern = switch_pattern(piece);
-            }
-            // if normal/last
-            else
-            {
-                // go to next row
-                --piece.current_row;
-            }
+            // go to next row
+            --piece.current_row;
+            
             // update time
             Time::last_frame_time = Time::current_time;
         }
@@ -268,12 +320,12 @@ int play_piece(Pattern::Tetrispiece &piece)
 void generate_piece()
 {
     static Pattern::Tetrispiece piece11;
+    static Pattern::Tetrispiece piece22;
     if (!Pattern::initialized_piece)
     {
-        Pattern::initializePiece(piece11);
+        Pattern::initializePiece1(piece11);
+        Pattern::initializePiece2(piece22);
     }
-
-    int(*current_pattern_array)[4][2] = piece11.collection_patterns[0];
 
     static int result {1};
 
@@ -287,7 +339,7 @@ void generate_piece()
     {
     case 0:
         // result = piece1();
-        result = play_piece(piece11);
+        result = play_piece(piece22);
         break;
     case 1:
         // result = piece1();
@@ -295,15 +347,15 @@ void generate_piece()
         break;
     case 2:
         // result = piece1();
-        result = play_piece(piece11);
+        result = play_piece(piece22);
         break;
     case 3:
         // result = piece1();
-        result = play_piece(piece11);
+        result = play_piece(piece22);
         break;
     case 4:
         // result = piece1();
-        result = play_piece(piece11);
+        result = play_piece(piece22);
         break;
 
     default:
