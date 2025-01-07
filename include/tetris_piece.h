@@ -5,7 +5,6 @@
 #include <stdio.h>
 int random_generator(std::uint16_t &X, int range);
 void generate_piece();
-int piece1();
 int piece2();
 bool check_Ledplacement(int row, int col);
 void clear_frame(int *rows, int *cols, size_t size);
