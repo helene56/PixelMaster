@@ -3,8 +3,8 @@
 #include "led_memory.h"
 #include "pico/stdlib.h"
 #include "pio_utils.h"
-#include <stdio.h>
 #include <iostream>
+#include <stdio.h>
 // steps
 // generate randomv piece at randomv location, start in the top of the matrix
 // move it down till it reaches the bottom
@@ -93,8 +93,8 @@ namespace Pattern
                 // pattern1
                 {8, 3}, // Row 1
                 {8, 4}, // Row 2
-                {8, 5},  // Row 3
-                {0, 0}        // this will be initialized as 0.. need to rework the
+                {8, 5}, // Row 3
+                {0, 0}  // this will be initialized as 0.. need to rework the
                         // code to only work with + numbers
             },
             {           // pattern2
@@ -112,7 +112,7 @@ namespace Pattern
             color::green,
         };
         // piece is initialized
-        initialized_piece = true;
+        initialized_piece            = true;
         piece.collection_patterns[0] = &piece.pattern1;
         piece.collection_patterns[1] = &piece.pattern2;
         piece.collection_patterns[2] = &piece.pattern3;
@@ -124,24 +124,19 @@ namespace Pattern
     // returns the next pattern in order
     patterns_state switch_pattern(Tetrispiece &piece)
     {
-        printf("current patterin in switch_pattern: %d\n", static_cast<int>(piece.current_pattern));
         if (piece.current_pattern != LAST_PATTERN)
         {
             bool all_zero {true};
             int index                   = static_cast<int>(piece.current_pattern) + 1;
-            int (*current_pattern)[4][2] = piece.collection_patterns[index];
-            
+            int(*current_pattern)[4][2] = piece.collection_patterns[index];
+
             for (int i = 0; i < piece.max_rows; ++i)
             {
-                printf("hey\n");
-                printf("row: %d, col: %d\n", (*current_pattern)[i][0], (*current_pattern)[i][1]);
                 if ((*current_pattern)[i][0] > 0 || (*current_pattern)[i][1] > 0)
                 {
                     all_zero = false;
                 }
-                sleep_ms(3000);
             }
-            printf("result of all_zero: %d\n", all_zero);
             // if it is not all 0, meaning there is a next pattern, return that pattern
             if (!all_zero)
             {
@@ -159,12 +154,9 @@ namespace Pattern
         {
             return NORMAL;
         }
-        
     }
 
 } // namespace Pattern
-
-
 
 namespace Time
 {
@@ -204,18 +196,14 @@ int random_generator(std::uint16_t &X, int range)
     return result;
 }
 
-
 int play_piece(Pattern::Tetrispiece &piece)
 {
     Time::current_time = to_ms_since_boot(get_absolute_time());
-    // somehow initialize use the pieces first frames, that are different from
-    // the rest
-    //  maybe an enum so: first_frame, normal_frame, or could be first_frame,
-    //  second_frame, normal_frame
-    printf("frame num start: %d\n", static_cast<int>(piece.current_pattern));
-    sleep_ms(1000);
-    int(*current_pattern_array)[4][2] =
-        piece.collection_patterns[static_cast<int>(piece.current_pattern)]; // dereference to get the correct pattern
+    // boolean  to keep track of when the first normal pattern has been set
+    static bool normalPatternSet {false};
+
+    int(*current_pattern_array)[4][2] = piece.collection_patterns[static_cast<int>(
+        piece.current_pattern)]; // dereference to get the correct pattern
     if (time_to_switch_frame())
     {
         // check to see if the piece is blocked, then stop moving
@@ -226,7 +214,6 @@ int play_piece(Pattern::Tetrispiece &piece)
 
         int static current_rows[piece.max_rows] {0};
         int static current_cols[piece.max_rows] {0};
-        
 
         if (piece.current_pattern == Pattern::PATTERN1)
         {
@@ -238,7 +225,6 @@ int play_piece(Pattern::Tetrispiece &piece)
             }
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
             piece.current_pattern = switch_pattern(piece);
-            printf("frame num switch: %d\n", static_cast<int>(piece.current_pattern));
             Time::last_frame_time = Time::current_time;
         }
         // if the current row is 0, it should not do anything more
@@ -250,11 +236,25 @@ int play_piece(Pattern::Tetrispiece &piece)
             // clear pixels on display
             clear_all_pixels();
             // set new leds
-            for (int i = 0; i < piece.max_rows; ++i)
+            if (!normalPatternSet)
             {
-                current_rows[i] = (*current_pattern_array)[i][0];
-                current_cols[i] = (*current_pattern_array)[i][1];
+                for (int i = 0; i < piece.max_rows; ++i)
+                {
+                    current_rows[i] = (*current_pattern_array)[i][0];
+                    current_cols[i] = (*current_pattern_array)[i][1];
+                }
+                // normal pattern set once
+                normalPatternSet = true;
             }
+            else
+            {
+                // now subtract from the set rows to move the normal pattern down
+                for (int i = 0; i < piece.max_rows; ++i)
+                {
+                    current_rows[i] -= 1;
+                }
+            }
+
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
 
             // depend on the pattern setting
@@ -271,13 +271,11 @@ int play_piece(Pattern::Tetrispiece &piece)
             }
             // update time
             Time::last_frame_time = Time::current_time;
-            
         }
         printf("current row: %d\n", piece.current_row);
     }
     return piece.current_row;
 }
-
 
 void generate_piece()
 {
@@ -285,22 +283,10 @@ void generate_piece()
     if (!Pattern::initialized_piece)
     {
         Pattern::initializePiece(piece11);
-
     }
 
     int(*current_pattern_array)[4][2] = piece11.collection_patterns[0];
-    for (int i = 0; i < 4; ++i)
-    {
-        for (int j = 0; j < 2; ++j)
-        {
-            printf("%d ", *current_pattern_array[i][j]);
 
-        }
-        printf("\n");
-    }
-
-    sleep_ms(2000);
-    printf("initial pattern: %d\n", static_cast<int>(piece11.current_pattern));
     static int result {1};
 
     if (result <= 0 && !game_end())
@@ -310,7 +296,7 @@ void generate_piece()
         // some other way to keep it organized..
         piece_settings::current_frame = piece_settings::first_frame;
         piece_settings::current_row   = 6;
-        randomv::ran_num               = random_generator(randomv::seed, 5);
+        randomv::ran_num              = random_generator(randomv::seed, 5);
         result                        = 1;
     }
 
@@ -391,8 +377,6 @@ void clear_frame(int *rows, int *cols, size_t size)
         ++p2;
     }
 }
-
-
 
 int piece1()
 {
