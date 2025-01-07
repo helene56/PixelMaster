@@ -167,18 +167,6 @@ namespace Time
     bool switch_frame = (current_time - last_frame_time >= interval);
 } // namespace Time
 
-namespace piece_settings
-{
-    enum Framestate
-    {
-        first_frame,
-        second_frame,
-        normal_frame
-    };
-    static Framestate current_frame {first_frame};
-    static int current_row {6};
-} // namespace piece_settings
-
 bool time_to_switch_frame()
 {
     return (Time::current_time - Time::last_frame_time >= Time::interval);
@@ -272,7 +260,6 @@ int play_piece(Pattern::Tetrispiece &piece)
             // update time
             Time::last_frame_time = Time::current_time;
         }
-        printf("current row: %d\n", piece.current_row);
     }
     return piece.current_row;
 }
@@ -291,13 +278,8 @@ void generate_piece()
 
     if (result <= 0 && !game_end())
     {
-        // the piece that just ran should be reset now, but the last leds should
-        // remain need to add some resets for the second piece as well.. maybe
-        // some other way to keep it organized..
-        piece_settings::current_frame = piece_settings::first_frame;
-        piece_settings::current_row   = 6;
-        randomv::ran_num              = random_generator(randomv::seed, 5);
-        result                        = 1;
+        randomv::ran_num = random_generator(randomv::seed, 5);
+        result           = 1;
     }
 
     switch (randomv::ran_num)
@@ -376,100 +358,6 @@ void clear_frame(int *rows, int *cols, size_t size)
         ++p;
         ++p2;
     }
-}
-
-int piece1()
-{
-    Time::current_time = to_ms_since_boot(get_absolute_time());
-
-    // enum Framestate {first_frame, second_frame, normal_frame};
-    // static Framestate current_frame {first_frame};
-
-    // static int current_row {6};
-
-    int first_frame_rows[3] {8, 8, 8};
-    int first_frame_cols[3] {3, 4, 5};
-    int second_frame_rows[4] {8, 7, 7, 7};
-    int second_frame_cols[4] {4, 3, 4, 5};
-    int normal_frame_rows[4] {piece_settings::current_row + 1, piece_settings::current_row,
-                              piece_settings::current_row, piece_settings::current_row};
-    int normal_frame_cols[4] {4, 3, 4, 5};
-    size_t normal_frame_size = sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]);
-
-    if (time_to_switch_frame())
-    {
-        if (piece_settings::current_frame == piece_settings::first_frame)
-        {
-
-            if (check_Ledplacement(8, 4))
-            {
-                return -1;
-            }
-
-            call_frame(first_frame_rows, first_frame_cols,
-                       sizeof(first_frame_rows) / sizeof(first_frame_rows[0]), color::green);
-
-            piece_settings::current_frame = piece_settings::second_frame;
-            Time::last_frame_time         = Time::current_time;
-        }
-        else if (piece_settings::current_frame == piece_settings::second_frame)
-        {
-            if (check_Ledplacement(8 - 1, 4))
-            {
-                return -1;
-            }
-            // clear first frame here
-            clear_frame(first_frame_rows, first_frame_cols,
-                        sizeof(first_frame_rows) / sizeof(first_frame_rows[0]));
-            // clear pixels on display
-            clear_all_pixels();
-            // set new leds
-            call_frame(second_frame_rows, second_frame_cols,
-                       sizeof(second_frame_rows) / sizeof(second_frame_rows[0]), color::green);
-
-            piece_settings::current_frame = piece_settings::normal_frame;
-            Time::last_frame_time         = Time::current_time;
-        }
-        else
-        {
-            if (piece_settings::current_row >= 0)
-            {
-
-                if (check_Ledplacement(piece_settings::current_row, 4) ||
-                    check_Ledplacement(piece_settings::current_row, 5) ||
-                    check_Ledplacement(piece_settings::current_row, 3))
-                {
-                    return -1;
-                }
-                else
-                {
-                    // clear second frame here
-                    clear_frame(second_frame_rows, second_frame_cols,
-                                sizeof(second_frame_rows) / sizeof(second_frame_rows[0]));
-                    // move one row down till it reaches first row
-                    // clear pixels
-                    clear_all_pixels();
-                    // printf("hey\n");
-                    call_frame(normal_frame_rows, normal_frame_cols,
-                               sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]),
-                               color::green);
-                    // check that the current row is above 1 and nothing is in
-                    // its next row path, to clear ledmemory
-                    if (piece_settings::current_row > 1 &&
-                        !(check_Ledplacement(piece_settings::current_row - 1, 4) ||
-                          check_Ledplacement(piece_settings::current_row - 1, 5) ||
-                          check_Ledplacement(piece_settings::current_row - 1, 3)))
-                    {
-                        clear_frame(normal_frame_rows, normal_frame_cols,
-                                    sizeof(normal_frame_rows) / sizeof(normal_frame_rows[0]));
-                    }
-                    --piece_settings::current_row;
-                    Time::last_frame_time = Time::current_time;
-                }
-            }
-        }
-    }
-    return piece_settings::current_row;
 }
 
 // could probably refactor this a bit..
