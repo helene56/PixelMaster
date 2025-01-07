@@ -58,7 +58,7 @@ int main()
 
     // storeLed(7, 4, 0b0000000, 0b00001101, 0b0000000);
     // sendLed();
-
+    // sleep_ms(9000);
     while (true) 
     {
 
