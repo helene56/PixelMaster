@@ -12,6 +12,7 @@
 namespace color
 {
     std::uint32_t green = (0b00001101 << 16) | (0b00000000 << 8) | 0b00000000;
+    std::uint32_t yellow = (0b00001101<< 16) | (0b00001101 << 8) | 0b00000000;
 
 } // namespace color
 
