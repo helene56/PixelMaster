@@ -68,6 +68,39 @@
             "windows": {
                 "command": "${env:USERPROFILE}/.pico-sdk/ninja/v1.12.1/ninja.exe"
             }
+        },
+        {
+            "label": "Bootsel start",
+            "type": "shell",
+            "command": "${userHome}/pico-projects/flash_pico.sh",
+            "args": [
+                "${command:raspberry-pi-pico.launchTargetPath}"
+            ],
+            "dependsOn": "Compile Project",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": [],
+            "windows": {
+                "command": "${env:USERPROFILE}/.pico-sdk/picotool/2.1.0/picotool/picotool.exe"
+            }
+        },
+        { "label": "Attach pico", 
+          "type": "shell", 
+          "command": "/bin/bash", 
+          "args": [ "${userHome}/pico-projects/attach_pico.sh" ], 
+          "group": {
+             "kind": "build", "isDefault": true
+           }, 
+          "presentation": {
+             "echo": true, "reveal": "always", "focus": false, "panel": "shared" 
+           }, 
+            "problemMatcher": [] 
+        },
+        { "label": "Upload & connect", 
+          "dependsOrder": "parallel", 
+          "dependsOn": ["Attach pico", "Bootsel start"] 
         }
     ]
 }
