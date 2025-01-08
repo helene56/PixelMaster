@@ -406,61 +406,6 @@ void clear_frame(int *rows, int *cols, size_t size)
     }
 }
 
-// could probably refactor this a bit..
-int piece2()
-{
-    // 4 dots: 4 rows, one column
-    Time::current_time = to_ms_since_boot(get_absolute_time());
-    static bool first_frame {true};
-
-    static int i {8};
-
-    if (first_frame)
-    {
-        if (time_to_switch_frame())
-        {
-            if (i >= 5)
-            {
-                storeLed(i, 4, 0b00001101, 0b00001101, 00000000);
-                sendLed();
-                if (check_Ledplacement(i - 1, 4))
-                {
-                    return -1;
-                }
-                --i;
-                Time::last_frame_time = Time::current_time;
-            }
-        }
-
-        // clear memory
-        if (i == 5)
-        {
-            first_frame = !first_frame;
-        }
-    }
-    // already the next placement because of the j-- at the end of the loop
-    else if (check_Ledplacement(i, 4) || i == 1)
-    {
-        return -1;
-    }
-    else if (time_to_switch_frame())
-    {
-        if (i >= 0)
-        {
-            // move one row down till it reaches first row
-            // clear pixels
-            clear_all_pixels();
-
-            storeLed(i, 4, 0b00001101, 0b00001101, 00000000);
-            clear_Ledmemory(i + 4, 4);
-            sendLed();
-
-            --i;
-            Time::last_frame_time = Time::current_time;
-        }
-    }
-    return i;
-}
 
 bool check_Ledplacement(int row, int col) { return (led_memory[row - 1][col - 1] > 0); }
 
