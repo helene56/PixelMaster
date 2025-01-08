@@ -63,11 +63,11 @@ namespace Pattern
         case 1:
             if (piece.current_pattern == PATTERN1)
             {
-                return (check_Ledplacement(8, 4));
+                return (check_Ledplacement(piece.current_row, 4));
             }
             else if (piece.current_pattern == PATTERN2)
             {
-                return (check_Ledplacement(8 - 1, 4));
+                return (check_Ledplacement(piece.current_row - 1, 4));
             }
             else if (piece.current_row >= 0)
             {
@@ -75,7 +75,14 @@ namespace Pattern
                          check_Ledplacement(piece.current_row, 5) ||
                          check_Ledplacement(piece.current_row, 3)));
             }
-
+        case 2:
+            if (piece.current_pattern >= 0)
+            {
+                // current_row depicts the row where the pixel is currently lit at
+                // col = 4 is hardcoded for now, should change when piece can move by the player
+                return (check_Ledplacement(piece.current_row, 4));
+            }
+                
         default:
             return false;
         }
@@ -83,7 +90,7 @@ namespace Pattern
 
     // declare frames
     // piece1
-    static int p1_row {6}; // consider passing this as a variable to functions
+    static int p1_row {8}; // consider passing this as a variable to functions
                            // instead of global variable
     int p1_id {1};
     void initializePiece1(Tetrispiece &piece)
@@ -122,33 +129,31 @@ namespace Pattern
         piece.collection_patterns[4] = &piece.normal_pattern;
     }
 
-    // piece1
-    static int p2_row {5}; // consider passing this as a variable to functions
+    // piece2
+    static int p2_row {8}; // consider passing this as a variable to functions
                            // instead of global variable
     int p2_id {2};
     void initializePiece2(Tetrispiece &piece)
     {
         piece = {
-            p2_id,  // id
-            p2_row, // current row
-            {
-                // pattern1
-            {8, 4}, // Row 1
-            {0, 0}, // Row 2
-            {0, 0}, // Row 3
-            {0, 0}
-            },
-            {           // pattern2
+            p2_id,   // id
+            p2_row,  // current row
+            {        // pattern1
+             {8, 4}, // Row 1
+             {0, 0}, // Row 2
+             {0, 0}, // Row 3
+             {0, 0}},
+            {        // pattern2
              {8, 4},
              {7, 4},
              {0, 0},
              {0, 0}},
+            {{8, 4}, {7, 4}, {6, 4}, {0, 0}}, // pattern3
             {{8, 4},
              {7, 4},
              {6, 4},
-             {0, 0}}, // pattern3
-            {{0}}, // pattern4
-            {    // normal
+             {5, 4}},                            // pattern4
+            {                                 // normal
              {8, 4},
              {7, 4},
              {6, 4},
@@ -257,14 +262,16 @@ int play_piece(Pattern::Tetrispiece &piece)
             }
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
             piece.current_pattern = switch_pattern(piece);
+
             Time::last_frame_time = Time::current_time;
+
         }
         else if (piece.current_pattern != Pattern::LAST_PATTERN)
         {
             clear_frame(current_rows, current_cols, piece.max_rows);
             // clear pixels on display
             clear_all_pixels();
-            
+
             for (int i = 0; i < piece.max_rows; ++i)
             {
                 current_rows[i] = (*current_pattern_array)[i][0];
@@ -272,9 +279,10 @@ int play_piece(Pattern::Tetrispiece &piece)
             }
 
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
-            // update time
+            // update time and pattern
             piece.current_pattern = switch_pattern(piece);
             Time::last_frame_time = Time::current_time;
+
         }
         // if the current row is 0, it should not do anything more
         // if last pattern
@@ -285,34 +293,19 @@ int play_piece(Pattern::Tetrispiece &piece)
             clear_frame(current_rows, current_cols, piece.max_rows);
             // clear pixels on display
             clear_all_pixels();
-            // set new leds
-            if (!normalPatternSet)
+            // move pattern down
+            for (int i = 0; i < piece.max_rows; ++i)
             {
-                for (int i = 0; i < piece.max_rows; ++i)
-                {
-                    current_rows[i] = (*current_pattern_array)[i][0];
-                    current_cols[i] = (*current_pattern_array)[i][1];
-                }
-                // normal pattern set once
-                normalPatternSet = true;
-            }
-            else
-            {
-                // now subtract from the set rows to move the normal pattern down
-                for (int i = 0; i < piece.max_rows; ++i)
-                {
-                    current_rows[i] -= 1;
-                }
+                current_rows[i] -= 1;
             }
 
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
 
-            // go to next row
-            --piece.current_row;
-            
             // update time
             Time::last_frame_time = Time::current_time;
         }
+        // go to next row
+        --piece.current_row;
     }
     return piece.current_row;
 }
@@ -339,11 +332,11 @@ void generate_piece()
     {
     case 0:
         // result = piece1();
-        result = play_piece(piece22);
+        result = play_piece(piece11);
         break;
     case 1:
         // result = piece1();
-        result = play_piece(piece11);
+        result = play_piece(piece22);
         break;
     case 2:
         // result = piece1();
