@@ -63,6 +63,8 @@ target_sources(PixelMaster PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}/src/led_memory.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/animations.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/tetris_piece.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/src/control_piece.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/src/TetrisPatterns.cpp
 )
 
 # Compile the PIO program
