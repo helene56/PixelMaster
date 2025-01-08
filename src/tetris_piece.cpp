@@ -57,7 +57,6 @@ namespace Pattern
     // provide an id to identify the specific conditon.
     bool piece_stop_moving(const Tetrispiece &piece)
     {
-        // TODO: implement same switch for id = 2
         switch (piece.id)
         {
         case 1:
