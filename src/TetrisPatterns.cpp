@@ -32,6 +32,7 @@ namespace Pattern
         // initialize these variables
         int id {0};
         int current_row {0};
+        int current_col {0};
         int pattern1[max_rows][max_cols] {};
         int pattern2[max_rows][max_cols] {};
         int pattern3[max_rows][max_cols] {};
@@ -81,12 +82,14 @@ namespace Pattern
     // piece1
     static int p1_row {8}; // consider passing this as a variable to functions
                            // instead of global variable
+    static int p1_col {4}; // current col middle pixel of piece
     int p1_id {1};
     void initializePiece1(Tetrispiece &piece)
     {
         piece = {
             p1_id,  // id
             p1_row, // current row
+            p1_col,
             {
                 // pattern1
                 {8, 3}, // Row 1
@@ -121,12 +124,14 @@ namespace Pattern
     // piece2
     static int p2_row {8}; // consider passing this as a variable to functions
                            // instead of global variable
+    static int p2_col {4}; // current col middle pixel of piece
     int p2_id {2};
     void initializePiece2(Tetrispiece &piece)
     {
         piece = {
             p2_id,   // id
             p2_row,  // current row
+            p2_col,
             {        // pattern1
              {8, 4}, // Row 1
              {0, 0}, // Row 2
