@@ -9,6 +9,7 @@
 #include "led_memory.h"
 #include "animations.h"
 #include "tetris_piece.h"
+#include "control_piece.h"
 
 #include "build/wave.pio.h"
 
@@ -40,6 +41,12 @@ int main()
     gpio_set_dir(Pins::button, GPIO_IN);
     gpio_pull_up(Pins::button);
 
+    // constexpr int RIGTH {19};
+    // gpio_init(RIGTH);
+    // gpio_set_dir(RIGTH, GPIO_IN);
+    // gpio_pull_up(RIGTH);
+    initialize_control_buttons();
+
     PIO pio = pio0;
     int sm = 0;
     uint offset = pio_add_program(pio, &wave_program);
@@ -61,7 +68,15 @@ int main()
     // sleep_ms(9000);
     while (true) 
     {
-
+        // bool right_press {gpio_get(RIGTH) == 0};
+        // if (right_press)
+        // {
+        //     printf("right pressed\n");
+        // }
+        // else
+        // {
+        //     printf("not pressed\n");
+        // }
         // uint32_t current_time = to_ms_since_boot(get_absolute_time());
         // // Check if it's time to switch frames
         // if (current_time - frames::last_frame_time >= frames::FRAME_INTERVAL) 
@@ -71,7 +86,6 @@ int main()
 
         generate_piece();
 
-        
         // small delay for button to be read correctly
         sleep_ms(2);
          
