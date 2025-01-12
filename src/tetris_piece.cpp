@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #include "TetrisPatterns.h"
+#include "control_piece.h"
 
 namespace randomv
 {
@@ -46,7 +47,8 @@ int play_piece(Pattern::Tetrispiece &piece)
     Time::current_time = to_ms_since_boot(get_absolute_time());
     // boolean  to keep track of when the first normal pattern has been set
     static bool normalPatternSet {false};
-
+    volatile bool right_press {control_right()};
+    volatile bool left_press {control_left()};
     int(*current_pattern_array)[4][2] = piece.collection_patterns[static_cast<int>(
         piece.current_pattern)]; // dereference to get the correct pattern
     if (time_to_switch_frame())
@@ -68,6 +70,7 @@ int play_piece(Pattern::Tetrispiece &piece)
                 current_rows[i] = (*current_pattern_array)[i][0];
                 current_cols[i] = (*current_pattern_array)[i][1];
             }
+            move_piece(piece, current_cols, right_press, left_press);
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
             piece.current_pattern = switch_pattern(piece);
 
@@ -85,6 +88,7 @@ int play_piece(Pattern::Tetrispiece &piece)
                 current_rows[i] = (*current_pattern_array)[i][0];
                 current_cols[i] = (*current_pattern_array)[i][1];
             }
+            move_piece(piece, current_cols, right_press, left_press);
 
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
             // update time and pattern
@@ -106,7 +110,7 @@ int play_piece(Pattern::Tetrispiece &piece)
             {
                 current_rows[i] -= 1;
             }
-
+            move_piece(piece, current_cols, right_press, left_press);
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
 
             // update time
@@ -230,13 +234,10 @@ bool game_end()
             }
         }
     }
-    printf("game_off: %d\n", game_off);
     return game_off;
 }
 
 // todo:
-// 3. make a function for pieces, that will work with multiple pieces, so
-// avoiding repeating code
-// 4. retain memoery of other piece when they stop moving
-// 5. retain memory of the piece when it stopped moving and then reset the
-// piece, so it can start its frames over.
+// 1. something wrong with piece 2's detection. sometimes it will continue even if the next pixel is already taken
+// 2. piece 2 wont move correctly to the right or left in the begininng of the patterns
+// 3. pieces do not stop at the border, the continue to move past
