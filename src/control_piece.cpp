@@ -1,8 +1,8 @@
 // module to control the tetris pieces created in tetris_piece.cpp
 #include "pico/stdlib.h"
 
-#include "tetris_piece.h"
 #include "TetrisPatterns.h"
+#include "tetris_piece.h"
 
 namespace control_buttons
 {
@@ -25,61 +25,52 @@ namespace control_buttons
         gpio_init(LEFT);
         gpio_set_dir(LEFT, GPIO_IN);
         gpio_pull_up(LEFT);
-
     }
- 
+
 } // namespace control_buttons
 
-void initialize_control_buttons()
-{
-    control_buttons::initialize_control_buttons();
-}
+void initialize_control_buttons() { control_buttons::initialize_control_buttons(); }
 
-void move_piece(Pattern::Tetrispiece &piece, int current_rows[4])
+bool control_right()
 {
     // active low, is pulled up
-    volatile bool right_pressed {gpio_get(control_buttons::RIGTH) == 0};
-    volatile bool left_pressed {gpio_get(control_buttons::LEFT) == 0};
-    volatile bool down_pressed {gpio_get(control_buttons::DOWN) == 0};
+    return {gpio_get(control_buttons::RIGTH) == 0};
+}
 
-    int(*current_pattern_array)[4][2] = piece.collection_patterns[static_cast<int>(
-        piece.current_pattern)]; // dereference to get the correct pattern
-    
-    
+bool control_left()
+{
+    // active low, is pulled up
+    return {gpio_get(control_buttons::LEFT) == 0};
+}
 
+void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool right_pressed,
+                bool left_pressed)
+{
+    // TODO: should rename piece.max_cols, right now it is only 2.. should be 4?
+    // current_col is set to be the middle piece which is why it wont work for pieces filling more
+    // than one pixel
     if (right_pressed)
     {
+        printf("right is pressed\n");
         if (piece.current_col < 8)
         {
-            for (int i = 0; i < piece.max_cols; ++i)
+            for (int i = 0; i < piece.max_rows; ++i)
             {
-                current_rows[i] += 1;
+                current_cols[i] += 1;
             }
             ++piece.current_col;
         }
-        
     }
     else if (left_pressed)
     {
+        printf("left is pressed\n");
         if (piece.current_col > 0)
         {
-            for (int i = 0; i < piece.max_cols; ++i)
+            for (int i = 0; i < piece.max_rows; ++i)
             {
-                current_rows[i] -= 1;
+                current_cols[i] -= 1;
             }
             --piece.current_col;
-        }   
-    }
-    
-}
-
-void apply_move(Pattern::Tetrispiece &piece, int current_rows[4])
-{
-    int(*current_pattern_array)[4][2] = piece.collection_patterns[static_cast<int>(
-        piece.current_pattern)]; // dereference to get the correct pattern
-    
-    for (int i = 0; i < piece.max_cols; ++i)
-        {
-            current_rows[i] -= 1;
         }
+    }
 }
