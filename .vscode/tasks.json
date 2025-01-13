@@ -86,6 +86,23 @@
                 "command": "${env:USERPROFILE}/.pico-sdk/picotool/2.1.0/picotool/picotool.exe"
             }
         },
+        {
+            "label": "Bootsel start (DEBUG)",
+            "type": "shell",
+            "command": "${userHome}/pico-projects/flash_pico_dont_exit.sh",
+            "args": [
+                "${command:raspberry-pi-pico.launchTargetPath}"
+            ],
+            "dependsOn": "Compile Project",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": [],
+            "windows": {
+                "command": "${env:USERPROFILE}/.pico-sdk/picotool/2.1.0/picotool/picotool.exe"
+            }
+        },
         { "label": "Attach pico", 
           "type": "shell", 
           "command": "/bin/bash", 
@@ -101,6 +118,10 @@
         { "label": "Upload & connect", 
           "dependsOrder": "parallel", 
           "dependsOn": ["Attach pico", "Bootsel start"] 
+        },
+        { "label": "Upload & connect (DEBUG)", 
+          "dependsOrder": "parallel", 
+          "dependsOn": ["Attach pico", "Bootsel start (DEBUG)"] 
         }
     ]
 }
