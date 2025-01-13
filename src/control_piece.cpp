@@ -33,8 +33,19 @@ void initialize_control_buttons() { control_buttons::initialize_control_buttons(
 
 bool control_right()
 {
-    // active low, is pulled up
-    return {gpio_get(control_buttons::RIGTH) == 0};
+    static bool last_state = true; // Assume button starts unpressed
+    bool current_state     = gpio_get(control_buttons::RIGTH) == 0; // Active low
+
+    if (current_state && !last_state)                               // Detect falling edge
+    {
+        last_state = current_state;
+        return true;                                                // Button was just pressed
+    }
+    else
+    {
+        last_state = current_state;
+        return false; // No new press detected
+    }
 }
 
 bool control_left()
@@ -51,7 +62,6 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool right_press
     // than one pixel
     if (right_pressed)
     {
-        printf("right is pressed\n");
         if (piece.current_col < 8)
         {
             for (int i = 0; i < piece.max_rows; ++i)
@@ -63,7 +73,6 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool right_press
     }
     else if (left_pressed)
     {
-        printf("left is pressed\n");
         if (piece.current_col > 0)
         {
             for (int i = 0; i < piece.max_rows; ++i)
