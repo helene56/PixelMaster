@@ -37,6 +37,8 @@ namespace Pattern
         int pattern4[max_rows][max_cols] {};
         int normal_pattern[max_rows][max_cols] {};
         std::uint32_t color {0};
+        int right_border {0};  // what hits the right border first
+        int left_border {0};   // what hits the left border first
         // do not initialize
         patterns_state current_pattern {PATTERN1};
         int (*collection_patterns[5])[4][2] {};
@@ -60,6 +62,10 @@ namespace Pattern
 
     // returns the next pattern in order
     patterns_state switch_pattern(Tetrispiece &piece);
+
+    void reset_piece1(Tetrispiece &piece);
+
+    void reset_piece2(Tetrispiece &piece);
 
 } // namespace Pattern
 

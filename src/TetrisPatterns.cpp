@@ -39,6 +39,8 @@ namespace Pattern
         int pattern4[max_rows][max_cols] {};
         int normal_pattern[max_rows][max_cols] {};
         std::uint32_t color {0};
+        int right_border {0};  // what hits the right border first
+        int left_border {0};   // what hits the left border first
         // do not initialize
         patterns_state current_pattern {PATTERN1};
         int (*collection_patterns[5])[4][2] {};
@@ -111,6 +113,8 @@ namespace Pattern
              {p1_row, 4},
              {p1_row, 5}},
             color::green,
+            5,
+            3
         };
         // piece is initialized
         initialized_piece            = true;
@@ -153,6 +157,8 @@ namespace Pattern
              {6, 4},
              {5, 4}},
             color::yellow,
+            4,
+            4
         };
         // piece is initialized
         initialized_piece            = true;
@@ -197,6 +203,16 @@ namespace Pattern
         {
             return NORMAL;
         }
+    }
+
+    void reset_piece1(Tetrispiece &piece)
+    {
+        initializePiece1(piece);
+    }
+
+    void reset_piece2(Tetrispiece &piece)
+    {
+        initializePiece2(piece);
     }
 
 } // namespace Pattern
