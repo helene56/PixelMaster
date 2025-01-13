@@ -36,10 +36,10 @@ int random_generator(std::uint16_t &X, int range)
     X ^= (X >> 17); // XOR result with itself shifted right by 17 bits
     X ^= (X << 5);  // XOR result with itself shifted left by 5 bits
 
-    int result = X % range;
+    int ran_result = X % range;
     X ^= (X >> 5);  // Update seed to prepare for next call
     // return X % range; // range of num 0-4
-    return result;
+    return ran_result;
 }
 
 int play_piece(Pattern::Tetrispiece &piece)
@@ -151,29 +151,28 @@ void generate_piece()
     {
         randomv::ran_num = random_generator(randomv::seed, 5);
         result           = 1;
+        // reset the pieces to the start values
+        Pattern::reset_piece1(piece11);
+        Pattern::reset_piece1(piece22);
+
     }
 
     switch (randomv::ran_num)
     {
     case 0:
-        // result = piece1();
         result = play_piece(piece11);
         break;
     case 1:
-        // result = piece1();
         result = play_piece(piece22);
         break;
     case 2:
-        // result = piece1();
-        result = play_piece(piece22);
+        result = play_piece(piece11);
         break;
     case 3:
-        // result = piece1();
         result = play_piece(piece22);
         break;
     case 4:
-        // result = piece1();
-        result = play_piece(piece22);
+        result = play_piece(piece11);
         break;
 
     default:
@@ -251,6 +250,4 @@ bool game_end()
 }
 
 // todo:
-// 1. something wrong with piece 2's detection. sometimes it will continue even if the next pixel is already taken
-// 2. piece 2 wont move correctly to the right or left in the begininng of the patterns
-// 3. pieces do not stop at the border, the continue to move past
+// fix both pieces pixel/piece detection. does not correctly stop where they should.
