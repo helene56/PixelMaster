@@ -62,26 +62,26 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
     // than one pixel
     if (right_pressed)
     {
-        if (piece.current_col < 8)
+        if (piece.right_border < 8)
         {
             for (int i = 0; i < piece.max_rows; ++i)
             {
                 current_cols[i] += 1;
             }
-            ++piece.current_col;
+            ++piece.right_border;
         }
         // return right_pressed to its original state, button no longer pressed
         right_pressed = false;
     }
     else if (left_pressed)
     {
-        if (piece.current_col > 0)
+        if (piece.left_border > 1)
         {
             for (int i = 0; i < piece.max_rows; ++i)
             {
                 current_cols[i] -= 1;
             }
-            --piece.current_col;
+            --piece.left_border;
         }
         left_pressed = false;
     }
