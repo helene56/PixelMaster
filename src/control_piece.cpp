@@ -54,8 +54,8 @@ bool control_left()
     return {gpio_get(control_buttons::LEFT) == 0};
 }
 
-void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool right_pressed,
-                bool left_pressed)
+void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pressed,
+                bool &left_pressed)
 {
     // TODO: should rename piece.max_cols, right now it is only 2.. should be 4?
     // current_col is set to be the middle piece which is why it wont work for pieces filling more
@@ -70,6 +70,8 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool right_press
             }
             ++piece.current_col;
         }
+        // return right_pressed to its original state, button no longer pressed
+        right_pressed = false;
     }
     else if (left_pressed)
     {
@@ -81,5 +83,6 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool right_press
             }
             --piece.current_col;
         }
+        left_pressed = false;
     }
 }
