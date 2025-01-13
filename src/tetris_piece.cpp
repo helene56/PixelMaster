@@ -47,15 +47,21 @@ int play_piece(Pattern::Tetrispiece &piece)
     Time::current_time = to_ms_since_boot(get_absolute_time());
     // boolean  to keep track of when the first normal pattern has been set
     static bool normalPatternSet {false};
-    static bool right_has_been_pressed {false};
+    static bool right_has_been_pressed {false};  // is reset in move_piece. maybe this is not the best idea?
+    static bool left_has_been_pressed {false};
     volatile bool right_press {control_right()};
+    volatile bool left_press {control_left()};
     // this solved the issue, now the button responds, but should probably refactor..
     if (right_press)
     {
-        printf("now the right button has been pressed\n");
         right_has_been_pressed = true;
     }
-    bool left_press {control_left()};
+    else if (left_press)
+    {
+        left_has_been_pressed = true;
+    }
+    
+    
     int(*current_pattern_array)[4][2] = piece.collection_patterns[static_cast<int>(
         piece.current_pattern)]; // dereference to get the correct pattern
     if (time_to_switch_frame())
@@ -78,11 +84,7 @@ int play_piece(Pattern::Tetrispiece &piece)
                 current_rows[i] = (*current_pattern_array)[i][0];
                 current_cols[i] = (*current_pattern_array)[i][1];
             }
-            move_piece(piece, current_cols, right_has_been_pressed, left_press);
-            if (right_has_been_pressed)
-            {
-                right_has_been_pressed = false;
-            }
+            move_piece(piece, current_cols, right_has_been_pressed, left_has_been_pressed);
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
             piece.current_pattern = switch_pattern(piece);
 
@@ -100,11 +102,7 @@ int play_piece(Pattern::Tetrispiece &piece)
                 current_rows[i] = (*current_pattern_array)[i][0];
                 current_cols[i] = (*current_pattern_array)[i][1];
             }
-            move_piece(piece, current_cols, right_has_been_pressed, left_press);
-            if (right_has_been_pressed)
-            {
-                right_has_been_pressed = false;
-            }
+            move_piece(piece, current_cols, right_has_been_pressed, left_has_been_pressed);
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
             // update time and pattern
             piece.current_pattern = switch_pattern(piece);
@@ -125,11 +123,7 @@ int play_piece(Pattern::Tetrispiece &piece)
             {
                 current_rows[i] -= 1;
             }
-            move_piece(piece, current_cols, right_has_been_pressed, left_press);
-            if (right_has_been_pressed)
-            {
-                right_has_been_pressed = false;
-            }
+            move_piece(piece, current_cols, right_has_been_pressed, left_has_been_pressed);
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
 
             // update time
