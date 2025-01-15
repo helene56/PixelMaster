@@ -153,26 +153,26 @@ void generate_piece()
         result           = 1;
         // reset the pieces to the start values
         Pattern::reset_piece1(piece11);
-        Pattern::reset_piece1(piece22);
+        Pattern::reset_piece2(piece22);
 
     }
 
     switch (randomv::ran_num)
     {
     case 0:
-        result = play_piece(piece11);
+        result = play_piece(piece22);
         break;
     case 1:
         result = play_piece(piece22);
         break;
     case 2:
-        result = play_piece(piece11);
+        result = play_piece(piece22);
         break;
     case 3:
         result = play_piece(piece22);
         break;
     case 4:
-        result = play_piece(piece11);
+        result = play_piece(piece22);
         break;
 
     default:
@@ -250,4 +250,4 @@ bool game_end()
 }
 
 // todo:
-// fix both pieces pixel/piece detection. does not correctly stop where they should.
+// figure out why piece22 jumps back when at 2 or 3 pixels

@@ -64,7 +64,11 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
         {
             for (int i = 0; i < piece.max_rows; ++i)
             {
-                current_cols[i] += 1;
+                if (current_cols[i] != 0)
+                {
+                    current_cols[i] += 1;
+                }
+                
             }
             ++piece.right_border;
             ++piece.mid_pixel;
@@ -78,7 +82,10 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
         {
             for (int i = 0; i < piece.max_rows; ++i)
             {
-                current_cols[i] -= 1;
+                if (current_cols[i] != 0)
+                {
+                    current_cols[i] -= 1;
+                }
             }
             --piece.left_border;
             --piece.mid_pixel;
