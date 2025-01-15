@@ -30,7 +30,7 @@ namespace Pattern
         // initialize these variables
         int id {0};
         int current_row {0};
-        int current_col {0};
+        int mid_pixel {0};
         int pattern1[max_rows][max_cols] {};
         int pattern2[max_rows][max_cols] {};
         int pattern3[max_rows][max_cols] {};

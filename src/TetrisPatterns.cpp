@@ -32,7 +32,7 @@ namespace Pattern
         // initialize these variables
         int id {0};
         int current_row {0};
-        int current_col {0};
+        int mid_pixel {0};
         int pattern1[max_rows][max_cols] {};
         int pattern2[max_rows][max_cols] {};
         int pattern3[max_rows][max_cols] {};
@@ -53,26 +53,18 @@ namespace Pattern
         switch (piece.id)
         {
         case 1:
-            if (piece.current_pattern == PATTERN1)
+            if (piece.current_row >= 0)
             {
-                return (check_Ledplacement(piece.current_row, 4));
-            }
-            else if (piece.current_pattern == PATTERN2)
-            {
-                return (check_Ledplacement(piece.current_row - 1, 4));
-            }
-            else if (piece.current_row >= 0)
-            {
-                return ((check_Ledplacement(piece.current_row, 4) ||
-                         check_Ledplacement(piece.current_row, 5) ||
-                         check_Ledplacement(piece.current_row, 3)));
+                return ((check_Ledplacement(piece.current_row, piece.mid_pixel) ||
+                         check_Ledplacement(piece.current_row, piece.mid_pixel+1) ||
+                         check_Ledplacement(piece.current_row, piece.mid_pixel-1)));
             }
         case 2:
             if (piece.current_pattern >= 0)
             {
                 // current_row depicts the row where the pixel is currently lit at
                 // col = 4 is hardcoded for now, should change when piece can move by the player
-                return (check_Ledplacement(piece.current_row, 4));
+                return (check_Ledplacement(piece.current_row, piece.mid_pixel));
             }
                 
         default:

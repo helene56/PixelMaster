@@ -58,8 +58,6 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
                 bool &left_pressed)
 {
     // TODO: should rename piece.max_cols, right now it is only 2.. should be 4?
-    // current_col is set to be the middle piece which is why it wont work for pieces filling more
-    // than one pixel
     if (right_pressed)
     {
         if (piece.right_border < 8)
@@ -69,6 +67,7 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
                 current_cols[i] += 1;
             }
             ++piece.right_border;
+            ++piece.mid_pixel;
         }
         // return right_pressed to its original state, button no longer pressed
         right_pressed = false;
@@ -82,6 +81,7 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
                 current_cols[i] -= 1;
             }
             --piece.left_border;
+            --piece.mid_pixel;
         }
         left_pressed = false;
     }
