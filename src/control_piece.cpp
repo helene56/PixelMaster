@@ -72,6 +72,12 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
             }
             ++piece.right_border;
             ++piece.mid_pixel;
+
+            if (piece.current_pattern != Pattern::LAST_PATTERN)
+            {
+                // update the column patterns to reflect the move
+                ++piece.pattern_counter;
+            }
         }
         // return right_pressed to its original state, button no longer pressed
         right_pressed = false;
@@ -89,6 +95,12 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
             }
             --piece.left_border;
             --piece.mid_pixel;
+            // update the column patterns to reflect the move
+            if (piece.current_pattern != Pattern::LAST_PATTERN)
+            {
+                // update the column patterns to reflect the move
+                --piece.pattern_counter;
+            }
         }
         left_pressed = false;
     }

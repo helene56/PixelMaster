@@ -47,6 +47,7 @@ int play_piece(Pattern::Tetrispiece &piece)
     Time::current_time = to_ms_since_boot(get_absolute_time());
     // boolean  to keep track of when the first normal pattern has been set
     static bool normalPatternSet {false};
+    // static int counter {0};
     static bool right_has_been_pressed {false};  // is reset in move_piece. maybe this is not the best idea?
     static bool left_has_been_pressed {false};
     volatile bool right_press {control_right()};
@@ -82,7 +83,7 @@ int play_piece(Pattern::Tetrispiece &piece)
             for (int i = 0; i < piece.max_rows; ++i)
             {
                 current_rows[i] = (*current_pattern_array)[i][0];
-                current_cols[i] = (*current_pattern_array)[i][1];
+                current_cols[i] = (*current_pattern_array)[i][1] + piece.pattern_counter;
             }
             move_piece(piece, current_cols, right_has_been_pressed, left_has_been_pressed);
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
@@ -100,7 +101,7 @@ int play_piece(Pattern::Tetrispiece &piece)
             for (int i = 0; i < piece.max_rows; ++i)
             {
                 current_rows[i] = (*current_pattern_array)[i][0];
-                current_cols[i] = (*current_pattern_array)[i][1];
+                current_cols[i] = (*current_pattern_array)[i][1] + piece.pattern_counter;
             }
             move_piece(piece, current_cols, right_has_been_pressed, left_has_been_pressed);
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
@@ -113,6 +114,7 @@ int play_piece(Pattern::Tetrispiece &piece)
         // if last pattern
         else if (piece.current_row > 0 && piece.current_pattern == Pattern::LAST_PATTERN)
         {
+            piece.pattern_counter = 0;
             // clear previous patterns
             // clear first frame here
             clear_frame(current_rows, current_cols, piece.max_rows);

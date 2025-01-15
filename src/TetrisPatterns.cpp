@@ -44,6 +44,7 @@ namespace Pattern
         // do not initialize
         patterns_state current_pattern {PATTERN1};
         int (*collection_patterns[5])[4][2] {};
+        int pattern_counter {0};
     };
 
     // a general function to stop pieces from moving.
@@ -106,7 +107,7 @@ namespace Pattern
              {p1_row, 5}},
             color::green,
             5,
-            3
+            3,
         };
         // piece is initialized
         initialized_piece            = true;
