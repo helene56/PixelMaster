@@ -61,16 +61,30 @@ namespace Pattern
                          check_Ledplacement(piece.current_row, piece.mid_pixel - 1)));
             }
         case 2:
-            if (piece.current_pattern >= 0)
+            if (piece.current_row >= 0)
             {
                 // current_row depicts the row where the pixel is currently lit at
                 return (check_Ledplacement(piece.current_row, piece.mid_pixel));
             }
         case 3:
-            if (piece.current_pattern >= 0)
+
+            if (piece.current_row >= 0)
             {
+                // if (piece.current_pattern != PATTERN1)
+                // {
+                //     return (check_Ledplacement(piece.current_row, piece.mid_pixel) ||
+                //             check_Ledplacement(piece.current_row, piece.right_border) ||
+                //             check_Ledplacement(piece.current_row + 1, piece.left_border));
+                // }
+                if (piece.current_pattern == PATTERN1)
+                {
+                    return (check_Ledplacement(piece.current_row, piece.mid_pixel) ||
+                            check_Ledplacement(piece.current_row, piece.right_border));
+                }
                 return (check_Ledplacement(piece.current_row, piece.mid_pixel) ||
-                        check_Ledplacement(piece.current_row, piece.left_border));
+                            check_Ledplacement(piece.current_row, piece.right_border) ||
+                            check_Ledplacement(piece.current_row + 1, piece.left_border));
+                
             }
 
         default:
@@ -166,31 +180,33 @@ namespace Pattern
                            // instead of global variable
     static int p3_col {4}; // current col middle pixel of piece
     int p3_id {3};
+    int p3_right_border {5};
+    int p3_left_border {3};
     void initializePiece3(Tetrispiece &piece)
     {
         piece = {p3_id,   // id
                  p3_row,  // current row
                  p3_col,
                  {        // pattern1
-                  {8, 3}, // Row 1
-                  {8, 4}, // Row 2
+                  {8, 4}, // Row 1
+                  {8, 5}, // Row 2
                   {0, 0}, // Row 3
                   {0, 0}},
                  {        // pattern2
+                  {8, 3},
                   {8, 4},
-                  {8, 5},
-                  {7, 3},
-                  {7, 4}},
+                  {7, 4},
+                  {7, 5}},
                  {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, // pattern3
                  {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, // pattern4
                  {                                 // normal pattern
+                  {8, 3},
                   {8, 4},
-                  {8, 5},
-                  {7, 3},
-                  {7, 4}},
+                  {7, 4},
+                  {7, 5}},
                  color::pink,
-                 5,
-                 3};
+                 p3_right_border,
+                 p3_left_border};
         // piece is initialized
         initialized_piece            = true;
         piece.collection_patterns[0] = &piece.pattern1;

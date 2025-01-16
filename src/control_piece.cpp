@@ -10,6 +10,8 @@ namespace control_buttons
     constexpr int DOWN {20};
     constexpr int RIGTH {19};
     constexpr int LEFT {18};
+    // rotate pieces
+    constexpr int ROTATE {21};
 
     // initialize buttons
     void initialize_control_buttons()
@@ -25,6 +27,10 @@ namespace control_buttons
         gpio_init(LEFT);
         gpio_set_dir(LEFT, GPIO_IN);
         gpio_pull_up(LEFT);
+
+        gpio_init(ROTATE);
+        gpio_set_dir(ROTATE, GPIO_IN);
+        gpio_pull_up(ROTATE);
     }
 
 } // namespace control_buttons
@@ -51,7 +57,19 @@ bool control_right()
 bool control_left()
 {
     // active low, is pulled up
-    return {gpio_get(control_buttons::LEFT) == 0};
+    static bool last_state = true; // Assume button starts unpressed
+    bool current_state     = {gpio_get(control_buttons::LEFT) == 0}; // Active low
+
+    if (current_state && !last_state)                               // Detect falling edge
+    {
+        last_state = current_state;
+        return true;                                                // Button was just pressed
+    }
+    else
+    {
+        last_state = current_state;
+        return false; // No new press detected
+    }
 }
 
 void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pressed,
@@ -71,6 +89,7 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
                 
             }
             ++piece.right_border;
+            ++piece.left_border;
             ++piece.mid_pixel;
 
             if (piece.current_pattern != Pattern::LAST_PATTERN)
@@ -94,6 +113,7 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
                 }
             }
             --piece.left_border;
+            --piece.right_border;
             --piece.mid_pixel;
             // update the column patterns to reflect the move
             if (piece.current_pattern != Pattern::LAST_PATTERN)
