@@ -60,6 +60,8 @@ namespace Pattern
     // piece2
   
     void initializePiece2(Tetrispiece &piece);
+    // piece3
+    void initializePiece3(Tetrispiece &piece);
 
     // returns the next pattern in order
     patterns_state switch_pattern(Tetrispiece &piece);
@@ -67,6 +69,8 @@ namespace Pattern
     void reset_piece1(Tetrispiece &piece);
 
     void reset_piece2(Tetrispiece &piece);
+
+    void reset_piece3(Tetrispiece &piece);
 
 } // namespace Pattern
 

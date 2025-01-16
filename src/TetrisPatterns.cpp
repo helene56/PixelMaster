@@ -6,11 +6,11 @@
 
 namespace color
 {
-    std::uint32_t green  = (0b00001101 << 16) | (0b00000000 << 8) | 0b00000000;
-    std::uint32_t yellow = (0b00001101 << 16) | (0b00001101 << 8) | 0b00000000;
+    constexpr std::uint32_t green  = (0b00001101 << 16) | (0b00000000 << 8) | 0b00000000;
+    constexpr std::uint32_t yellow = (0b00001101 << 16) | (0b00001101 << 8) | 0b00000000;
+    constexpr std::uint32_t pink   = (0b00000011 << 16) | (0b00001011 << 8) | 0b00000011;
 
 } // namespace color
-
 
 namespace Pattern
 {
@@ -39,8 +39,8 @@ namespace Pattern
         int pattern4[max_rows][max_cols] {};
         int normal_pattern[max_rows][max_cols] {};
         std::uint32_t color {0};
-        int right_border {0};  // what hits the right border first
-        int left_border {0};   // what hits the left border first
+        int right_border {0}; // what hits the right border first
+        int left_border {0};  // what hits the left border first
         // do not initialize
         patterns_state current_pattern {PATTERN1};
         int (*collection_patterns[5])[4][2] {};
@@ -57,17 +57,22 @@ namespace Pattern
             if (piece.current_row >= 0)
             {
                 return ((check_Ledplacement(piece.current_row, piece.mid_pixel) ||
-                         check_Ledplacement(piece.current_row, piece.mid_pixel+1) ||
-                         check_Ledplacement(piece.current_row, piece.mid_pixel-1)));
+                         check_Ledplacement(piece.current_row, piece.mid_pixel + 1) ||
+                         check_Ledplacement(piece.current_row, piece.mid_pixel - 1)));
             }
         case 2:
             if (piece.current_pattern >= 0)
             {
                 // current_row depicts the row where the pixel is currently lit at
-                // col = 4 is hardcoded for now, should change when piece can move by the player
                 return (check_Ledplacement(piece.current_row, piece.mid_pixel));
             }
-                
+        case 3:
+            if (piece.current_pattern >= 0)
+            {
+                return (check_Ledplacement(piece.current_row, piece.mid_pixel) ||
+                        check_Ledplacement(piece.current_row, piece.left_border));
+            }
+
         default:
             return false;
         }
@@ -125,34 +130,67 @@ namespace Pattern
     int p2_id {2};
     void initializePiece2(Tetrispiece &piece)
     {
-        piece = {
-            p2_id,   // id
-            p2_row,  // current row
-            p2_col,
-            {        // pattern1
-             {8, 4}, // Row 1
-             {0, 0}, // Row 2
-             {0, 0}, // Row 3
-             {0, 0}},
-            {        // pattern2
-             {8, 4},
-             {7, 4},
-             {0, 0},
-             {0, 0}},
-            {{8, 4}, {7, 4}, {6, 4}, {0, 0}}, // pattern3
-            {{8, 4},
-             {7, 4},
-             {6, 4},
-             {5, 4}},                            // pattern4
-            {                                 // normal
-             {8, 4},
-             {7, 4},
-             {6, 4},
-             {5, 4}},
-            color::yellow,
-            4,
-            4
-        };
+        piece = {p2_id,   // id
+                 p2_row,  // current row
+                 p2_col,
+                 {        // pattern1
+                  {8, 4}, // Row 1
+                  {0, 0}, // Row 2
+                  {0, 0}, // Row 3
+                  {0, 0}},
+                 {        // pattern2
+                  {8, 4},
+                  {7, 4},
+                  {0, 0},
+                  {0, 0}},
+                 {{8, 4}, {7, 4}, {6, 4}, {0, 0}}, // pattern3
+                 {{8, 4}, {7, 4}, {6, 4}, {5, 4}}, // pattern4
+                 {                                 // normal
+                  {8, 4},
+                  {7, 4},
+                  {6, 4},
+                  {5, 4}},
+                 color::yellow,
+                 4,
+                 4};
+        // piece is initialized
+        initialized_piece            = true;
+        piece.collection_patterns[0] = &piece.pattern1;
+        piece.collection_patterns[1] = &piece.pattern2;
+        piece.collection_patterns[2] = &piece.pattern3;
+        piece.collection_patterns[3] = &piece.pattern4;
+        piece.collection_patterns[4] = &piece.normal_pattern;
+    }
+    // piece3
+    static int p3_row {8}; // consider passing this as a variable to functions
+                           // instead of global variable
+    static int p3_col {4}; // current col middle pixel of piece
+    int p3_id {3};
+    void initializePiece3(Tetrispiece &piece)
+    {
+        piece = {p3_id,   // id
+                 p3_row,  // current row
+                 p3_col,
+                 {        // pattern1
+                  {8, 3}, // Row 1
+                  {8, 4}, // Row 2
+                  {0, 0}, // Row 3
+                  {0, 0}},
+                 {        // pattern2
+                  {8, 4},
+                  {8, 5},
+                  {7, 3},
+                  {7, 4}},
+                 {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, // pattern3
+                 {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, // pattern4
+                 {                                 // normal pattern
+                  {8, 4},
+                  {8, 5},
+                  {7, 3},
+                  {7, 4}},
+                 color::pink,
+                 5,
+                 3};
         // piece is initialized
         initialized_piece            = true;
         piece.collection_patterns[0] = &piece.pattern1;
@@ -198,14 +236,10 @@ namespace Pattern
         }
     }
 
-    void reset_piece1(Tetrispiece &piece)
-    {
-        initializePiece1(piece);
-    }
+    void reset_piece1(Tetrispiece &piece) { initializePiece1(piece); }
 
-    void reset_piece2(Tetrispiece &piece)
-    {
-        initializePiece2(piece);
-    }
+    void reset_piece2(Tetrispiece &piece) { initializePiece2(piece); }
+
+    void reset_piece3(Tetrispiece &piece) { initializePiece3(piece); }
 
 } // namespace Pattern

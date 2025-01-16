@@ -141,10 +141,12 @@ void generate_piece()
 {
     static Pattern::Tetrispiece piece11;
     static Pattern::Tetrispiece piece22;
+    static Pattern::Tetrispiece piece33;
     if (!Pattern::initialized_piece)
     {
         Pattern::initializePiece1(piece11);
         Pattern::initializePiece2(piece22);
+        Pattern::initializePiece3(piece33);
     }
 
     static int result {1};
@@ -156,25 +158,26 @@ void generate_piece()
         // reset the pieces to the start values
         Pattern::reset_piece1(piece11);
         Pattern::reset_piece2(piece22);
+        Pattern::reset_piece3(piece33);
 
     }
 
     switch (randomv::ran_num)
     {
     case 0:
-        result = play_piece(piece22);
+        result = play_piece(piece33);
         break;
     case 1:
-        result = play_piece(piece22);
+        result = play_piece(piece33);
         break;
     case 2:
-        result = play_piece(piece22);
+        result = play_piece(piece33);
         break;
     case 3:
-        result = play_piece(piece22);
+        result = play_piece(piece33);
         break;
     case 4:
-        result = play_piece(piece22);
+        result = play_piece(piece33);
         break;
 
     default:
