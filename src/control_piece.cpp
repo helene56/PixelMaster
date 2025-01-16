@@ -125,3 +125,19 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
         left_pressed = false;
     }
 }
+
+void rotate_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &rotate_press)
+{
+    if (rotate_press)
+    {
+        switch (piece.id)
+        {
+        case 3:
+            
+            break;
+        
+        default:
+            break;
+        }
+    }
+}
