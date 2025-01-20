@@ -259,4 +259,5 @@ bool game_end()
 }
 
 // todo:
-// figure out why piece22 jumps back when at 2 or 3 pixels
+// figure out the rotated piece's border check, for when it is time to stop. is not working.
+// figure out how to rotate the pixel back again when clicking rotate for the second time.
