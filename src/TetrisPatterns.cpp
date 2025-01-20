@@ -32,7 +32,7 @@ namespace Pattern
         // initialize these variables
         int id {0};
         int current_row {0};
-        int mid_pixel {0};
+        int mid_pixel {0}; // right now: used to check for when colliding with other pieces
         int pattern1[max_rows][max_cols] {};
         int pattern2[max_rows][max_cols] {};
         int pattern3[max_rows][max_cols] {};
@@ -82,9 +82,8 @@ namespace Pattern
                             check_Ledplacement(piece.current_row, piece.right_border));
                 }
                 return (check_Ledplacement(piece.current_row, piece.mid_pixel) ||
-                            check_Ledplacement(piece.current_row, piece.right_border) ||
-                            check_Ledplacement(piece.current_row + 1, piece.left_border));
-                
+                        check_Ledplacement(piece.current_row, piece.right_border) ||
+                        check_Ledplacement(piece.current_row + 1, piece.left_border));
             }
 
         default:

@@ -15,7 +15,6 @@ namespace randomv
     int ran_num {random_generator(seed, 5)};
 } // namespace randomv
 
-
 namespace Time
 {
     uint32_t interval               = 800;
@@ -48,10 +47,13 @@ int play_piece(Pattern::Tetrispiece &piece)
     // boolean  to keep track of when the first normal pattern has been set
     static bool normalPatternSet {false};
     // static int counter {0};
-    static bool right_has_been_pressed {false};  // is reset in move_piece. maybe this is not the best idea?
+    static bool right_has_been_pressed {
+        false}; // is reset in move_piece. maybe this is not the best idea?
     static bool left_has_been_pressed {false};
+    static bool rotate_has_been_pressed {false};
     volatile bool right_press {control_right()};
     volatile bool left_press {control_left()};
+    volatile bool rotate_press {rotate()};
     // this solved the issue, now the button responds, but should probably refactor..
     if (right_press)
     {
@@ -61,8 +63,11 @@ int play_piece(Pattern::Tetrispiece &piece)
     {
         left_has_been_pressed = true;
     }
-    
-    
+    else if (rotate_press)
+    {
+        rotate_has_been_pressed = true;
+    }
+
     int(*current_pattern_array)[4][2] = piece.collection_patterns[static_cast<int>(
         piece.current_pattern)]; // dereference to get the correct pattern
     if (time_to_switch_frame())
@@ -85,12 +90,12 @@ int play_piece(Pattern::Tetrispiece &piece)
                 current_rows[i] = (*current_pattern_array)[i][0];
                 current_cols[i] = (*current_pattern_array)[i][1] + piece.pattern_counter;
             }
+            rotate_piece(piece, current_rows, current_cols, rotate_has_been_pressed);
             move_piece(piece, current_cols, right_has_been_pressed, left_has_been_pressed);
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
             piece.current_pattern = switch_pattern(piece);
 
             Time::last_frame_time = Time::current_time;
-
         }
         else if (piece.current_pattern != Pattern::LAST_PATTERN)
         {
@@ -103,12 +108,12 @@ int play_piece(Pattern::Tetrispiece &piece)
                 current_rows[i] = (*current_pattern_array)[i][0];
                 current_cols[i] = (*current_pattern_array)[i][1] + piece.pattern_counter;
             }
+            rotate_piece(piece, current_rows, current_cols, rotate_has_been_pressed);
             move_piece(piece, current_cols, right_has_been_pressed, left_has_been_pressed);
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
             // update time and pattern
             piece.current_pattern = switch_pattern(piece);
             Time::last_frame_time = Time::current_time;
-
         }
         // if the current row is 0, it should not do anything more
         // if last pattern
@@ -125,6 +130,7 @@ int play_piece(Pattern::Tetrispiece &piece)
             {
                 current_rows[i] -= 1;
             }
+            rotate_piece(piece, current_rows, current_cols, rotate_has_been_pressed);
             move_piece(piece, current_cols, right_has_been_pressed, left_has_been_pressed);
             call_frame(current_rows, current_cols, piece.max_rows, piece.color);
 
@@ -159,7 +165,6 @@ void generate_piece()
         Pattern::reset_piece1(piece11);
         Pattern::reset_piece2(piece22);
         Pattern::reset_piece3(piece33);
-
     }
 
     switch (randomv::ran_num)
@@ -234,7 +239,6 @@ void clear_frame(int *rows, int *cols, size_t size)
         ++p2;
     }
 }
-
 
 bool check_Ledplacement(int row, int col) { return (led_memory[row - 1][col - 1] > 0); }
 
