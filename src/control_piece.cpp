@@ -60,10 +60,28 @@ bool control_left()
     static bool last_state = true; // Assume button starts unpressed
     bool current_state     = {gpio_get(control_buttons::LEFT) == 0}; // Active low
 
-    if (current_state && !last_state)                               // Detect falling edge
+    if (current_state && !last_state)                                // Detect falling edge
     {
         last_state = current_state;
-        return true;                                                // Button was just pressed
+        return true;                                                 // Button was just pressed
+    }
+    else
+    {
+        last_state = current_state;
+        return false; // No new press detected
+    }
+}
+
+bool rotate()
+{
+    // active low, is pulled up
+    static bool last_state = true; // Assume button starts unpressed
+    bool current_state     = {gpio_get(control_buttons::ROTATE) == 0}; // Active low
+
+    if (current_state && !last_state)                                  // Detect falling edge
+    {
+        last_state = current_state;
+        return true;                                                   // Button was just pressed
     }
     else
     {
@@ -86,7 +104,6 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
                 {
                     current_cols[i] += 1;
                 }
-                
             }
             ++piece.right_border;
             ++piece.left_border;
@@ -126,16 +143,51 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
     }
 }
 
-void rotate_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &rotate_press)
+void rotate_piece(Pattern::Tetrispiece &piece, int *current_rows, int *current_cols,
+                  bool &rotate_pressed)
 {
-    if (rotate_press)
+    if (rotate_pressed)
     {
         switch (piece.id)
         {
         case 3:
-            
-            break;
-        
+        {
+            int chosen_col_idx {9};
+            int chosen_row_idx {0};
+            // rows
+            for (int i = 0; i < piece.max_rows; ++i)
+            {
+                // cols
+                for (int j = 0; j < piece.max_rows; ++j)
+                {
+                    if (current_rows[i] == piece.current_row + 1 &&
+                        current_cols[j] == piece.mid_pixel)
+                    {
+                        // current_rows[i] -= 2;
+                        chosen_row_idx = i;
+                    }
+                    if (current_rows[i] == piece.current_row + 1 &&
+                        current_cols[i] == piece.mid_pixel - 1)
+                    {
+                        chosen_col_idx = i;
+                    }
+                }
+            }
+
+            // new positions
+            current_cols[chosen_col_idx] += 2;
+            current_rows[chosen_row_idx] -= 2;
+            // update current_row, as one pixel was moved down
+            --piece.current_row;
+            // update borders
+            piece.left_border = current_cols[chosen_col_idx];
+            // shoud be same location as midpixel, but it stops working if i assing that value to it
+            // return right_pressed to its original state, button no longer pressed
+            rotate_pressed = false;
+        }
+
+        break;
+
         default:
             break;
         }
