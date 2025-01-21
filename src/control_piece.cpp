@@ -180,10 +180,12 @@ void rotate_piece(Pattern::Tetrispiece &piece, int *current_rows, int *current_c
             // update current_row, as one pixel was moved down
             --piece.current_row;
             // update borders
-            piece.left_border = current_cols[chosen_col_idx];
+            piece.left_border = piece.mid_pixel;
             // shoud be same location as midpixel, but it stops working if i assing that value to it
             // return right_pressed to its original state, button no longer pressed
             rotate_pressed = false;
+            // to keep track of its state
+            piece.rotated = true;
         }
 
         break;

@@ -45,6 +45,7 @@ namespace Pattern
         patterns_state current_pattern {PATTERN1};
         int (*collection_patterns[5])[4][2] {};
         int pattern_counter {0};
+        bool rotated {false};
     };
 
     // a general function to stop pieces from moving.
@@ -80,6 +81,11 @@ namespace Pattern
                 {
                     return (check_Ledplacement(piece.current_row, piece.mid_pixel) ||
                             check_Ledplacement(piece.current_row, piece.right_border));
+                }
+                if (piece.rotated)
+                {
+                    return (check_Ledplacement(piece.current_row + 1, piece.right_border) ||
+                            check_Ledplacement(piece.current_row, piece.left_border));
                 }
                 return (check_Ledplacement(piece.current_row, piece.mid_pixel) ||
                         check_Ledplacement(piece.current_row, piece.right_border) ||

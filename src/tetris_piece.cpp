@@ -260,4 +260,5 @@ bool game_end()
 
 // todo:
 // figure out the rotated piece's border check, for when it is time to stop. is not working.
+// solution: each rotated form needs it own stop check. only implemented for piece 3.
 // figure out how to rotate the pixel back again when clicking rotate for the second time.

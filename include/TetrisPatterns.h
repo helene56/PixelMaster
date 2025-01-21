@@ -43,6 +43,7 @@ namespace Pattern
         patterns_state current_pattern {PATTERN1};
         int (*collection_patterns[5])[4][2] {};
         int pattern_counter {0};
+        bool rotated {false};
     };
 
     // inline to avoid multiple definitions
