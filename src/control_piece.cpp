@@ -146,13 +146,18 @@ void move_piece(Pattern::Tetrispiece &piece, int *current_cols, bool &right_pres
 void rotate_piece(Pattern::Tetrispiece &piece, int *current_rows, int *current_cols,
                   bool &rotate_pressed)
 {
+    if (piece.current_row == 1)
+    {
+        rotate_pressed = false;
+        return;
+    }
     if (rotate_pressed)
     {
         switch (piece.id)
         {
         case 3:
         {
-            int chosen_col_idx {9};
+            int chosen_col_idx {0};
             int chosen_row_idx {0};
             // rows
             for (int i = 0; i < piece.max_rows; ++i)
@@ -160,32 +165,62 @@ void rotate_piece(Pattern::Tetrispiece &piece, int *current_rows, int *current_c
                 // cols
                 for (int j = 0; j < piece.max_rows; ++j)
                 {
-                    if (current_rows[i] == piece.current_row + 1 &&
+                    if (!piece.rotated)
+                    {
+                        if (current_rows[i] == piece.current_row + 1 &&
                         current_cols[j] == piece.mid_pixel)
-                    {
-                        // current_rows[i] -= 2;
-                        chosen_row_idx = i;
+                        {
+                            chosen_row_idx = i;
+                        }
+                        if (current_rows[i] == piece.current_row + 1 &&
+                            current_cols[i] == piece.mid_pixel - 1)
+                        {
+                            chosen_col_idx = i;
+                        }
                     }
-                    if (current_rows[i] == piece.current_row + 1 &&
-                        current_cols[i] == piece.mid_pixel - 1)
+                    else
                     {
-                        chosen_col_idx = i;
+                        if (current_rows[i] == piece.current_row &&
+                        current_cols[j] == piece.mid_pixel)
+                        {
+                            chosen_row_idx = i;
+                        }
+                        if (current_rows[i] == piece.current_row + 2 &&
+                            current_cols[i] == piece.right_border)
+                        {
+                            chosen_col_idx = i;
+                        }
                     }
+                    
                 }
             }
-
-            // new positions
-            current_cols[chosen_col_idx] += 2;
-            current_rows[chosen_row_idx] -= 2;
-            // update current_row, as one pixel was moved down
-            --piece.current_row;
-            // update borders
-            piece.left_border = piece.mid_pixel;
-            // shoud be same location as midpixel, but it stops working if i assing that value to it
+            if (!piece.rotated)
+            {
+                // new positions
+                current_cols[chosen_col_idx] += 2;
+                current_rows[chosen_row_idx] -= 2;
+                // update current_row, as one pixel was moved down
+                --piece.current_row;
+                // update borders
+                piece.left_border = piece.mid_pixel;
+                // to keep track of its state
+                piece.rotated = true;
+                // here it goes wrong
+            }
+            else
+            {
+                // new positions
+                current_cols[chosen_col_idx] -= 2;
+                current_rows[chosen_row_idx] += 2;
+                // update current_row, as one pixel was moved up
+                ++piece.current_row;
+                piece.left_border = piece.mid_pixel - 1;
+                piece.rotated = false;
+            }
+            
             // return right_pressed to its original state, button no longer pressed
             rotate_pressed = false;
-            // to keep track of its state
-            piece.rotated = true;
+            
         }
 
         break;
