@@ -168,7 +168,7 @@ void rotate_piece(Pattern::Tetrispiece &piece, int *current_rows, int *current_c
                     if (!piece.rotated)
                     {
                         if (current_rows[i] == piece.current_row + 1 &&
-                        current_cols[j] == piece.mid_pixel)
+                            current_cols[j] == piece.mid_pixel)
                         {
                             chosen_row_idx = i;
                         }
@@ -181,7 +181,7 @@ void rotate_piece(Pattern::Tetrispiece &piece, int *current_rows, int *current_c
                     else
                     {
                         if (current_rows[i] == piece.current_row &&
-                        current_cols[j] == piece.mid_pixel)
+                            current_cols[j] == piece.mid_pixel)
                         {
                             chosen_row_idx = i;
                         }
@@ -191,11 +191,18 @@ void rotate_piece(Pattern::Tetrispiece &piece, int *current_rows, int *current_c
                             chosen_col_idx = i;
                         }
                     }
-                    
                 }
             }
             if (!piece.rotated)
             {
+                // check that no led is already present at the new positions
+                if (check_Ledplacement(current_rows[chosen_col_idx],
+                                       current_cols[chosen_col_idx] + 2) ||
+                    check_Ledplacement(current_rows[chosen_row_idx] - 2,
+                                       current_cols[chosen_row_idx]))
+                {
+                    return;
+                }
                 // new positions
                 current_cols[chosen_col_idx] += 2;
                 current_rows[chosen_row_idx] -= 2;
@@ -209,18 +216,25 @@ void rotate_piece(Pattern::Tetrispiece &piece, int *current_rows, int *current_c
             }
             else
             {
+                // check that no led is already present at the new positions
+                if (check_Ledplacement(current_rows[chosen_col_idx],
+                                       current_cols[chosen_col_idx] - 2) ||
+                    check_Ledplacement(current_rows[chosen_row_idx] + 2,
+                                       current_cols[chosen_row_idx]))
+                {
+                    return;
+                }
                 // new positions
                 current_cols[chosen_col_idx] -= 2;
                 current_rows[chosen_row_idx] += 2;
                 // update current_row, as one pixel was moved up
                 ++piece.current_row;
                 piece.left_border = piece.mid_pixel - 1;
-                piece.rotated = false;
+                piece.rotated     = false;
             }
-            
+
             // return right_pressed to its original state, button no longer pressed
             rotate_pressed = false;
-            
         }
 
         break;

@@ -264,3 +264,4 @@ bool game_end()
 // figure out how to rotate the pixel back again when clicking rotate for the second time.
 // implemented for piece 3.
 // make it register two button presses, in that case it needs to move two times.
+// todo: dont rotate when a pixel is already in its desired path
