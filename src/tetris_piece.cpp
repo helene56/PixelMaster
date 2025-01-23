@@ -258,3 +258,34 @@ bool game_end()
     return game_off;
 }
 
+struct complete_line
+{
+    int complete_row[8] {0};
+};
+
+struct complete_line complete_row()
+{
+    struct complete_line resulting_line;
+
+    bool row_complete {true};
+    for (int row = 0; row < 8; ++row)
+    {
+        for (int col = 0; col < 8; ++col)
+        {
+            if (led_memory[row][col] == 0)
+            {
+                // if it find one column not lit up, the row is not completed.
+                row_complete = false;
+                break;
+            }
+        }
+        if (row_complete)
+        {
+            resulting_line.complete_row[row] = 1;
+        }
+        
+    }
+
+    return resulting_line;
+
+}
