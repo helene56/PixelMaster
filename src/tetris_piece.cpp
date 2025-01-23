@@ -188,6 +188,7 @@ void generate_piece()
     default:
         break;
     }
+    win_row();
 }
 
 // refactor these two functions under here somehow, they almost do the same
@@ -233,10 +234,14 @@ void clear_frame(int *rows, int *cols, size_t size)
     int *p  = rows;
     int *p2 = cols;
     for (int i = 0; i < size; ++i)
-    {
-        clear_Ledmemory(*p, *p2);
+    {   
+        if (*p != 0 || *p2 != 0)
+        {
+            clear_Ledmemory(*p, *p2);
+        }
         ++p;
         ++p2;
+        
     }
 }
 
@@ -252,6 +257,7 @@ bool game_end()
             if (led_memory[row][col] == 0)
             {
                 game_off = false;
+                break;
             }
         }
     }
@@ -267,9 +273,9 @@ struct complete_line complete_row()
 {
     struct complete_line resulting_line;
 
-    bool row_complete {true};
     for (int row = 0; row < 8; ++row)
     {
+        bool row_complete = true; // Reset row_complete for each row
         for (int col = 0; col < 8; ++col)
         {
             if (led_memory[row][col] == 0)
@@ -283,9 +289,33 @@ struct complete_line complete_row()
         {
             resulting_line.complete_row[row] = 1;
         }
-        
     }
 
     return resulting_line;
+}
+
+// remove row, player wins a row, add score point
+void win_row()
+{
+    bool test_debug;
+    struct complete_line result_row {complete_row()};
+    int test_rows[8] {1,2,3,4,5,6,7,8};
+    int test_cols[8] {1,2,3,4,5,6,7,8};
+    for (int i = 0; i < 8; ++i)
+    {
+        test_debug = true;
+        if (result_row.complete_row[i] == 0)
+        {
+            test_rows[i] = 0;
+            test_debug = false;
+        }
+
+    }
+    if (test_debug)
+    {
+        printf("it is working.\n");
+    }
+    // // remove the row,remove from memory, move the pixels left above down
+    clear_frame(test_rows, test_cols, 8);
 
 }

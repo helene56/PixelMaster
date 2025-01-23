@@ -10,5 +10,6 @@ void clear_frame(int *rows, int *cols, size_t size);
 void call_frame(int *rows, int *cols, int size, std::int32_t grb);
 bool game_end();
 struct complete_line complete_row();
+void win_row();
 
 #endif // TETRIS_PIECE
