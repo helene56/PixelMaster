@@ -249,6 +249,8 @@ bool check_Ledplacement(int row, int col) { return (led_memory[row - 1][col - 1]
 
 bool game_end()
 {
+    // consider refactoring this, so the boolean is not necessary.
+    // simply return true or false.
     bool game_off {true};
     for (int col = 0; col < 8; ++col)
     {
