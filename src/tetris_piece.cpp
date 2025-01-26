@@ -11,6 +11,7 @@
 
 namespace randomv
 {
+    // todo: seed with the current time/clock the application started up, to ensure randomness.
     std::uint16_t seed {42};
     int ran_num {random_generator(seed, 5)};
 } // namespace randomv
