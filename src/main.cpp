@@ -96,5 +96,8 @@ int main()
 // 1. implement rotation for piece1 and piece2
 // 2. implement a new piece
 // 3. start to implement completing rows
+// 3.1. one row win; the other rows move down [x]
+// 3.2. make the logic work for more than one row
 // 4. when more screen is added; remove patterns so the already full piece is visible. 
-//    to mimic the real game. 
+//    to mimic the real game.
+// 5. implement a memory for button clicks; when clicking even when it is not time to move, it should remember and move
