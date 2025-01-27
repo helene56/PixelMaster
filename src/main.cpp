@@ -95,4 +95,6 @@ int main()
 // todo:
 // 1. implement rotation for piece1 and piece2
 // 2. implement a new piece
-// 3. start to implement completing rows 
+// 3. start to implement completing rows
+// 4. when more screen is added; remove patterns so the already full piece is visible. 
+//    to mimic the real game. 
