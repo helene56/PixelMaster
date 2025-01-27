@@ -235,14 +235,13 @@ void clear_frame(int *rows, int *cols, size_t size)
     int *p  = rows;
     int *p2 = cols;
     for (int i = 0; i < size; ++i)
-    {   
+    {
         if (*p != 0 || *p2 != 0)
         {
             clear_Ledmemory(*p, *p2);
         }
         ++p;
         ++p2;
-        
     }
 }
 
@@ -300,25 +299,57 @@ struct complete_line complete_row()
 // remove row, player wins a row, add score point
 void win_row()
 {
-    bool test_debug;
-    struct complete_line result_row {complete_row()};
-    int test_rows[8] {1,2,3,4,5,6,7,8};
-    int test_cols[8] {1,2,3,4,5,6,7,8};
-    for (int i = 0; i < 8; ++i)
+    bool player_win {false};
+    struct complete_line result_row
     {
-        test_debug = true;
-        if (result_row.complete_row[i] == 0)
+        complete_row()
+    };
+    int test_rows[8] {0};
+    int test_cols[8] {1, 2, 3, 4, 5, 6, 7, 8};
+    // fill this in with the row that was complete
+    // start with only one row completion
+    int selected_rows[8] {0};
+    for (int i {0}; i < 8; ++i)
+    {
+
+        if (result_row.complete_row[i] != 0)
         {
-            test_rows[i] = 0;
-            test_debug = false;
+            test_rows[i] = i;
+            int select_i = ++i;
+            for (int j {0}; j < 8; ++j)
+            {
+                selected_rows[j] = select_i;
+            }
+            player_win = true;
+            // break for now; later implement check for multiple rows
+            break;
         }
-
     }
-    if (test_debug)
+
+    if (player_win)
     {
-        printf("it is working.\n");
-    }
-    // // remove the row,remove from memory, move the pixels left above down
-    clear_frame(test_rows, test_cols, 8);
 
+        clear_frame(selected_rows, test_cols, 8);
+        // now: move all pixels above one row down
+        // assign just the first for now, they should all be the same
+        int select_row {selected_rows[0]};
+        // for now try to only change led_memory, next time it is called, it will be moved down when
+        // time to switch frame
+
+        // only loop through rows above the completed row
+        for (int i {select_row - 1}; i < 8; ++i)
+        {
+            for (int j {0}; j < 8; ++j)
+            {
+                // if led memory is not 0 and the value is the row above the deleted row
+                if (led_memory[i][j] != 0)
+                {
+                    // first assign pixel to the row under it and same col
+                    led_memory[i - 1][j] = led_memory[i][j];
+                    // reset the previous
+                    led_memory[i][j] = 0;
+                }
+            }
+        }
+    }
 }
