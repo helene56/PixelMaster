@@ -98,6 +98,7 @@ int main()
 // 3. start to implement completing rows
 // 3.1. one row win; the other rows move down [x]
 // 3.2. make the logic work for more than one row
+// 3.3. implement a small animation/blinking when row gets completed??
 // 4. when more screen is added; remove patterns so the already full piece is visible. 
 //    to mimic the real game.
 // 5. implement a memory for button clicks; when clicking even when it is not time to move, it should remember and move
