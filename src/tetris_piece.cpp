@@ -171,16 +171,16 @@ void generate_piece()
     switch (randomv::ran_num)
     {
     case 0:
-        result = play_piece(piece11);
+        result = play_piece(piece22);
         break;
     case 1:
-        result = play_piece(piece11);
+        result = play_piece(piece22);
         break;
     case 2:
         result = play_piece(piece22);
         break;
     case 3:
-        result = play_piece(piece33);
+        result = play_piece(piece22);
         break;
     case 4:
         result = play_piece(piece22);
@@ -189,7 +189,11 @@ void generate_piece()
     default:
         break;
     }
-    win_row();
+    if (!result)
+    {
+        win_row();
+    } 
+    
 }
 
 // refactor these two functions under here somehow, they almost do the same
@@ -304,7 +308,6 @@ void win_row()
     {
         complete_row()
     };
-    int test_rows[8] {0};
     int test_cols[8] {1, 2, 3, 4, 5, 6, 7, 8};
     // fill this in with the row that was complete
     // start with only one row completion
@@ -314,7 +317,6 @@ void win_row()
 
         if (result_row.complete_row[i] != 0)
         {
-            test_rows[i] = i;
             int select_i = ++i;
             for (int j {0}; j < 8; ++j)
             {
@@ -326,9 +328,30 @@ void win_row()
         }
     }
 
+    // for (int i {0}, j{1}; i < 8; ++i, ++j)
+    // {
+
+    //     if (result_row.complete_row[i] != 0)
+    //     {
+    //         int select_i = ++i;
+    //         for (int j {0}; j < 8; ++j)
+    //         {
+    //             selected_rows[j] = select_i;
+    //         }
+    //         player_win = true;
+    //         // break for now; later implement check for multiple rows
+    //         break;
+    //     }
+    //     else
+    //     {
+    //         break;
+    //     }
+    // }
+
     if (player_win)
     {
-
+        // pass the select_i instead and fill array with that to send instead
+        // maybe only check this when a piece stops moving?
         clear_frame(selected_rows, test_cols, 8);
         // now: move all pixels above one row down
         // assign just the first for now, they should all be the same
