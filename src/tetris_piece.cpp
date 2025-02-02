@@ -71,7 +71,7 @@ int play_piece(Pattern::Tetrispiece &piece)
 
     int(*current_pattern_array)[4][2] = piece.collection_patterns[static_cast<int>(
         piece.current_pattern)]; // dereference to get the correct pattern
-    if (time_to_switch_frame() || left_has_been_pressed || right_has_been_pressed || rotate_has_been_pressed)
+    if (time_to_switch_frame() || left_has_been_pressed || right_has_been_pressed)
     {
         // check to see if the piece is blocked, then stop moving
         if (piece_stop_moving(piece))
@@ -171,19 +171,19 @@ void generate_piece()
     switch (randomv::ran_num)
     {
     case 0:
-        result = play_piece(piece33);
+        result = play_piece(piece11);
         break;
     case 1:
-        result = play_piece(piece33);
+        result = play_piece(piece11);
         break;
     case 2:
-        result = play_piece(piece33);
+        result = play_piece(piece22);
         break;
     case 3:
         result = play_piece(piece33);
         break;
     case 4:
-        result = play_piece(piece33);
+        result = play_piece(piece22);
         break;
 
     default:
