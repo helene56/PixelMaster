@@ -1,15 +1,15 @@
-#include <stdio.h>
-#include "pico/stdlib.h"
-#include "hardware/gpio.h"
 #include "hardware/clocks.h"
+#include "hardware/gpio.h"
+#include "pico/stdlib.h"
 #include <cstdint>
+#include <stdio.h>
 
-#include <iostream>
+#include "animations.h"
+#include "control_piece.h"
 #include "led_control.h"
 #include "led_memory.h"
-#include "animations.h"
 #include "tetris_piece.h"
-#include "control_piece.h"
+#include <iostream>
 
 #include "build/wave.pio.h"
 
@@ -24,13 +24,12 @@ namespace Pins
     constexpr int read_light {13};
 } // namespace Pins
 
-
 namespace frames
 {
-    uint32_t last_frame_time = 0;
-    uint32_t FRAME_INTERVAL = 500;
+    uint32_t last_frame_time     = 0;
+    uint32_t FRAME_INTERVAL      = 500;
     volatile bool button_pressed = false;
-    bool is_face_1 = true; // Tracks which face is currently displayed
+    bool is_face_1               = true; // Tracks which face is currently displayed
 } // namespace frames
 
 int main()
@@ -47,26 +46,29 @@ int main()
     // gpio_pull_up(RIGTH);
     initialize_control_buttons();
 
-    PIO pio = pio0;
-    int sm = 0;
+    PIO pio     = pio0;
+    int sm      = 0;
     uint offset = pio_add_program(pio, &wave_program);
     // uint clock = clock_get_hz(clk_sys);
     wave_program_init(pio, sm, offset, Pins::DIN, 800000);
-    
 
     std::uint32_t w {0x050505};
     std::uint32_t y {0x030301}; // yellow at 5% brightness
-    
+
     // storeLed(8, 4, 0b00001101, 0b00001101, 00000000);
     // storeLed(7, 3, 0b00001101, 0b00001101, 00000000);
     // storeLed(7, 4, 0b00001101, 0b00001101, 00000000);
     // storeLed(7, 5, 0b00001101, 0b00001101, 00000000);
     // sendLed();
-
+    for (int i {1}; i < 8; ++i)
+    {
+        storeLed(1, i, 0b00000010, 0b00000010, 00000000);
+        storeLed(2, i, 0b00000010, 0b00000010, 00000000);
+    }
     // storeLed(7, 4, 0b0000000, 0b00001101, 0b0000000);
     // sendLed();
     // sleep_ms(9000);
-    while (true) 
+    while (true)
     {
         // bool right_press {gpio_get(RIGTH) == 0};
         // if (right_press)
@@ -79,26 +81,29 @@ int main()
         // }
         // uint32_t current_time = to_ms_since_boot(get_absolute_time());
         // // Check if it's time to switch frames
-        // if (current_time - frames::last_frame_time >= frames::FRAME_INTERVAL) 
+        // if (current_time - frames::last_frame_time >= frames::FRAME_INTERVAL)
         // {
-            
+
         // }
 
         generate_piece();
 
         // small delay for button to be read correctly
         sleep_ms(2);
-         
     }
 }
 
 // todo:
 // 1. implement rotation for piece1 and piece2
+// make generic function
+// make a member variable keep track of orientation instead, something like west, north or
+// something, then work out what should be done to rotate the piece.
 // 2. implement a new piece
 // 3. start to implement completing rows
 // 3.1. one row win; the other rows move down [x]
 // 3.2. make the logic work for more than one row
 // 3.3. implement a small animation/blinking when row gets completed??
-// 4. when more screen is added; remove patterns so the already full piece is visible. 
+// 4. when more screen is added; remove patterns so the already full piece is visible.
 //    to mimic the real game.
-// 5. implement a memory for button clicks; when clicking even when it is not time to move, it should remember and move
+// 5. implement a memory for button clicks; when clicking even when it is not time to move, it
+// should remember and move
